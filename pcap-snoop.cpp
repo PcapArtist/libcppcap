@@ -66,9 +66,9 @@ static int pcap_read_snoop(pcap_t *p, int cnt, pcap_handler callback,
   struct pcap_snoop *psn = p->priv;
   int cc;
   struct snoopheader *sh;
-  register u_int datalen;
-  register u_int caplen;
-  register u_char *cp;
+  u_int datalen;
+  u_int caplen;
+  u_char *cp;
 
 again:
   /*

@@ -100,7 +100,7 @@ static int pcap_read_nit(pcap_t *p, int cnt, pcap_handler callback,
                          u_char *user) {
   struct pcap_nit *pn = p->priv;
   int cc, n;
-  register u_char *bp, *cp, *ep;
+  u_char *bp, *cp, *ep;
   struct nit_hdr *nh;
   int caplen;
 

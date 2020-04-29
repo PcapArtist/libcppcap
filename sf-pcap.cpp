@@ -727,7 +727,7 @@ static int sf_write_header(pcap_t *p, FILE *fp, int linktype, int snaplen) {
  * Output a packet to the initialized dump file.
  */
 void pcap_dump(u_char *user, const struct pcap_pkthdr *h, const u_char *sp) {
-  register FILE *f;
+  FILE *f;
   struct pcap_sf_pkthdr sf_hdr;
 
   f = (FILE *)user;

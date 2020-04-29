@@ -651,7 +651,7 @@ static void freechunks(compiler_state_t *cstate) {
  */
 char *sdup(compiler_state_t *cstate, const char *s) {
   size_t n = strlen(s) + 1;
-  char *cp = newchunk_nolongjmp(cstate, n);
+  char *cp = static_cast<char *>(newchunk_nolongjmp(cstate, n));
 
   if (cp == nullptr)
     return (nullptr);

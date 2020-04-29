@@ -47,7 +47,7 @@ static void efReadError(int, char *);
 void readloop(int cnt, int if_fd, struct bpf_program *fp, printfunc printit) {
 #ifdef IBMRTPC
   struct packet_header *ph;
-  register u_char *bp;
+  u_char *bp;
   int inc;
 #else  /* !IBMRTPC */
   static struct timeval tv = {0};

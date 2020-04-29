@@ -99,11 +99,11 @@ static int pcap_setfilter_pf(pcap_t *, struct bpf_program *);
 static int pcap_read_pf(pcap_t *pc, int cnt, pcap_handler callback,
                         u_char *user) {
   struct pcap_pf *pf = pc->priv;
-  register u_char *p, *bp;
+  u_char *p, *bp;
   int cc, n, buflen, inc;
   struct enstamp *sp;
   struct enstamp stamp;
-  register u_int pad;
+  u_int pad;
 
 again:
   cc = pc->cc;

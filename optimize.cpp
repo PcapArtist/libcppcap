@@ -277,7 +277,7 @@ typedef struct {
  */
 #define SET_INTERSECT(a, b, n)                                                 \
   {                                                                            \
-    register bpf_u_int32 *_x = a, *_y = b;                                     \
+    bpf_u_int32 *_x = a, *_y = b;                                              \
     int _n = n;                                                                \
     while (--_n >= 0)                                                          \
       *_x++ &= *_y++;                                                          \
@@ -288,7 +288,7 @@ typedef struct {
  */
 #define SET_SUBTRACT(a, b, n)                                                  \
   {                                                                            \
-    register bpf_u_int32 *_x = a, *_y = b;                                     \
+    bpf_u_int32 *_x = a, *_y = b;                                              \
     int _n = n;                                                                \
     while (--_n >= 0)                                                          \
       *_x++ &= ~*_y++;                                                         \
@@ -299,7 +299,7 @@ typedef struct {
  */
 #define SET_UNION(a, b, n)                                                     \
   {                                                                            \
-    register bpf_u_int32 *_x = a, *_y = b;                                     \
+    bpf_u_int32 *_x = a, *_y = b;                                              \
     int _n = n;                                                                \
     while (--_n >= 0)                                                          \
       *_x++ |= *_y++;                                                          \
@@ -1524,7 +1524,7 @@ static void opt_j(opt_state_t *opt_state, struct edge *ep) {
    */
 top:
   for (i = 0; i < opt_state->edgewords; ++i) {
-    register bpf_u_int32 x = ep->edom[i];
+    bpf_u_int32 x = ep->edom[i];
 
     while (x != 0) {
       k = lowest_set_bit(x);

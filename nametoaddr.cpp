@@ -691,8 +691,8 @@ int __pcap_atodn(const char *s, bpf_u_int32 *addr) {
  * ethernet address.  Assumes 's' is well formed.
  */
 u_char *pcap_ether_aton(const char *s) {
-  register u_char *ep, *e;
-  register u_char d;
+  u_char *ep, *e;
+  u_char d;
 
   e = ep = (u_char *)malloc(6);
   if (e == nullptr)
@@ -720,7 +720,7 @@ u_char *pcap_ether_aton(const char *s) {
  */
 u_char *pcap_ether_hostton(const char *name) {
   struct pcap_etherent *ep;
-  register u_char *ap;
+  u_char *ap;
   static FILE *fp = nullptr;
   static int init = 0;
 
@@ -752,7 +752,7 @@ u_char *pcap_ether_hostton(const char *name) {
  * This *should* be thread-safe; the API doesn't have a static buffer.
  */
 u_char *pcap_ether_hostton(const char *name) {
-  register u_char *ap;
+  u_char *ap;
   u_char a[6];
 
   ap = nullptr;

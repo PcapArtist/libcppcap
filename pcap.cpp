@@ -75,6 +75,8 @@ struct rtentry; /* declarations in <net/if.h> */
 
 #include "optimize.h"
 
+#include "conversion_utils.h"
+
 #ifdef HAVE_DAG_API
 #include "pcap-dag.h"
 #endif /* HAVE_DAG_API */

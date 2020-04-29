@@ -140,7 +140,7 @@ static void warning(const char *, ...) PCAP_PRINTFLIKE(1, 2);
 
 static char *read_infile(char *fname) {
   int i, fd, cc;
-  register char *cp;
+  char *cp;
   struct stat buf;
 
   fd = open(fname, O_RDONLY | O_BINARY);
@@ -215,9 +215,9 @@ static void warning(const char *fmt, ...) {
 /*
  * Copy arg vector into a new buffer, concatenating arguments with spaces.
  */
-static char *copy_argv(register char **argv) {
-  register char **p;
-  register size_t len = 0;
+static char *copy_argv(char **argv) {
+  char **p;
+  size_t len = 0;
   char *buf;
   char *src, *dst;
 

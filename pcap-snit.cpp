@@ -113,7 +113,7 @@ static int pcap_read_snit(pcap_t *p, int cnt, pcap_handler callback,
                           u_char *user) {
   struct pcap_snit *psn = p->priv;
   int cc, n;
-  register u_char *bp, *cp, *ep;
+  u_char *bp, *cp, *ep;
   struct nit_bufhdr *hdrp;
   struct nit_iftime *ntp;
   struct nit_iflen *nlp;

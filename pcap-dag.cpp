@@ -653,7 +653,7 @@ static int dag_read(pcap_t *p, int cnt, pcap_handler callback, u_char *user) {
         pcap_filter(p->fcode.bf_insns, dp, packet_len, caplen)) {
 
       /* convert between timestamp formats */
-      register unsigned long long ts;
+      unsigned long long ts;
 
       if (IS_BIGENDIAN()) {
         ts = SWAPLL(header->ts);

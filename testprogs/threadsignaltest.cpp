@@ -169,7 +169,7 @@ static THREAD_FUNC_RETURN_TYPE capture_thread_func(THREAD_FUNC_ARG_TYPE arg) {
 
 int main(int argc, char **argv) {
   int op;
-  register char *cp, *cmdbuf, *device;
+  char *cp, *cmdbuf, *device;
   int immediate = 0;
   pcap_if_t *devlist;
   bpf_u_int32 localnet, netmask;
@@ -336,9 +336,9 @@ static void warning(const char *fmt, ...) {
 /*
  * Copy arg vector into a new buffer, concatenating arguments with spaces.
  */
-static char *copy_argv(register char **argv) {
-  register char **p;
-  register size_t len = 0;
+static char *copy_argv(char **argv) {
+  char **p;
+  size_t len = 0;
   char *buf;
   char *src, *dst;
 

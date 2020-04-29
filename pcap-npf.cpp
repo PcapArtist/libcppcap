@@ -455,7 +455,7 @@ static int pcap_read_npf(pcap_t *p, int cnt, pcap_handler callback,
   PACKET Packet;
   int cc;
   int n;
-  register u_char *bp, *ep;
+  u_char *bp, *ep;
   u_char *datap;
   struct pcap_win *pw = p->priv;
 
@@ -530,7 +530,7 @@ static int pcap_read_npf(pcap_t *p, int cnt, pcap_handler callback,
   n = 0;
   ep = bp + cc;
   for (;;) {
-    register u_int caplen, hdrlen;
+    u_int caplen, hdrlen;
 
     /*
      * Has "pcap_breakloop()" been called?
