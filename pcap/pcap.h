@@ -132,8 +132,10 @@
 #ifndef PCAP_DONT_INCLUDE_PCAP_BPF_H
 #include <pcap/bpf.h>
 #endif
-
+#include <list>
 #include <stdio.h>
+#include <string>
+#include <variant>
 
 /*
  * Version number of the current version of the pcap file format.
@@ -297,6 +299,9 @@ struct pcap_if {
   struct pcap_addr *addresses;
   bpf_u_int32 flags; /* PCAP_IF_ interface flags */
 };
+
+struct pcap_if_list;
+typedef struct pcap_if_list pcap_if_list_t;
 
 #define PCAP_IF_LOOPBACK 0x00000001 /* interface is loopback */
 #define PCAP_IF_UP 0x00000002       /* interface is up */
@@ -598,7 +603,7 @@ PCAP_API int pcap_dump_flush(pcap_dumper_t *);
 PCAP_API void pcap_dump_close(pcap_dumper_t *);
 PCAP_API void pcap_dump(u_char *, const struct pcap_pkthdr *, const u_char *);
 
-PCAP_API int pcap_findalldevs(pcap_if_t **, char *);
+PCAP_API std::variant<std::string, pcap_if_list_t> pcap_findalldevs();
 PCAP_API void pcap_freealldevs(pcap_if_t *);
 
 /*

@@ -55,7 +55,6 @@ struct rtentry; /* declarations in <net/if.h> */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #if !defined(_MSC_VER) && !defined(__BORLANDC__) && !defined(__MINGW32__)
 #include <unistd.h>
 #endif
@@ -581,10 +580,12 @@ struct pcap_if_list {
   pcap_if_t *beginning;
 };
 
-static struct capture_source_type {
+struct capture_source_type {
   int (*findalldevs_op)(pcap_if_list_t *, char *);
   pcap_t *(*create_op)(const char *, char *, int *);
-} capture_source_types[] = {
+};
+
+static constexpr capture_source_type capture_source_types[] = {
 #ifdef HAVE_DAG_API
     {dag_findalldevs, dag_create},
 #endif
@@ -629,24 +630,24 @@ static struct capture_source_type {
  * The list, as returned through "alldevsp", may be nullptr if no interfaces
  * were up and could be opened.
  */
-int pcap_findalldevs(pcap_if_t **alldevsp, char *errbuf) {
+std::variant<std::string, pcap_if_list_t> pcap_findalldevs() {
   size_t i;
   pcap_if_list_t devlist;
+  std::string error;
 
   /*
    * Find all the local network interfaces on which we
    * can capture.
    */
   devlist.beginning = nullptr;
-  if (pcap_platform_finddevs(&devlist, errbuf) == -1) {
+  if (pcap_platform_finddevs(&devlist, error.data()) == -1) {
     /*
      * Failed - free all of the entries we were given
      * before we failed.
      */
     if (devlist.beginning != nullptr)
       pcap_freealldevs(devlist.beginning);
-    *alldevsp = nullptr;
-    return (-1);
+    return error;
   }
 
   /*
@@ -654,23 +655,21 @@ int pcap_findalldevs(pcap_if_t **alldevsp, char *errbuf) {
    * source types what interfaces they have.
    */
   for (i = 0; capture_source_types[i].findalldevs_op != nullptr; i++) {
-    if (capture_source_types[i].findalldevs_op(&devlist, errbuf) == -1) {
+    if (capture_source_types[i].findalldevs_op(&devlist, error.data()) == -1) {
       /*
        * We had an error; free the list we've been
        * constructing.
        */
       if (devlist.beginning != nullptr)
         pcap_freealldevs(devlist.beginning);
-      *alldevsp = nullptr;
-      return (-1);
+      return error;
     }
   }
 
   /*
    * Return the first entry of the list of all devices.
    */
-  *alldevsp = devlist.beginning;
-  return (0);
+  return {std::move(devlist)};
 }
 
 static struct sockaddr *dup_sockaddr(struct sockaddr *sa, size_t sa_length) {
@@ -1380,7 +1379,6 @@ void pcap_freealldevs(pcap_if_t *alldevs) {
  * lowest unit number is preferred; loopback is ignored.
  */
 char *pcap_lookupdev(char *errbuf) {
-  pcap_if_t *alldevs;
 #ifdef _WIN32
 /*
  * Windows - use the same size as the old WinPcap 3.1 code.
@@ -1418,8 +1416,13 @@ char *pcap_lookupdev(char *errbuf) {
     return (nullptr);
   }
 
-  if (pcap_findalldevs(&alldevs, errbuf) == -1)
+  auto find_devs_ret = pcap_findalldevs();
+
+  if (!std::holds_alternative<pcap_if_list_t>(find_devs_ret)) {
     return (nullptr);
+  }
+
+  auto *alldevs = std::get<pcap_if_list_t>(find_devs_ret).beginning;
 
   if (alldevs == nullptr || (alldevs->flags & PCAP_IF_LOOPBACK)) {
     /*

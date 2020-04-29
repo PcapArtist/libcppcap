@@ -493,8 +493,6 @@ void pcap_breakloop_common(pcap_t *);
  * "find_or_add_dev()" checks whether a device is already in a pcap_if_list_t
  * and, if not, adds an entry for it.
  */
-struct pcap_if_list;
-typedef struct pcap_if_list pcap_if_list_t;
 typedef int (*get_if_flags_func)(const char *, bpf_u_int32 *, char *);
 int pcap_platform_finddevs(pcap_if_list_t *, char *);
 #if !defined(_WIN32) && !defined(MSDOS)
