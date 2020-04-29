@@ -484,12 +484,8 @@ case "$UNAME_MACHINE:$UNAME_SYSTEM:$UNAME_RELEASE:$UNAME_VERSION" in
     mips:*:*:UMIPS | mips:*:*:RISCos)
 	eval "$set_cc_for_build"
 	sed 's/^	//' << EOF > "$dummy.cpp"
-#ifdef __cplusplus
 #include <stdio.h>  /* for printf() prototype */
 	int main (int argc, char *argv[]) {
-#else
-	int main (argc, argv) int argc; char *argv[]; {
-#endif
 	#if defined (host_mips) && defined (MIPSEB)
 	#if defined (SYSTYPE_SYSV)
 	  printf ("mips-mips-riscos%ssysv\\n", argv[1]); exit (0);

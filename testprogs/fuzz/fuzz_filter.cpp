@@ -24,7 +24,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     printf("pcap_open_dead failed\n");
     return 0;
   }
-  filter = malloc(Size);
+  filter = static_cast<char *>(malloc(Size));
   memcpy(filter, Data, Size);
   // nullptr terminate string
   filter[Size - 1] = 0;

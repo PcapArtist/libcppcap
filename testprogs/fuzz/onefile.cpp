@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
     fclose(fp);
     return 2;
   }
-  Data = malloc(Size);
+  Data = static_cast<uint8_t *>(malloc(Size));
   if (Data == nullptr) {
     fclose(fp);
     return 2;

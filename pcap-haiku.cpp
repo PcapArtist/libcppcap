@@ -170,8 +170,7 @@ static int pcap_activate_haiku(pcap_t *handle) {
 
 //	#pragma mark - pcap API
 
-extern "C" pcap_t *pcap_create_interface(const char *device,
-                                         char *errorBuffer) {
+pcap_t *pcap_create_interface(const char *device, char *errorBuffer) {
   // TODO: handle promiscuous mode!
 
   // we need a socket to talk to the networking stack
@@ -248,8 +247,7 @@ static int get_if_flags(const char *name, bpf_u_int32 *flags, char *errbuf) {
   return (0);
 }
 
-extern "C" int pcap_platform_finddevs(pcap_if_list_t *_allDevices,
-                                      char *errorBuffer) {
+int pcap_platform_finddevs(pcap_if_list_t *_allDevices, char *errorBuffer) {
   return pcap_findalldevs_interfaces(_allDevices, errorBuffer, can_be_bound,
                                      get_if_flags);
 }

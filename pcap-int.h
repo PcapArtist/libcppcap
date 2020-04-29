@@ -47,10 +47,6 @@
  */
 #define PCAP_VERSION_STRING "libpcap version " PACKAGE_VERSION
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*
  * If pcap_new_api is set, we disable pcap_lookupdev(), because:
  *
@@ -608,10 +604,6 @@ int pcap_parsesrcstr_ex(const char *, int *, char *, char *, char *,
 
 #ifdef YYDEBUG
 extern int pcap_debug;
-#endif
-
-#ifdef __cplusplus
-}
 #endif
 
 #endif

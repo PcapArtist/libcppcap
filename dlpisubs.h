@@ -1,10 +1,6 @@
 #ifndef dlpisubs_h
 #define dlpisubs_h
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*
  * Private data for capturing on DLPI devices.
  */
@@ -30,9 +26,5 @@ int pcap_conf_bufmod(pcap_t *, int);
 #endif
 int pcap_alloc_databuf(pcap_t *);
 int strioctl(int, int, int, char *);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

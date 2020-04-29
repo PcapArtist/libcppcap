@@ -71,10 +71,6 @@
 
 #include <pcap/funcattrs.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* BSD style release date */
 #define BPF_RELEASE 199606
 
@@ -257,10 +253,6 @@ PCAP_API void bpf_dump(const struct bpf_program *, int);
  * Number of scratch memory words (for BPF_LD|BPF_MEM and BPF_ST).
  */
 #define BPF_MEMWORDS 16
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* !defined(_NET_BPF_H_) && !defined(_BPF_H_) && !defined(_H_BPF) &&    \
           !defined(lib_pcap_bpf_h) */

@@ -75,7 +75,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     return 0;
   }
 
-  filter = malloc(filterSize);
+  filter = static_cast<char *>(malloc(filterSize));
   memcpy(filter, Data + 1, filterSize);
   // nullptr terminate string
   filter[filterSize - 1] = 0;

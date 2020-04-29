@@ -135,10 +135,6 @@
 
 #include <stdio.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*
  * Version number of the current version of the pcap file format.
  *
@@ -1060,9 +1056,5 @@ PCAP_API int pcap_remoteact_list(char *hostlist, char sep, int size,
                                  char *errbuf);
 PCAP_API int pcap_remoteact_close(const char *host, char *errbuf);
 PCAP_API void pcap_remoteact_cleanup(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* lib_pcap_pcap_h */
