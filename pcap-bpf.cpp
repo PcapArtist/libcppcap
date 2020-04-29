@@ -426,7 +426,7 @@ static int pcap_ack_zbuf(pcap_t *p) {
 }
 #endif /* HAVE_ZEROCOPY_BPF */
 
-pcap_t *pcap_create_interface(const char *device _U_, char *ebuf) {
+pcap_t *pcap_create_interface([[maybe_unused]] const char *device, char *ebuf) {
   pcap_t *p;
 
   p = pcap_create_common(ebuf, sizeof(struct pcap_bpf));
@@ -861,7 +861,7 @@ static int pcap_can_set_rfmon_bpf(pcap_t *p) {
   return (ret);
 }
 #else
-static int pcap_can_set_rfmon_bpf(pcap_t *p _U_) { return (0); }
+static int pcap_can_set_rfmon_bpf([[maybe_unused]] pcap_t *p) { return (0); }
 #endif
 
 static int pcap_stats_bpf(pcap_t *p, struct pcap_stat *ps) {
@@ -2546,8 +2546,9 @@ static int check_bpf_bindable(const char *name) {
 }
 
 #if defined(__FreeBSD__) && defined(SIOCIFCREATE2)
-static int get_usb_if_flags(const char *name _U_, bpf_u_int32 *flags _U_,
-                            char *errbuf _U_) {
+static int get_usb_if_flags([[maybe_unused]] const char *name,
+                            [[maybe_unused]] bpf_u_int32 *flags,
+                            [[maybe_unused]] char *errbuf) {
   /*
    * XXX - if there's a way to determine whether there's something
    * plugged into a given USB bus, use that to determine whether
@@ -2556,7 +2557,7 @@ static int get_usb_if_flags(const char *name _U_, bpf_u_int32 *flags _U_,
   return (0);
 }
 
-static int finddevs_usb(pcap_if_list_t *devlistp, char *errbuf) {
+static int finddevs_usb(Interfaces *devlistp, char *errbuf) {
   DIR *usbdir;
   struct dirent *usbitem;
   size_t name_max;
@@ -2727,8 +2728,9 @@ static int get_if_flags(const char *name, bpf_u_int32 *flags, char *errbuf) {
   return (0);
 }
 #else
-static int get_if_flags(const char *name _U_, bpf_u_int32 *flags _U_,
-                        char *errbuf _U_) {
+static int get_if_flags([[maybe_unused]] const char *name,
+                        [[maybe_unused]] bpf_u_int32 *flags,
+                        [[maybe_unused]] char *errbuf) {
   /*
    * Nothing we can do other than mark loopback devices as "the
    * connected/disconnected status doesn't apply".
@@ -2750,7 +2752,7 @@ static int get_if_flags(const char *name _U_, bpf_u_int32 *flags _U_,
 }
 #endif
 
-int pcap_platform_finddevs(pcap_if_list_t *devlistp, char *errbuf) {
+int pcap_platform_finddevs(Interfaces *devlistp, char *errbuf) {
   /*
    * Get the list of regular interfaces first.
    */
@@ -3295,7 +3297,8 @@ static int pcap_setdirection_bpf(pcap_t *p, pcap_direction_t d) {
   return (0);
 }
 #else
-static int pcap_setdirection_bpf(pcap_t *p, pcap_direction_t d _U_) {
+static int pcap_setdirection_bpf(pcap_t *p,
+                                 [[maybe_unused]] pcap_direction_t d) {
   (void)snprintf(p->errbuf, sizeof(p->errbuf),
                  "Setting direction is not supported on this device");
   return (-1);
@@ -3312,7 +3315,10 @@ static int pcap_set_datalink_bpf(pcap_t *p, int dlt) {
   return (0);
 }
 #else
-static int pcap_set_datalink_bpf(pcap_t *p _U_, int dlt _U_) { return (0); }
+static int pcap_set_datalink_bpf([[maybe_unused]] pcap_t *p,
+                                 [[maybe_unused]] int dlt) {
+  return (0);
+}
 #endif
 
 /*

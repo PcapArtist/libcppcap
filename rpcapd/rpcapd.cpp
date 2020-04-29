@@ -51,7 +51,6 @@
 #include "rpcap-protocol.h"
 #include "rpcapd.h"
 #include "sockutils.h" // for socket calls
-#include "varattrs.h"  // for _U_
 
 #ifdef HAVE_OPENSSL
 #include "sslutils.h"
@@ -804,7 +803,7 @@ static BOOL WINAPI main_ctrl_event(DWORD ctrltype) {
   return TRUE;
 }
 #else
-static void main_terminate(int sign _U_) {
+static void main_terminate([[maybe_unused]] int sign) {
   //
   // Note that the server should shut down.
   // select() should get an EINTR error when we return,
@@ -813,7 +812,7 @@ static void main_terminate(int sign _U_) {
   shutdown_server = 1;
 }
 
-static void main_reread_config(int sign _U_) {
+static void main_reread_config([[maybe_unused]] int sign) {
   //
   // Note that the server should re-read its configuration file.
   // select() should get an EINTR error when we return,
@@ -822,7 +821,7 @@ static void main_reread_config(int sign _U_) {
   reread_config = 1;
 }
 
-static void main_reap_children(int sign _U_) {
+static void main_reap_children([[maybe_unused]] int sign) {
   pid_t pid;
   int exitstat;
 

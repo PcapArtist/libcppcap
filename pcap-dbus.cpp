@@ -50,8 +50,8 @@ struct pcap_dbus {
   u_int packets_read; /* count of packets read */
 };
 
-static int dbus_read(pcap_t *handle, int max_packets _U_, pcap_handler callback,
-                     u_char *user) {
+static int dbus_read(pcap_t *handle, [[maybe_unused]] int max_packets,
+                     pcap_handler callback, u_char *user) {
   struct pcap_dbus *handlep = handle->priv;
 
   struct pcap_pkthdr pkth;
@@ -152,7 +152,7 @@ static int dbus_getnonblock(pcap_t *p) {
   return (-1);
 }
 
-static int dbus_setnonblock(pcap_t *p, int nonblock _U_) {
+static int dbus_setnonblock(pcap_t *p, [[maybe_unused]] int nonblock) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "Non-blocking mode isn't supported for capturing on D-Bus");
   return (-1);
@@ -325,7 +325,7 @@ pcap_t *dbus_create(const char *device, char *ebuf, int *is_ours) {
   return (p);
 }
 
-int dbus_findalldevs(pcap_if_list_t *devlistp, char *err_str) {
+int dbus_findalldevs(Interfaces *devlistp, char *err_str) {
   /*
    * The notion of "connected" vs. "disconnected" doesn't apply.
    * XXX - what about the notions of "up" and "running"?

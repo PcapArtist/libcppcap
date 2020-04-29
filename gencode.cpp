@@ -80,6 +80,8 @@
 #include <sys/socket.h>
 #endif
 
+namespace pcap {
+
 #ifndef offsetof
 #define offsetof(s, e) ((size_t) & ((s *)0)->e)
 #endif
@@ -8310,7 +8312,8 @@ struct block *gen_pf_action(compiler_state_t *cstate, int action) {
   return (b0);
 }
 #else  /* !HAVE_NET_PFVAR_H */
-struct block *gen_pf_ifname(compiler_state_t *cstate, const char *ifname _U_) {
+struct block *gen_pf_ifname(compiler_state_t *cstate,
+                            [[maybe_unused]] const char *ifname) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -8322,7 +8325,8 @@ struct block *gen_pf_ifname(compiler_state_t *cstate, const char *ifname _U_) {
   /*NOTREACHED*/
 }
 
-struct block *gen_pf_ruleset(compiler_state_t *cstate, char *ruleset _U_) {
+struct block *gen_pf_ruleset(compiler_state_t *cstate,
+                             [[maybe_unused]] char *ruleset) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -8334,7 +8338,7 @@ struct block *gen_pf_ruleset(compiler_state_t *cstate, char *ruleset _U_) {
   /*NOTREACHED*/
 }
 
-struct block *gen_pf_rnr(compiler_state_t *cstate, int rnr _U_) {
+struct block *gen_pf_rnr(compiler_state_t *cstate, [[maybe_unused]] int rnr) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -8346,7 +8350,7 @@ struct block *gen_pf_rnr(compiler_state_t *cstate, int rnr _U_) {
   /*NOTREACHED*/
 }
 
-struct block *gen_pf_srnr(compiler_state_t *cstate, int srnr _U_) {
+struct block *gen_pf_srnr(compiler_state_t *cstate, [[maybe_unused]] int srnr) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -8358,7 +8362,8 @@ struct block *gen_pf_srnr(compiler_state_t *cstate, int srnr _U_) {
   /*NOTREACHED*/
 }
 
-struct block *gen_pf_reason(compiler_state_t *cstate, int reason _U_) {
+struct block *gen_pf_reason(compiler_state_t *cstate,
+                            [[maybe_unused]] int reason) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -8370,7 +8375,8 @@ struct block *gen_pf_reason(compiler_state_t *cstate, int reason _U_) {
   /*NOTREACHED*/
 }
 
-struct block *gen_pf_action(compiler_state_t *cstate, int action _U_) {
+struct block *gen_pf_action(compiler_state_t *cstate,
+                            [[maybe_unused]] int action) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -9747,3 +9753,5 @@ struct block *gen_atmmulti_abbrev(compiler_state_t *cstate, int type) {
   }
   return b1;
 }
+
+} // namespace pcap

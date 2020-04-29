@@ -42,18 +42,4 @@
  * extensions.
  */
 
-#if __has_attribute(unused) \
-    || PCAP_IS_AT_LEAST_GNUC_VERSION(2,0)
-  /*
-   * Compiler with support for __attribute__((unused)), or GCC 2.0 and
-   * later, so it supports __attribute__((unused)).
-   */
-  #define _U_ __attribute__((unused))
-#else
-  /*
-   * We don't know of any way to mark a variable as unused.
-   */
-  #define _U_
-#endif
-
 #endif

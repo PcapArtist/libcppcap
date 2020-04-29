@@ -208,7 +208,7 @@ int sock_init(char *errbuf, int errbuflen) {
   return 0;
 }
 #else
-int sock_init(char *errbuf _U_, int errbuflen _U_) {
+int sock_init([[maybe_unused]] char *errbuf, [[maybe_unused]] int errbuflen) {
   /*
    * Nothing to do on UN*Xes.
    */
@@ -759,8 +759,8 @@ int sock_initaddress(const char *host, const char *port, struct addrinfo *hints,
  * '-2' if we got one of those errors.
  * For errors, an error message is returned in the 'errbuf' variable.
  */
-int sock_send(SOCKET sock, SSL *ssl _U_NOSSL_, const char *buffer, size_t size,
-              char *errbuf, int errbuflen) {
+int sock_send(SOCKET sock, [[maybe_unused]] SSL *ssl, const char *buffer,
+              size_t size, char *errbuf, int errbuflen) {
   int remaining;
   ssize_t nsent;
 
@@ -958,7 +958,7 @@ int sock_bufferize(const char *buffer, int size, char *tempbuf, int *offset,
  *occurred. The error message is returned in the 'errbuf' variable.
  */
 
-int sock_recv(SOCKET sock, SSL *ssl _U_NOSSL_, void *buffer, size_t size,
+int sock_recv(SOCKET sock, [[maybe_unused]] SSL *ssl, void *buffer, size_t size,
               int flags, char *errbuf, int errbuflen) {
   int recv_flags = 0;
   char *bufp = buffer;
@@ -1050,8 +1050,8 @@ int sock_recv(SOCKET sock, SSL *ssl _U_NOSSL_, void *buffer, size_t size,
  *
  * Returns the size of the datagram on success or -1 on error.
  */
-int sock_recv_dgram(SOCKET sock, SSL *ssl _U_NOSSL_, void *buffer, size_t size,
-                    char *errbuf, int errbuflen) {
+int sock_recv_dgram(SOCKET sock, [[maybe_unused]] SSL *ssl, void *buffer,
+                    size_t size, char *errbuf, int errbuflen) {
   ssize_t nread;
 #ifndef _WIN32
   struct msghdr message;

@@ -133,8 +133,11 @@
 #include <pcap/bpf.h>
 #endif
 #include <list>
+#include <map>
+#include <memory>
 #include <stdio.h>
 #include <string>
+#include <string_view>
 #include <variant>
 
 /*
@@ -149,6 +152,7 @@
 
 #define PCAP_ERRBUF_SIZE 256
 
+namespace pcap {
 /*
  * Compatibility for systems that have a bpf.h that
  * predates the bpf typedefs for 64-bit support.
@@ -160,7 +164,6 @@ typedef u_int bpf_u_int32;
 
 typedef struct pcap pcap_t;
 typedef struct pcap_dumper pcap_dumper_t;
-typedef struct pcap_if pcap_if_t;
 typedef struct pcap_addr pcap_addr_t;
 
 /*
@@ -292,16 +295,17 @@ struct pcap_stat_ex {
 /*
  * Item in a list of interfaces.
  */
-struct pcap_if {
-  struct pcap_if *next;
-  char *name;        /* name to hand to "pcap_open_live()" */
-  char *description; /* textual description of interface, or nullptr */
-  struct pcap_addr *addresses;
+struct Interface {
+  std::string name;        /* name to hand to "pcap_open_live()" */
+  std::string description; /* textual description of interface, or nullptr */
+  std::list<pcap_addr> addresses;
   bpf_u_int32 flags; /* PCAP_IF_ interface flags */
 };
 
-struct pcap_if_list;
-typedef struct pcap_if_list pcap_if_list_t;
+/*
+ * Implementation of a Interfaces.
+ */
+using Interfaces = std::multimap<u_int, Interface>;
 
 #define PCAP_IF_LOOPBACK 0x00000001 /* interface is loopback */
 #define PCAP_IF_UP 0x00000002       /* interface is up */
@@ -320,11 +324,10 @@ typedef struct pcap_if_list pcap_if_list_t;
  * Representation of an interface address.
  */
 struct pcap_addr {
-  struct pcap_addr *next;
-  struct sockaddr *addr;      /* address */
-  struct sockaddr *netmask;   /* netmask for that address */
-  struct sockaddr *broadaddr; /* broadcast address for that address */
-  struct sockaddr *dstaddr;   /* P2P destination address for that address */
+  std::string addr;      /* address */
+  std::string netmask;   /* netmask for that address */
+  std::string broadaddr; /* broadcast address for that address */
+  std::string dstaddr;   /* P2P destination address for that address */
 };
 
 typedef void (*pcap_handler)(u_char *, const struct pcap_pkthdr *,
@@ -603,8 +606,7 @@ PCAP_API int pcap_dump_flush(pcap_dumper_t *);
 PCAP_API void pcap_dump_close(pcap_dumper_t *);
 PCAP_API void pcap_dump(u_char *, const struct pcap_pkthdr *, const u_char *);
 
-PCAP_API std::variant<std::string, pcap_if_list_t> pcap_findalldevs();
-PCAP_API void pcap_freealldevs(pcap_if_t *);
+PCAP_API std::variant<std::string, Interfaces> pcap_findalldevs();
 
 /*
  * We return a pointer to the version string, rather than exporting the
@@ -971,7 +973,7 @@ PCAP_API int pcap_parsesrcstr(const char *source, int *type, char *host,
  * the only API available.
  */
 PCAP_API int pcap_findalldevs_ex(const char *source, struct pcap_rmtauth *auth,
-                                 pcap_if_t **alldevs, char *errbuf);
+                                 Interface **alldevs, char *errbuf);
 
 /*
  * Sampling methods.
@@ -1061,5 +1063,6 @@ PCAP_API int pcap_remoteact_list(char *hostlist, char sep, int size,
                                  char *errbuf);
 PCAP_API int pcap_remoteact_close(const char *host, char *errbuf);
 PCAP_API void pcap_remoteact_cleanup(void);
+} // namespace pcap
 
 #endif /* lib_pcap_pcap_h */

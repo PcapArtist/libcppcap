@@ -109,6 +109,7 @@ struct rtentry;
 #include "os-proto.h"
 #endif
 
+
 #ifdef YYBYACC
 /*
  * Both Berkeley YACC and Bison define yydebug (under whatever name
@@ -246,10 +247,10 @@ str2tok(const char *str, const struct tok *toks)
 	return (-1);
 }
 
-static const struct qual qerr = { Q_UNDEF, Q_UNDEF, Q_UNDEF, Q_UNDEF };
+static const pcap::qual qerr = { Q_UNDEF, Q_UNDEF, Q_UNDEF, Q_UNDEF };
 
 static void
-yyerror(void *yyscanner _U_, compiler_state_t *cstate, const char *msg)
+yyerror([[maybe_unused]] void *yyscanner, compiler_state_t *cstate, const char *msg)
 {
 	bpf_set_error(cstate, "can't parse filter expression: %s", msg);
 }
@@ -295,14 +296,14 @@ pfaction_to_num(compiler_state_t *cstate, const char *action)
 }
 #else /* !HAVE_NET_PFVAR_H */
 static int
-pfreason_to_num(compiler_state_t *cstate, const char *reason _U_)
+pfreason_to_num(compiler_state_t *cstate, [[maybe_unused]] const char *reason)
 {
 	bpf_set_error(cstate, "libpcap was compiled on a machine without pf support");
 	return (-1);
 }
 
 static int
-pfaction_to_num(compiler_state_t *cstate, const char *action _U_)
+pfaction_to_num(compiler_state_t *cstate, [[maybe_unused]] const char *action)
 {
 	bpf_set_error(cstate, "libpcap was compiled on a machine without pf support");
 	return (-1);
@@ -325,7 +326,7 @@ DIAG_OFF_BISON_BYACC
 	struct stmt *stmt;
 	struct arth *a;
 	struct {
-		struct qual q;
+		pcap::qual q;
 		int atmfieldtype;
 		int mtp3fieldtype;
 		struct block *b;

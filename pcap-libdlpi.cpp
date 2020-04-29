@@ -271,10 +271,11 @@ static int dlpromiscon(pcap_t *p, bpf_u_int32 level) {
  * so there's no work to be done here to check whether name refers
  * to a DLPI device.
  */
-static int is_dlpi_interface(const char *name _U_) { return (1); }
+static int is_dlpi_interface([[maybe_unused]] const char *name) { return (1); }
 
-static int get_if_flags(const char *name _U_, bpf_u_int32 *flags _U_,
-                        char *errbuf _U_) {
+static int get_if_flags([[maybe_unused]] const char *name,
+                        [[maybe_unused]] bpf_u_int32 *flags,
+                        [[maybe_unused]] char *errbuf) {
   /*
    * Nothing we can do other than mark loopback devices as "the
    * connected/disconnected status doesn't apply".
@@ -300,7 +301,7 @@ static int get_if_flags(const char *name _U_, bpf_u_int32 *flags _U_,
  * network links that are plumbed and are up. dlpi_walk(3DLPI) will find
  * additional network links present in the system.
  */
-int pcap_platform_finddevs(pcap_if_list_t *devlistp, char *errbuf) {
+int pcap_platform_finddevs(Interfaces *devlistp, char *errbuf) {
   int retv = 0;
 
   linknamelist_t *entry, *next;
@@ -446,7 +447,7 @@ static void pcap_libdlpi_err(const char *linkname, const char *func, int err,
            linkname, dlpi_strerror(err));
 }
 
-pcap_t *pcap_create_interface(const char *device _U_, char *ebuf) {
+pcap_t *pcap_create_interface([[maybe_unused]] const char *device, char *ebuf) {
   pcap_t *p;
 
   p = pcap_create_common(ebuf, sizeof(struct pcap_dlpi));

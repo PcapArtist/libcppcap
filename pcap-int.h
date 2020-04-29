@@ -64,6 +64,8 @@
  *
  * We also disable the aforementioned hack in pcap_create().
  */
+
+namespace pcap {
 extern int pcap_new_api;
 
 /*
@@ -475,7 +477,7 @@ void pcap_breakloop_common(pcap_t *);
 /*
  * Internal interfaces for "pcap_findalldevs()".
  *
- * A pcap_if_list_t * is a reference to a list of devices.
+ * A Interfaces * is a reference to a list of devices.
  *
  * A get_if_flags_func is a platform-dependent function called to get
  * additional interface flags.
@@ -486,34 +488,37 @@ void pcap_breakloop_common(pcap_t *);
  * "pcap_findalldevs_interfaces()" is a helper to find those interfaces
  * using the "standard" mechanisms (SIOCGIFCONF, "getifaddrs()", etc.).
  *
- * "add_dev()" adds an entry to a pcap_if_list_t.
+ * "add_dev()" adds an entry to a Interfaces.
  *
- * "find_dev()" tries to find a device, by name, in a pcap_if_list_t.
+ * "find_dev()" tries to find a device, by name, in a Interfaces.
  *
- * "find_or_add_dev()" checks whether a device is already in a pcap_if_list_t
+ * "find_or_add_dev()" checks whether a device is already in a Interfaces
  * and, if not, adds an entry for it.
  */
 typedef int (*get_if_flags_func)(const char *, bpf_u_int32 *, char *);
-int pcap_platform_finddevs(pcap_if_list_t *, char *);
+int pcap_platform_finddevs(Interfaces *, char *);
 #if !defined(_WIN32) && !defined(MSDOS)
-int pcap_findalldevs_interfaces(pcap_if_list_t *, char *, int (*)(const char *),
+int pcap_findalldevs_interfaces(Interfaces *, char *, int (*)(const char *),
                                 get_if_flags_func);
 #endif
-pcap_if_t *find_or_add_dev(pcap_if_list_t *, const char *, bpf_u_int32,
-                           get_if_flags_func, const char *, char *);
-pcap_if_t *find_dev(pcap_if_list_t *, const char *);
-pcap_if_t *add_dev(pcap_if_list_t *, const char *, bpf_u_int32, const char *,
-                   char *);
-int add_addr_to_dev(pcap_if_t *, struct sockaddr *, size_t, struct sockaddr *,
-                    size_t, struct sockaddr *, size_t, struct sockaddr *dstaddr,
-                    size_t, char *errbuf);
+std::variant<std::string, Interfaces::iterator>
+find_or_add_dev(Interfaces &interfaces, std::string_view name,
+                bpf_u_int32 flags, get_if_flags_func get_flags_func,
+                std::string_view description);
+Interfaces::iterator find_dev(Interfaces &devlistp, std::string_view name);
+Interfaces::iterator add_dev(Interfaces &devlistp, std::string_view name,
+                             bpf_u_int32 flags, std::string_view description);
+void add_addr_to_dev(Interface &curdev, std::string addr, std::string netmask,
+                     std::string broadaddr, std::string dstaddr);
 #ifndef _WIN32
-pcap_if_t *find_or_add_if(pcap_if_list_t *, const char *, bpf_u_int32,
-                          get_if_flags_func, char *);
-int add_addr_to_if(pcap_if_list_t *, const char *, bpf_u_int32,
-                   get_if_flags_func, struct sockaddr *, size_t,
-                   struct sockaddr *, size_t, struct sockaddr *, size_t,
-                   struct sockaddr *, size_t, char *);
+std::variant<std::string, Interfaces::iterator>
+find_or_add_if(Interfaces &devlistp, std::string_view name,
+               bpf_u_int32 if_flags, get_if_flags_func get_flags_func);
+std::optional<std::string>
+add_addr_to_if(Interfaces &devlistp, std::string_view name,
+               bpf_u_int32 if_flags, get_if_flags_func get_flags_func,
+               std::optional<std::string_view> addr, std::string_view netmask,
+               std::string_view broadaddr, std::string_view dstaddr);
 #endif
 
 /*
@@ -603,5 +608,7 @@ int pcap_parsesrcstr_ex(const char *, int *, char *, char *, char *,
 #ifdef YYDEBUG
 extern int pcap_debug;
 #endif
+
+} // namespace pcap
 
 #endif

@@ -73,7 +73,7 @@ created-but-not-activated pcap_t for an instance of one of your devices.
 
 The "list of device instances" routine takes, as arguments:
 
-	a pointer to a pcap_if_list_t;
+	a pointer to a Interfaces;
 
 	a pointer to an error message buffer.
 
@@ -94,7 +94,7 @@ The routine should add devices to the list by calling the add_dev()
 routine in libpcap, declared in the pcap-int.h header.  It takes, as
 arguments:
 
-	the pointer to the pcap_if_list_t passed as an argument to the
+	the pointer to the Interfaces passed as an argument to the
 	routine;
 
 	the device name, as described above;
@@ -106,7 +106,7 @@ arguments:
 
 	the error message buffer pointer provided to the routine.
 
-add_dev() will, if it succeeds, return a pointer to a pcap_if_t that was
+add_dev() will, if it succeeds, return a pointer to a Interface that was
 added to the list of devices.  If it fails, it will return nullptr; in this
 case, the error message buffer has been filled in with an error string,
 and your routine must return -1 to indicate the error.

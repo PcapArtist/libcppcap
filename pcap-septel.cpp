@@ -167,7 +167,8 @@ septel_read(pcap_t *p, int cnt, pcap_handler callback, u_char *user) {
   return processed;
 }
 
-static int septel_inject(pcap_t *handle, const void *buf _U_, int size _U_) {
+static int septel_inject(pcap_t *handle, [[maybe_unused]] const void *buf,
+                         [[maybe_unused]] int size) {
   pcap_strlcpy(handle->errbuf,
                "Sending packets isn't supported on Septel cards",
                PCAP_ERRBUF_SIZE);
@@ -259,7 +260,7 @@ static int septel_stats(pcap_t *p, struct pcap_stat *ps) {
   return 0;
 }
 
-int septel_findalldevs(pcap_if_list_t *devlistp, char *errbuf) {
+int septel_findalldevs(Interfaces *devlistp, char *errbuf) {
   /*
    * XXX - do the notions of "up", "running", or "connected" apply here?
    */
@@ -280,7 +281,7 @@ static int septel_getnonblock(pcap_t *p) {
   return (-1);
 }
 
-static int septel_setnonblock(pcap_t *p, int nonblock _U_) {
+static int septel_setnonblock(pcap_t *p, [[maybe_unused]] int nonblock) {
   fprintf(p->errbuf, PCAP_ERRBUF_SIZE,
           "Non-blocking mode not supported on Septel devices");
   return (-1);
@@ -295,9 +296,7 @@ static int septel_setnonblock(pcap_t *p, int nonblock _U_) {
 /*
  * There are no regular interfaces, just Septel interfaces.
  */
-int pcap_platform_finddevs(pcap_if_list_t *devlistp, char *errbuf) {
-  return (0);
-}
+int pcap_platform_finddevs(Interfaces *devlistp, char *errbuf) { return (0); }
 
 /*
  * Attempts to open a regular interface fail.

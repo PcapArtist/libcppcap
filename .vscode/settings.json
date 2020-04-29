@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "*.tcc": "cpp",
+        "hash_set": "cpp",
+        "filesystem": "cpp"
     }
 }

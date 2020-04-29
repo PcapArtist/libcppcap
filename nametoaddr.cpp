@@ -213,7 +213,7 @@ struct addrinfo *pcap_nametoaddrinfo(const char *name) {
  *  on which it is thread-safe and on which it isn't.
  */
 #if defined(_WIN32) || defined(__CYGWIN__)
-bpf_u_int32 pcap_nametonetaddr(const char *name _U_) {
+bpf_u_int32 pcap_nametonetaddr([[maybe_unused]] const char *name) {
   /*
    * There's no "getnetbyname()" on Windows.
    *
@@ -782,7 +782,7 @@ __pcap_nametodnaddr(const char *name, u_short *res)
   memcpy((char *)res, (char *)nep->n_addr, sizeof(unsigned short));
   return (1);
 #else
-__pcap_nametodnaddr(const char *name _U_, u_short *res _U_)
+__pcap_nametodnaddr([[maybe_unused]] const char *name, [[maybe_unused]] u_short *res)
 {
   return (0);
 #endif

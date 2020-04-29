@@ -29,12 +29,13 @@
 
 static char nosup[] = "live packet capture not supported on this system";
 
-pcap_t *pcap_create_interface(const char *device _U_, char *ebuf) {
+pcap_t *pcap_create_interface([[maybe_unused]] const char *device, char *ebuf) {
   (void)pcap_strlcpy(ebuf, nosup, PCAP_ERRBUF_SIZE);
   return (nullptr);
 }
 
-int pcap_platform_finddevs(pcap_if_list_t *devlistp _U_, char *errbuf _U_) {
+int pcap_platform_finddevs([[maybe_unused]] Interfaces *devlistp,
+                           [[maybe_unused]] char *errbuf) {
   /*
    * There are no interfaces on which we can capture.
    */
@@ -42,8 +43,9 @@ int pcap_platform_finddevs(pcap_if_list_t *devlistp _U_, char *errbuf _U_) {
 }
 
 #ifdef _WIN32
-int pcap_lookupnet(const char *device _U_, bpf_u_int32 *netp _U_,
-                   bpf_u_int32 *maskp _U_, char *errbuf) {
+int pcap_lookupnet([[maybe_unused]] const char *device,
+                   [[maybe_unused]] bpf_u_int32 *netp,
+                   [[maybe_unused]] bpf_u_int32 *maskp, char *errbuf) {
   (void)pcap_strlcpy(errbuf, nosup, PCAP_ERRBUF_SIZE);
   return (-1);
 }

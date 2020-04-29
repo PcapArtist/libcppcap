@@ -142,7 +142,7 @@ struct pcap_dos {
   struct pcap_stat stat;
 };
 
-pcap_t *pcap_create_interface(const char *device _U_, char *ebuf) {
+pcap_t *pcap_create_interface([[maybe_unused]] const char *device, char *ebuf) {
   pcap_t *p;
 
   p = pcap_create_common(ebuf, sizeof(struct pcap_dos));
@@ -512,9 +512,9 @@ int pcap_lookupnet(const char *device, bpf_u_int32 *localnet,
  * Returns -1 on error, 0 otherwise.
  * The list may be nullptr epty if no interfaces were up and could be opened.
  */
-int pcap_platform_finddevs(pcap_if_list_t *devlistp, char *errbuf) {
+int pcap_platform_finddevs(Interfaces *devlistp, char *errbuf) {
   struct device *dev;
-  pcap_if_t *curdev;
+  Interface *curdev;
 #if 0 /* Pkt drivers should have no addresses */
   struct sockaddr_in sa_ll_1, sa_ll_2;
   struct sockaddr   *addr, *netmask, *broadaddr, *dstaddr;

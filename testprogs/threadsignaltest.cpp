@@ -22,7 +22,7 @@
 #include "varattrs.h"
 
 #ifndef lint
-static const char copyright[] _U_ =
+[[maybe_unused]] static const char copyright[] =
     "@(#) Copyright (c) 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 2000\n\
 The Regents of the University of California.  All rights reserved.\n";
 #endif
@@ -99,7 +99,7 @@ static const char *win32_strerror(DWORD error) {
   return errbuf;
 }
 #else
-static void catch_sigusr1(int sig _U_) { printf("Got SIGUSR1\n"); }
+static void catch_sigusr1([[maybe_unused]] int sig) { printf("Got SIGUSR1\n"); }
 #endif
 
 static void sleep_secs(int secs) {
@@ -171,7 +171,7 @@ int main(int argc, char **argv) {
   int op;
   char *cp, *cmdbuf, *device;
   int immediate = 0;
-  pcap_if_t *devlist;
+  Interface *devlist;
   bpf_u_int32 localnet, netmask;
   struct bpf_program fcode;
   char ebuf[PCAP_ERRBUF_SIZE];
@@ -287,8 +287,8 @@ int main(int argc, char **argv) {
   exit(status == -1 ? 1 : 0);
 }
 
-static void countme(u_char *user, const struct pcap_pkthdr *h _U_,
-                    const u_char *sp _U_) {
+static void countme(u_char *user, [[maybe_unused]] const struct pcap_pkthdr *h,
+                    [[maybe_unused]] const u_char *sp) {
   int *counterp = (int *)user;
 
   (*counterp)++;

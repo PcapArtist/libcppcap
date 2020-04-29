@@ -1489,8 +1489,8 @@ static int daemon_msg_findallif_req(uint8 ver, struct daemon_slpars *pars,
                                     // is buffered
   int sendbufidx =
       0; // index which keeps the number of bytes currently buffered
-  pcap_if_t *alldevs = nullptr; // pointer to the header of the interface chain
-  pcap_if_t *d; // temp pointer needed to scan the interface chain
+  Interface *alldevs = nullptr; // pointer to the header of the interface chain
+  Interface *d; // temp pointer needed to scan the interface chain
   struct pcap_addr
       *address; // pcap structure that keeps a network address of an interface
   struct rpcap_findalldevs_if
@@ -1814,11 +1814,11 @@ error:
         \param plen: the length of the current message (needed in order to be
    able to discard excess data in the message, if present)
 */
-static int daemon_msg_startcap_req(uint8 ver, struct daemon_slpars *pars,
-                                   uint32 plen, char *source,
-                                   struct session **sessionp,
-                                   struct rpcap_sampling *samp_param _U_,
-                                   int uses_ssl) {
+static int
+daemon_msg_startcap_req(uint8 ver, struct daemon_slpars *pars, uint32 plen,
+                        char *source, struct session **sessionp,
+                        [[maybe_unused]] struct rpcap_sampling *samp_param,
+                        int uses_ssl) {
   char errbuf[PCAP_ERRBUF_SIZE];    // buffer for network errors
   char errmsgbuf[PCAP_ERRBUF_SIZE]; // buffer for errors to send to the client
   char portdata[PCAP_BUF_SIZE]; // temp variable needed to derive the data port
@@ -2646,7 +2646,7 @@ error:
 // interrupt the data thread if it's blocked in a system call waiting
 // for packets to arrive.
 //
-static void noop_handler(int sign _U_) {}
+static void noop_handler([[maybe_unused]] int sign) {}
 #endif
 
 /*!

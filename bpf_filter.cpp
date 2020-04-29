@@ -65,6 +65,8 @@
 #include <linux/types.h>
 #endif
 
+namespace pcap {
+
 enum {
   BPF_S_ANC_NONE,
   BPF_S_ANC_VLAN_TAG,
@@ -88,9 +90,9 @@ u_int pcap_filter_with_aux_data(const struct bpf_insn *pc, const u_char *p,
                                 u_int wirelen, u_int buflen,
                                 const struct bpf_aux_data *aux_data)
 #else
-u_int pcap_filter_with_aux_data(const struct bpf_insn *pc, const u_char *p,
-                                u_int wirelen, u_int buflen,
-                                const struct bpf_aux_data *aux_data _U_)
+u_int pcap_filter_with_aux_data(
+    const struct bpf_insn *pc, const u_char *p, u_int wirelen, u_int buflen,
+    [[maybe_unused]] const struct bpf_aux_data *aux_data)
 #endif
 {
   uint32_t A, X;
@@ -526,3 +528,5 @@ u_int bpf_filter(const struct bpf_insn *pc, const u_char *p, u_int wirelen,
 int bpf_validate(const struct bpf_insn *f, int len) {
   return pcap_validate_filter(f, len);
 }
+
+} // namespace pcap

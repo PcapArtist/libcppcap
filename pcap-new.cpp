@@ -73,7 +73,7 @@
  ****************************************************/
 
 int pcap_findalldevs_ex(const char *source, struct pcap_rmtauth *auth,
-                        pcap_if_t **alldevs, char *errbuf) {
+                        Interface **alldevs, char *errbuf) {
   int type;
   char name[PCAP_BUF_SIZE], path[PCAP_BUF_SIZE], filename[PCAP_BUF_SIZE];
   size_t pathlen;
@@ -81,8 +81,8 @@ int pcap_findalldevs_ex(const char *source, struct pcap_rmtauth *auth,
   pcap_t *fp;
   char tmpstring[PCAP_BUF_SIZE + 1]; /* Needed to convert names and descriptions
                                         from 'old' syntax to the 'new' one */
-  pcap_if_t *lastdev;                /* Last device in the pcap_if_t list */
-  pcap_if_t *dev; /* Device we're adding to the pcap_if_t list */
+  Interface *lastdev;                /* Last device in the Interface list */
+  Interface *dev; /* Device we're adding to the Interface list */
 
   /* List starts out empty. */
   (*alldevs) = nullptr;
@@ -256,7 +256,7 @@ int pcap_findalldevs_ex(const char *source, struct pcap_rmtauth *auth,
 
       if (fp) {
         /* allocate the main structure */
-        dev = (pcap_if_t *)malloc(sizeof(pcap_if_t));
+        dev = (Interface *)malloc(sizeof(Interface));
         if (dev == nullptr) {
           pcap_fmt_errmsg_for_errno(errbuf, PCAP_ERRBUF_SIZE, errno,
                                     "malloc() failed");
@@ -265,7 +265,7 @@ int pcap_findalldevs_ex(const char *source, struct pcap_rmtauth *auth,
         }
 
         /* Initialize the structure to 'zero' */
-        memset(dev, 0, sizeof(pcap_if_t));
+        memset(dev, 0, sizeof(Interface));
 
         /* Append it to the list. */
         if (lastdev == nullptr) {

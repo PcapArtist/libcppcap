@@ -174,7 +174,8 @@ static int snf_read(pcap_t *p, int cnt, pcap_handler callback, u_char *user) {
   return (n);
 }
 
-static int snf_inject(pcap_t *p, const void *buf _U_, int size _U_) {
+static int snf_inject(pcap_t *p, [[maybe_unused]] const void *buf,
+                      [[maybe_unused]] int size) {
 #ifdef SNF_HAVE_INJECT_API
   struct pcap_snf *ps = p->priv;
   int rc;
@@ -300,8 +301,8 @@ static int snf_activate(pcap_t *p) {
 }
 
 #define MAX_DESC_LENGTH 128
-int snf_findalldevs(pcap_if_list_t *devlistp, char *errbuf) {
-  pcap_if_t *dev;
+int snf_findalldevs(Interfaces *devlistp, char *errbuf) {
+  Interface *dev;
 #ifdef _WIN32
   struct sockaddr_in addr;
 #endif
@@ -541,9 +542,7 @@ pcap_t *snf_create(const char *device, char *ebuf, int *is_ours) {
 /*
  * There are no regular interfaces, just SNF interfaces.
  */
-int pcap_platform_finddevs(pcap_if_list_t *devlistp, char *errbuf) {
-  return (0);
-}
+int pcap_platform_finddevs(Interfaces *devlistp, char *errbuf) { return (0); }
 
 /*
  * Attempts to open a regular interface fail.

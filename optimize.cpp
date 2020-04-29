@@ -44,7 +44,9 @@
 #include "os-proto.h"
 #endif
 
+namespace pcap {
 #ifdef BDEBUG
+
 /*
  * The internal "debug printout" flag for the filter expression optimizer.
  * The code to print that stuff is present only if BDEBUG is defined, so
@@ -2567,4 +2569,6 @@ static void opt_dump(opt_state_t *opt_state, struct icode *ic) {
   if (status == -1)
     opt_error(opt_state, "opt_dump: icode_to_fcode failed: %s", errbuf);
 }
+
 #endif
+} // namespace pcap

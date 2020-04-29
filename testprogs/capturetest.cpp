@@ -22,7 +22,7 @@
 #include "varattrs.h"
 
 #ifndef lint
-static const char copyright[] _U_ =
+[[maybe_unused]] static const char copyright[] =
     "@(#) Copyright (c) 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 2000\n\
 The Regents of the University of California.  All rights reserved.\n";
 #endif
@@ -66,7 +66,7 @@ static int breaksigint = 0;
 #endif
 
 #ifndef _WIN32
-static void sigint_handler(int signum _U_) {
+static void sigint_handler([[maybe_unused]] int signum) {
   if (breaksigint)
     pcap_breakloop(pd);
 }
@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
   int sigrestart = 0;
   int catchsigint = 0;
 #endif
-  pcap_if_t *devlist;
+  Interface *devlist;
   bpf_u_int32 localnet, netmask;
   struct bpf_program fcode;
   char ebuf[PCAP_ERRBUF_SIZE];
@@ -282,8 +282,8 @@ int main(int argc, char **argv) {
   exit(status == -1 ? 1 : 0);
 }
 
-static void countme(u_char *user, const struct pcap_pkthdr *h _U_,
-                    const u_char *sp _U_) {
+static void countme(u_char *user, [[maybe_unused]] const struct pcap_pkthdr *h,
+                    [[maybe_unused]] const u_char *sp) {
   int *counterp = (int *)user;
 
   (*counterp)++;

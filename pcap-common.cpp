@@ -104,6 +104,8 @@
  *	defining DLT_* values that collide with those
  *	LINKTYPE_* values, either).
  */
+
+namespace pcap {
 #define LINKTYPE_NULL DLT_NULL
 #define LINKTYPE_ETHERNET DLT_EN10MB    /* also for 100Mb and up */
 #define LINKTYPE_EXP_ETHERNET DLT_EN3MB /* 3Mb experimental Ethernet */
@@ -305,8 +307,9 @@
  *
  *	http://www.shaftnet.org/~pizza/software/capturefrm.txt
  */
-#define LINKTYPE_IEEE802_11_AVS 163 /* 802.11 plus AVS radio metadata header   \
-                                     */
+#define LINKTYPE_IEEE802_11_AVS                                                \
+  163 /* 802.11 plus AVS radio metadata header                                 \
+       */
 
 /*
  * Juniper-private data link type, as per request from
@@ -1666,3 +1669,5 @@ void swap_pseudo_headers(int linktype, struct pcap_pkthdr *hdr, u_char *data) {
     break;
   }
 }
+
+} // namespace pcap

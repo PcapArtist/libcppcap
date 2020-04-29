@@ -33,8 +33,8 @@ char errbuf[PCAP_ERRBUF_SIZE];
 .ft
 .LP
 .ft B
-int pcap_findalldevs(pcap_if_t **alldevsp, char *errbuf);
-void pcap_freealldevs(pcap_if_t *alldevs);
+int pcap_findalldevs(Interface **alldevsp, char *errbuf);
+void pcap_freealldevs(Interface *alldevs);
 .ft
 .fi
 .SH DESCRIPTION
@@ -59,7 +59,7 @@ is set to point to the first element of the list, or to
 .B nullptr
 if no devices were found (this is considered success).
 Each element of the list is of type
-.BR pcap_if_t ,
+.BR Interface ,
 and has the following members:
 .RS
 .TP

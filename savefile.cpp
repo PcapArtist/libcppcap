@@ -85,7 +85,7 @@ static pcap_t *pcap_fopen_offline_with_tstamp_precision(FILE *, u_int, char *);
 #endif
 #endif
 
-static int sf_getnonblock(pcap_t *p _U_) {
+static int sf_getnonblock([[maybe_unused]] pcap_t *p) {
   /*
    * This is a savefile, not a live capture file, so never say
    * it's in non-blocking mode.
@@ -93,7 +93,7 @@ static int sf_getnonblock(pcap_t *p _U_) {
   return (0);
 }
 
-static int sf_setnonblock(pcap_t *p, int nonblock _U_) {
+static int sf_setnonblock(pcap_t *p, [[maybe_unused]] int nonblock) {
   /*
    * This is a savefile, not a live capture file, so reject
    * requests to put it in non-blocking mode.  (If it's a
@@ -107,32 +107,32 @@ static int sf_setnonblock(pcap_t *p, int nonblock _U_) {
   return (-1);
 }
 
-static int sf_stats(pcap_t *p, struct pcap_stat *ps _U_) {
+static int sf_stats(pcap_t *p, [[maybe_unused]] struct pcap_stat *ps) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "Statistics aren't available from savefiles");
   return (-1);
 }
 
 #ifdef _WIN32
-static struct pcap_stat *sf_stats_ex(pcap_t *p, int *size _U_) {
+static struct pcap_stat *sf_stats_ex(pcap_t *p, [[maybe_unused]] int *size) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "Statistics aren't available from savefiles");
   return (nullptr);
 }
 
-static int sf_setbuff(pcap_t *p, int dim _U_) {
+static int sf_setbuff(pcap_t *p, [[maybe_unused]] int dim) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "The kernel buffer size cannot be set while reading from a file");
   return (-1);
 }
 
-static int sf_setmode(pcap_t *p, int mode _U_) {
+static int sf_setmode(pcap_t *p, [[maybe_unused]] int mode) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "impossible to set mode while reading from a file");
   return (-1);
 }
 
-static int sf_setmintocopy(pcap_t *p, int size _U_) {
+static int sf_setmintocopy(pcap_t *p, [[maybe_unused]] int size) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "The mintocopy parameter cannot be set while reading from a file");
   return (-1);
@@ -145,53 +145,58 @@ static HANDLE sf_getevent(pcap_t *pcap) {
   return (INVALID_HANDLE_VALUE);
 }
 
-static int sf_oid_get_request(pcap_t *p, bpf_u_int32 oid _U_, void *data _U_,
-                              size_t *lenp _U_) {
+static int sf_oid_get_request(pcap_t *p, [[maybe_unused]] bpf_u_int32 oid,
+                              [[maybe_unused]] void *data,
+                              [[maybe_unused]] size_t *lenp) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "An OID get request cannot be performed on a file");
   return (PCAP_ERROR);
 }
 
-static int sf_oid_set_request(pcap_t *p, bpf_u_int32 oid _U_,
-                              const void *data _U_, size_t *lenp _U_) {
+static int sf_oid_set_request(pcap_t *p, [[maybe_unused]] bpf_u_int32 oid,
+                              [[maybe_unused]] const void *data,
+                              [[maybe_unused]] size_t *lenp) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "An OID set request cannot be performed on a file");
   return (PCAP_ERROR);
 }
 
-static u_int sf_sendqueue_transmit(pcap_t *p, pcap_send_queue *queue _U_,
-                                   int sync _U_) {
+static u_int sf_sendqueue_transmit(pcap_t *p,
+                                   [[maybe_unused]] pcap_send_queue *queue,
+                                   [[maybe_unused]] int sync) {
   pcap_strlcpy(p->errbuf, "Sending packets isn't supported on savefiles",
                PCAP_ERRBUF_SIZE);
   return (0);
 }
 
-static int sf_setuserbuffer(pcap_t *p, int size _U_) {
+static int sf_setuserbuffer(pcap_t *p, [[maybe_unused]] int size) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "The user buffer cannot be set when reading from a file");
   return (-1);
 }
 
-static int sf_live_dump(pcap_t *p, char *filename _U_, int maxsize _U_,
-                        int maxpacks _U_) {
+static int sf_live_dump(pcap_t *p, [[maybe_unused]] char *filename,
+                        [[maybe_unused]] int maxsize,
+                        [[maybe_unused]] int maxpacks) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "Live packet dumping cannot be performed when reading from a file");
   return (-1);
 }
 
-static int sf_live_dump_ended(pcap_t *p, int sync _U_) {
+static int sf_live_dump_ended(pcap_t *p, [[maybe_unused]] int sync) {
   snprintf(
       p->errbuf, PCAP_ERRBUF_SIZE,
       "Live packet dumping cannot be performed on a pcap_open_dead pcap_t");
   return (-1);
 }
 
-static PAirpcapHandle sf_get_airpcap_handle(pcap_t *pcap _U_) {
+static PAirpcapHandle sf_get_airpcap_handle([[maybe_unused]] pcap_t *pcap) {
   return (nullptr);
 }
 #endif
 
-static int sf_inject(pcap_t *p, const void *buf _U_, int size _U_) {
+static int sf_inject(pcap_t *p, [[maybe_unused]] const void *buf,
+                     [[maybe_unused]] int size) {
   pcap_strlcpy(p->errbuf, "Sending packets isn't supported on savefiles",
                PCAP_ERRBUF_SIZE);
   return (-1);
@@ -201,7 +206,7 @@ static int sf_inject(pcap_t *p, const void *buf _U_, int size _U_) {
  * Set direction flag: Which packets do we accept on a forwarding
  * single device? IN, OUT or both?
  */
-static int sf_setdirection(pcap_t *p, pcap_direction_t d _U_) {
+static int sf_setdirection(pcap_t *p, [[maybe_unused]] pcap_direction_t d) {
   snprintf(p->errbuf, sizeof(p->errbuf),
            "Setting direction is not supported on savefiles");
   return (-1);

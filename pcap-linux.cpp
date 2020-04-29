@@ -1657,7 +1657,7 @@ static const char any_descr[] = "Pseudo-device that captures on all interfaces";
 /*
  * A PF_PACKET socket can be bound to any network interface.
  */
-static int can_be_bound(const char *name _U_) { return (1); }
+static int can_be_bound([[maybe_unused]] const char *name) { return (1); }
 
 /*
  * Get additional flags for a device, using SIOCGIFMEDIA.
@@ -1825,7 +1825,7 @@ static int get_if_flags(const char *name, bpf_u_int32 *flags, char *errbuf) {
   return 0;
 }
 
-int pcap_platform_finddevs(pcap_if_list_t *devlistp, char *errbuf) {
+int pcap_platform_finddevs(Interfaces *devlistp, char *errbuf) {
   /*
    * Get the list of regular interfaces first.
    */
@@ -1861,12 +1861,7 @@ static int pcap_setdirection_linux(pcap_t *handle, pcap_direction_t d) {
   return 0;
 }
 
-static int is_wifi(int sock_fd
-#ifndef IW_MODE_MONITOR
-                       _U_
-#endif
-                   ,
-                   const char *device) {
+static int is_wifi([[maybe_unused]] int sock_fd, const char *device) {
   char *pathstr;
   struct stat statb;
 #ifdef IW_MODE_MONITOR
@@ -2406,7 +2401,8 @@ static void set_dlt_list_cooked(pcap_t *handle, int sock_fd) {
  * The build environment doesn't define PACKET_RESERVE, so we can't reserve
  * extra space for a DLL_LINUX_SLL2 header, so we can't support DLT_LINUX_SLL2.
  */
-static void set_dlt_list_cooked(pcap_t *handle _U_, int sock_fd _U_) {}
+static void set_dlt_list_cooked([[maybe_unused]] pcap_t *handle,
+                                [[maybe_unused]] int sock_fd) {}
 #endif /* PACKET_RESERVE */
 
 /*
@@ -5357,7 +5353,7 @@ static int iface_ethtool_get_ts_info(const char *device, pcap_t *handle,
 }
 #else  /* ETHTOOL_GET_TS_INFO */
 static int iface_ethtool_get_ts_info(const char *device, pcap_t *handle,
-                                     char *ebuf _U_) {
+                                     [[maybe_unused]] char *ebuf) {
   /*
    * This doesn't apply to the "any" device; you can't say "turn on
    * hardware time stamping for all devices that exist now and arrange
@@ -5510,7 +5506,7 @@ static int iface_get_offload(pcap_t *handle) {
   return 0;
 }
 #else  /* SIOCETHTOOL */
-static int iface_get_offload(pcap_t *handle _U_) {
+static int iface_get_offload([[maybe_unused]] pcap_t *handle) {
   /*
    * XXX - do we need to get this information if we don't
    * have the ethtool ioctls?  If so, how do we do that?

@@ -124,6 +124,8 @@ struct rtentry; /* declarations in <net/if.h> */
 #include "pcap-dpdk.h"
 #endif
 
+namespace pcap {
+
 #ifdef _WIN32
 /*
  * DllMain(), required when built as a Windows DLL.
@@ -145,8 +147,9 @@ struct rtentry; /* declarations in <net/if.h> */
  * So we don't actually do anything here.  pcap_init() should be called
  * to initialize pcap on both UN*X and Windows.
  */
-BOOL WINAPI DllMain(HANDLE hinstDLL _U_, DWORD dwReason _U_,
-                    LPVOID lpvReserved _U_) {
+BOOL WINAPI DllMain(HANDLE [[maybe_unused]] hinstDLL,
+                    [[maybe_unused]] DWORD dwReason,
+                    [[maybe_unused]] LPVOID lpvReserved) {
   return (TRUE);
 }
 
@@ -317,36 +320,40 @@ static void pcap_set_not_initialized_message(pcap_t *pcap) {
                  "This handle hasn't been activated yet");
 }
 
-static int pcap_read_not_initialized(pcap_t *pcap, int cnt _U_,
-                                     pcap_handler callback _U_,
-                                     u_char *user _U_) {
+static int pcap_read_not_initialized(pcap_t *pcap, [[maybe_unused]] int cnt,
+                                     [[maybe_unused]] pcap_handler callback,
+                                     [[maybe_unused]] u_char *user) {
   pcap_set_not_initialized_message(pcap);
   /* this means 'not initialized' */
   return (PCAP_ERROR_NOT_ACTIVATED);
 }
 
-static int pcap_inject_not_initialized(pcap_t *pcap, const void *buf _U_,
-                                       int size _U_) {
+static int pcap_inject_not_initialized(pcap_t *pcap,
+                                       [[maybe_unused]] const void *buf,
+                                       [[maybe_unused]] int size) {
   pcap_set_not_initialized_message(pcap);
   /* this means 'not initialized' */
   return (PCAP_ERROR_NOT_ACTIVATED);
 }
 
-static int pcap_setfilter_not_initialized(pcap_t *pcap,
-                                          struct bpf_program *fp _U_) {
+static int
+pcap_setfilter_not_initialized(pcap_t *pcap,
+                               [[maybe_unused]] struct bpf_program *fp) {
   pcap_set_not_initialized_message(pcap);
   /* this means 'not initialized' */
   return (PCAP_ERROR_NOT_ACTIVATED);
 }
 
-static int pcap_setdirection_not_initialized(pcap_t *pcap,
-                                             pcap_direction_t d _U_) {
+static int
+pcap_setdirection_not_initialized(pcap_t *pcap,
+                                  [[maybe_unused]] pcap_direction_t d) {
   pcap_set_not_initialized_message(pcap);
   /* this means 'not initialized' */
   return (PCAP_ERROR_NOT_ACTIVATED);
 }
 
-static int pcap_set_datalink_not_initialized(pcap_t *pcap, int dlt _U_) {
+static int pcap_set_datalink_not_initialized(pcap_t *pcap,
+                                             [[maybe_unused]] int dlt) {
   pcap_set_not_initialized_message(pcap);
   /* this means 'not initialized' */
   return (PCAP_ERROR_NOT_ACTIVATED);
@@ -358,7 +365,8 @@ static int pcap_getnonblock_not_initialized(pcap_t *pcap) {
   return (PCAP_ERROR_NOT_ACTIVATED);
 }
 
-static int pcap_stats_not_initialized(pcap_t *pcap, struct pcap_stat *ps _U_) {
+static int pcap_stats_not_initialized(pcap_t *pcap,
+                                      [[maybe_unused]] struct pcap_stat *ps) {
   pcap_set_not_initialized_message(pcap);
   /* this means 'not initialized' */
   return (PCAP_ERROR_NOT_ACTIVATED);
@@ -366,24 +374,28 @@ static int pcap_stats_not_initialized(pcap_t *pcap, struct pcap_stat *ps _U_) {
 
 #ifdef _WIN32
 static struct pcap_stat *
-pcap_stats_ex_not_initialized(pcap_t *pcap, int *pcap_stat_size _U_) {
+pcap_stats_ex_not_initialized(pcap_t *pcap,
+                              [[maybe_unused]] int *pcap_stat_size) {
   pcap_set_not_initialized_message(pcap);
   return (nullptr);
 }
 
-static int pcap_setbuff_not_initialized(pcap_t *pcap, int dim _U_) {
+static int pcap_setbuff_not_initialized(pcap_t *pcap,
+                                        [[maybe_unused]] int dim) {
   pcap_set_not_initialized_message(pcap);
   /* this means 'not initialized' */
   return (PCAP_ERROR_NOT_ACTIVATED);
 }
 
-static int pcap_setmode_not_initialized(pcap_t *pcap, int mode _U_) {
+static int pcap_setmode_not_initialized(pcap_t *pcap,
+                                        [[maybe_unused]] int mode) {
   pcap_set_not_initialized_message(pcap);
   /* this means 'not initialized' */
   return (PCAP_ERROR_NOT_ACTIVATED);
 }
 
-static int pcap_setmintocopy_not_initialized(pcap_t *pcap, int size _U_) {
+static int pcap_setmintocopy_not_initialized(pcap_t *pcap,
+                                             [[maybe_unused]] int size) {
   pcap_set_not_initialized_message(pcap);
   /* this means 'not initialized' */
   return (PCAP_ERROR_NOT_ACTIVATED);
@@ -394,41 +406,44 @@ static HANDLE pcap_getevent_not_initialized(pcap_t *pcap) {
   return (INVALID_HANDLE_VALUE);
 }
 
-static int pcap_oid_get_request_not_initialized(pcap_t *pcap,
-                                                bpf_u_int32 oid _U_,
-                                                void *data _U_,
-                                                size_t *lenp _U_) {
+static int pcap_oid_get_request_not_initialized(
+    pcap_t *pcap, [[maybe_unused]] bpf_u_int32 oid, [[maybe_unused]] void *data,
+    [[maybe_unused]] size_t *lenp) {
   pcap_set_not_initialized_message(pcap);
   return (PCAP_ERROR_NOT_ACTIVATED);
 }
 
-static int pcap_oid_set_request_not_initialized(pcap_t *pcap,
-                                                bpf_u_int32 oid _U_,
-                                                const void *data _U_,
-                                                size_t *lenp _U_) {
+static int pcap_oid_set_request_not_initialized(
+    pcap_t *pcap, [[maybe_unused]] bpf_u_int32 oid,
+    [[maybe_unused]] const void *data, [[maybe_unused]] size_t *lenp) {
   pcap_set_not_initialized_message(pcap);
   return (PCAP_ERROR_NOT_ACTIVATED);
 }
 
-static u_int pcap_sendqueue_transmit_not_initialized(pcap_t *pcap,
-                                                     pcap_send_queue *queue _U_,
-                                                     int sync _U_) {
+static u_int
+pcap_sendqueue_transmit_not_initialized(pcap_t *pcap,
+                                        [[maybe_unused]] pcap_send_queue *queue,
+                                        [[maybe_unused]] int sync) {
   pcap_set_not_initialized_message(pcap);
   return (0);
 }
 
-static int pcap_setuserbuffer_not_initialized(pcap_t *pcap, int size _U_) {
+static int pcap_setuserbuffer_not_initialized(pcap_t *pcap,
+                                              [[maybe_unused]] int size) {
   pcap_set_not_initialized_message(pcap);
   return (PCAP_ERROR_NOT_ACTIVATED);
 }
 
-static int pcap_live_dump_not_initialized(pcap_t *pcap, char *filename _U_,
-                                          int maxsize _U_, int maxpacks _U_) {
+static int pcap_live_dump_not_initialized(pcap_t *pcap,
+                                          [[maybe_unused]] char *filename,
+                                          [[maybe_unused]] int maxsize,
+                                          [[maybe_unused]] int maxpacks) {
   pcap_set_not_initialized_message(pcap);
   return (PCAP_ERROR_NOT_ACTIVATED);
 }
 
-static int pcap_live_dump_ended_not_initialized(pcap_t *pcap, int sync _U_) {
+static int pcap_live_dump_ended_not_initialized(pcap_t *pcap,
+                                                [[maybe_unused]] int sync) {
   pcap_set_not_initialized_message(pcap);
   return (PCAP_ERROR_NOT_ACTIVATED);
 }
@@ -448,7 +463,7 @@ int pcap_can_set_rfmon(pcap_t *p) { return (p->can_set_rfmon_op(p)); }
 /*
  * For systems where rfmon mode is never supported.
  */
-static int pcap_cant_set_rfmon(pcap_t *p _U_) { return (0); }
+static int pcap_cant_set_rfmon([[maybe_unused]] pcap_t *p) { return (0); }
 
 /*
  * Sets *tstamp_typesp to point to an array 1 or more supported time stamp
@@ -573,15 +588,8 @@ int pcap_next_ex(pcap_t *p, struct pcap_pkthdr **pkt_header,
   return (p->read_op(p, 1, p->oneshot_callback, (u_char *)&s));
 }
 
-/*
- * Implementation of a pcap_if_list_t.
- */
-struct pcap_if_list {
-  pcap_if_t *beginning;
-};
-
 struct capture_source_type {
-  int (*findalldevs_op)(pcap_if_list_t *, char *);
+  int (*findalldevs_op)(Interfaces *, char *);
   pcap_t *(*create_op)(const char *, char *, int *);
 };
 
@@ -630,23 +638,20 @@ static constexpr capture_source_type capture_source_types[] = {
  * The list, as returned through "alldevsp", may be nullptr if no interfaces
  * were up and could be opened.
  */
-std::variant<std::string, pcap_if_list_t> pcap_findalldevs() {
+std::variant<std::string, Interfaces> pcap_findalldevs() {
   size_t i;
-  pcap_if_list_t devlist;
+  Interfaces devlist;
   std::string error;
 
   /*
    * Find all the local network interfaces on which we
    * can capture.
    */
-  devlist.beginning = nullptr;
   if (pcap_platform_finddevs(&devlist, error.data()) == -1) {
     /*
      * Failed - free all of the entries we were given
      * before we failed.
      */
-    if (devlist.beginning != nullptr)
-      pcap_freealldevs(devlist.beginning);
     return error;
   }
 
@@ -660,8 +665,6 @@ std::variant<std::string, pcap_if_list_t> pcap_findalldevs() {
        * We had an error; free the list we've been
        * constructing.
        */
-      if (devlist.beginning != nullptr)
-        pcap_freealldevs(devlist.beginning);
       return error;
     }
   }
@@ -670,15 +673,6 @@ std::variant<std::string, pcap_if_list_t> pcap_findalldevs() {
    * Return the first entry of the list of all devices.
    */
   return {std::move(devlist)};
-}
-
-static struct sockaddr *dup_sockaddr(struct sockaddr *sa, size_t sa_length) {
-  struct sockaddr *newsa;
-
-  if ((newsa = c_malloc<struct sockaddr>(sa_length)) == nullptr)
-    return (nullptr);
-  memcpy(newsa, sa, sa_length);
-  return newsa;
 }
 
 /*
@@ -709,13 +703,12 @@ static struct sockaddr *dup_sockaddr(struct sockaddr *sa, size_t sa_length) {
  * with the same figure of merit will be sorted by the order in which
  * the mechanism from which we're getting the interfaces supplies them.
  */
-static u_int get_figure_of_merit(pcap_if_t *dev) {
-  u_int n;
-
-  n = 0;
-  if (!(dev->flags & PCAP_IF_RUNNING))
+static constexpr u_int get_figure_of_merit(bpf_u_int32 flags,
+                                           std::string_view name) {
+  u_int n = 0;
+  if (!(flags & PCAP_IF_RUNNING))
     n |= 0x80000000;
-  if (!(dev->flags & PCAP_IF_UP))
+  if (!(flags & PCAP_IF_UP))
     n |= 0x40000000;
 
   /*
@@ -728,23 +721,22 @@ static u_int get_figure_of_merit(pcap_if_t *dev) {
    * which we presume not to necessarily prevent capture, as you
    * might run the adapter in some flavor of monitor mode.
    */
-  if (!(dev->flags & PCAP_IF_WIRELESS) &&
-      (dev->flags & PCAP_IF_CONNECTION_STATUS) ==
-          PCAP_IF_CONNECTION_STATUS_DISCONNECTED)
+  if (!(flags & PCAP_IF_WIRELESS) && (flags & PCAP_IF_CONNECTION_STATUS) ==
+                                         PCAP_IF_CONNECTION_STATUS_DISCONNECTED)
     n |= 0x20000000;
 
   /*
    * Sort loopback devices after non-loopback devices, *except* for
    * disconnected devices.
    */
-  if (dev->flags & PCAP_IF_LOOPBACK)
+  if (flags & PCAP_IF_LOOPBACK)
     n |= 0x10000000;
 
   /*
    * Sort the "any" device before loopback and disconnected devices,
    * but after all other devices.
    */
-  if (strcmp(dev->name, "any") == 0)
+  if (name == "any")
     n |= 0x08000000;
 
   return (n);
@@ -910,7 +902,7 @@ get_if_description(const char *name) {
 #endif
   return (description);
 #else  /* SIOCGIFDESCR */
-get_if_description(const char *name _U_) {
+get_if_description([[maybe_unused]] std::string_view name) {
   return (nullptr);
 #endif /* SIOCGIFDESCR */
 }
@@ -924,9 +916,9 @@ get_if_description(const char *name _U_) {
  * IFF_ flags and description, and, if that succeeds, return a pointer to
  * the new entry, otherwise return nullptr and set errbuf to an error message.
  */
-pcap_if_t *find_or_add_if(pcap_if_list_t *devlistp, const char *name,
-                          bpf_u_int32 if_flags,
-                          get_if_flags_func get_flags_func, char *errbuf) {
+std::variant<std::string, Interfaces::iterator>
+find_or_add_if(Interfaces &devlistp, std::string_view name,
+               bpf_u_int32 if_flags, get_if_flags_func get_flags_func) {
   bpf_u_int32 pcap_flags;
 
   /*
@@ -959,7 +951,7 @@ pcap_if_t *find_or_add_if(pcap_if_list_t *devlistp, const char *name,
    * attempt to add one.
    */
   return (find_or_add_dev(devlistp, name, pcap_flags, get_flags_func,
-                          get_if_description(name), errbuf));
+                          get_if_description(name)));
 }
 
 /*
@@ -980,32 +972,29 @@ pcap_if_t *find_or_add_if(pcap_if_list_t *devlistp, const char *name,
  * call may be the only call made to add to the list, and we want to
  * add interfaces even if they have no addresses.)
  */
-int add_addr_to_if(pcap_if_list_t *devlistp, const char *name,
-                   bpf_u_int32 if_flags, get_if_flags_func get_flags_func,
-                   struct sockaddr *addr, size_t addr_size,
-                   struct sockaddr *netmask, size_t netmask_size,
-                   struct sockaddr *broadaddr, size_t broadaddr_size,
-                   struct sockaddr *dstaddr, size_t dstaddr_size,
-                   char *errbuf) {
-  pcap_if_t *curdev;
+std::optional<std::string>
+add_addr_to_if(Interfaces &devlistp, std::string_view name,
+               bpf_u_int32 if_flags, get_if_flags_func get_flags_func,
+               std::optional<std::string_view> addr, std::string_view netmask,
+               std::string_view broadaddr, std::string_view dstaddr) {
 
   /*
    * Check whether the device exists and, if not, add it.
    */
-  curdev = find_or_add_if(devlistp, name, if_flags, get_flags_func, errbuf);
-  if (curdev == nullptr) {
+  auto curdev = find_or_add_if(devlistp, name, if_flags, get_flags_func);
+  if (std::holds_alternative<std::string>(curdev)) {
     /*
      * Error - give up.
      */
-    return (-1);
+    return {std::move(std::get<std::string>(curdev))};
   }
 
-  if (addr == nullptr) {
+  if (addr == std::nullopt) {
     /*
      * There's no address to add; this entry just meant
      * "here's a new interface".
      */
-    return (0);
+    return std::nullopt;
   }
 
   /*
@@ -1013,9 +1002,8 @@ int add_addr_to_if(pcap_if_list_t *devlistp, const char *name,
    * address for it; add an entry for that address to the
    * interface's list of addresses.
    */
-  return (add_addr_to_dev(curdev, addr, addr_size, netmask, netmask_size,
-                          broadaddr, broadaddr_size, dstaddr, dstaddr_size,
-                          errbuf));
+  add_addr_to_dev(curdev, addr, netmask, broadaddr, dstaddr);
+  return std::nullopt;
 }
 #endif /* _WIN32 */
 
@@ -1023,103 +1011,14 @@ int add_addr_to_if(pcap_if_list_t *devlistp, const char *name,
  * Add an entry to the list of addresses for an interface.
  * "curdev" is the entry for that interface.
  */
-int add_addr_to_dev(pcap_if_t *curdev, struct sockaddr *addr, size_t addr_size,
-                    struct sockaddr *netmask, size_t netmask_size,
-                    struct sockaddr *broadaddr, size_t broadaddr_size,
-                    struct sockaddr *dstaddr, size_t dstaddr_size,
-                    char *errbuf) {
-  pcap_addr_t *curaddr, *prevaddr, *nextaddr;
+void add_addr_to_dev(Interface &curdev, std::string addr, std::string netmask,
+                     std::string broadaddr, std::string dstaddr) {
 
   /*
    * Allocate the new entry and fill it in.
    */
-  curaddr = (pcap_addr_t *)malloc(sizeof(pcap_addr_t));
-  if (curaddr == nullptr) {
-    pcap_fmt_errmsg_for_errno(errbuf, PCAP_ERRBUF_SIZE, errno, "malloc");
-    return (-1);
-  }
-
-  curaddr->next = nullptr;
-  if (addr != nullptr && addr_size != 0) {
-    curaddr->addr = (struct sockaddr *)dup_sockaddr(addr, addr_size);
-    if (curaddr->addr == nullptr) {
-      pcap_fmt_errmsg_for_errno(errbuf, PCAP_ERRBUF_SIZE, errno, "malloc");
-      free(curaddr);
-      return (-1);
-    }
-  } else
-    curaddr->addr = nullptr;
-
-  if (netmask != nullptr && netmask_size != 0) {
-    curaddr->netmask = (struct sockaddr *)dup_sockaddr(netmask, netmask_size);
-    if (curaddr->netmask == nullptr) {
-      pcap_fmt_errmsg_for_errno(errbuf, PCAP_ERRBUF_SIZE, errno, "malloc");
-      if (curaddr->addr != nullptr)
-        free(curaddr->addr);
-      free(curaddr);
-      return (-1);
-    }
-  } else
-    curaddr->netmask = nullptr;
-
-  if (broadaddr != nullptr && broadaddr_size != 0) {
-    curaddr->broadaddr =
-        (struct sockaddr *)dup_sockaddr(broadaddr, broadaddr_size);
-    if (curaddr->broadaddr == nullptr) {
-      pcap_fmt_errmsg_for_errno(errbuf, PCAP_ERRBUF_SIZE, errno, "malloc");
-      if (curaddr->netmask != nullptr)
-        free(curaddr->netmask);
-      if (curaddr->addr != nullptr)
-        free(curaddr->addr);
-      free(curaddr);
-      return (-1);
-    }
-  } else
-    curaddr->broadaddr = nullptr;
-
-  if (dstaddr != nullptr && dstaddr_size != 0) {
-    curaddr->dstaddr = (struct sockaddr *)dup_sockaddr(dstaddr, dstaddr_size);
-    if (curaddr->dstaddr == nullptr) {
-      pcap_fmt_errmsg_for_errno(errbuf, PCAP_ERRBUF_SIZE, errno, "malloc");
-      if (curaddr->broadaddr != nullptr)
-        free(curaddr->broadaddr);
-      if (curaddr->netmask != nullptr)
-        free(curaddr->netmask);
-      if (curaddr->addr != nullptr)
-        free(curaddr->addr);
-      free(curaddr);
-      return (-1);
-    }
-  } else
-    curaddr->dstaddr = nullptr;
-
-  /*
-   * Find the end of the list of addresses.
-   */
-  for (prevaddr = curdev->addresses; prevaddr != nullptr; prevaddr = nextaddr) {
-    nextaddr = prevaddr->next;
-    if (nextaddr == nullptr) {
-      /*
-       * This is the end of the list.
-       */
-      break;
-    }
-  }
-
-  if (prevaddr == nullptr) {
-    /*
-     * The list was empty; this is the first member.
-     */
-    curdev->addresses = curaddr;
-  } else {
-    /*
-     * "prevaddr" is the last member of the list; append
-     * this member to it.
-     */
-    prevaddr->next = curaddr;
-  }
-
-  return (0);
+  curdev.addresses.emplace_back(std::move(addr), std::move(netmask),
+                                std::move(broadaddr), std::move(dstaddr));
 }
 
 /*
@@ -1131,20 +1030,22 @@ int add_addr_to_dev(pcap_if_t *curdev, struct sockaddr *addr, size_t addr_size,
  * flags and description, and, if that succeeds, return 0, otherwise
  * return -1 and set errbuf to an error message.
  */
-pcap_if_t *find_or_add_dev(pcap_if_list_t *devlistp, const char *name,
-                           bpf_u_int32 flags, get_if_flags_func get_flags_func,
-                           const char *description, char *errbuf) {
-  pcap_if_t *curdev;
+std::variant<std::string, Interfaces::iterator>
+find_or_add_dev(Interfaces &interfaces, std::string_view name,
+                bpf_u_int32 flags, get_if_flags_func get_flags_func,
+                std::string_view description) {
+
+  std::string errbuf(PCAP_ERRBUF_SIZE, '\0');
 
   /*
    * Is there already an entry in the list for this device?
    */
-  curdev = find_dev(devlistp, name);
-  if (curdev != nullptr) {
+  auto curdev = find_dev(interfaces, name);
+  if (curdev != interfaces.end()) {
     /*
      * Yes, return it.
      */
-    return (curdev);
+    return {std::move(curdev)};
   }
 
   /*
@@ -1154,44 +1055,27 @@ pcap_if_t *find_or_add_dev(pcap_if_list_t *devlistp, const char *name,
   /*
    * Try to get additional flags for the device.
    */
-  if ((*get_flags_func)(name, &flags, errbuf) == -1) {
+  if ((*get_flags_func)(std::string(name).c_str(), &flags, errbuf.data()) ==
+      -1) {
     /*
      * Failed.
      */
-    return (nullptr);
+    return errbuf;
   }
 
   /*
    * Now, try to add it to the list of devices.
    */
-  return (add_dev(devlistp, name, flags, description, errbuf));
+  return {add_dev(interfaces, name, flags, description)};
 }
 
 /*
  * Look for a given device in the specified list of devices, and return
  * the entry for it if we find it or nullptr if we don't.
  */
-pcap_if_t *find_dev(pcap_if_list_t *devlistp, const char *name) {
-  pcap_if_t *curdev;
-
-  /*
-   * Is there an entry in the list for this device?
-   */
-  for (curdev = devlistp->beginning; curdev != nullptr; curdev = curdev->next) {
-    if (strcmp(name, curdev->name) == 0) {
-      /*
-       * We found it, so, yes, there is.  No need to
-       * add it.  Provide the entry we found to our
-       * caller.
-       */
-      return (curdev);
-    }
-  }
-
-  /*
-   * No.
-   */
-  return (nullptr);
+Interfaces::iterator find_dev(Interfaces &devlistp, std::string_view name) {
+  return std::find_if(devlistp.begin(), devlistp.end(),
+                      [&name](auto dev) { return dev.second.name == name; });
 }
 
 /*
@@ -1202,163 +1086,14 @@ pcap_if_t *find_dev(pcap_if_list_t *devlistp, const char *name) {
  *
  * If we weren't given a description, try to get one.
  */
-pcap_if_t *add_dev(pcap_if_list_t *devlistp, const char *name,
-                   bpf_u_int32 flags, const char *description, char *errbuf) {
-  pcap_if_t *curdev, *prevdev, *nextdev;
-  u_int this_figure_of_merit, nextdev_figure_of_merit;
+Interfaces::iterator add_dev(Interfaces &devlistp, std::string_view name,
+                             bpf_u_int32 flags, std::string_view description) {
 
-  curdev = c_malloc<pcap_if_t>(sizeof(pcap_if_t));
-  if (curdev == nullptr) {
-    pcap_fmt_errmsg_for_errno(errbuf, PCAP_ERRBUF_SIZE, errno, "malloc");
-    return (nullptr);
-  }
+  auto priority = get_figure_of_merit(flags, name);
 
-  /*
-   * Fill in the entry.
-   */
-  curdev->next = nullptr;
-  curdev->name = strdup(name);
-  if (curdev->name == nullptr) {
-    pcap_fmt_errmsg_for_errno(errbuf, PCAP_ERRBUF_SIZE, errno, "malloc");
-    free(curdev);
-    return (nullptr);
-  }
-  if (description == nullptr) {
-    /*
-     * We weren't handed a description for the interface.
-     */
-    curdev->description = nullptr;
-  } else {
-    /*
-     * We were handed a description; make a copy.
-     */
-    curdev->description = strdup(description);
-    if (curdev->description == nullptr) {
-      pcap_fmt_errmsg_for_errno(errbuf, PCAP_ERRBUF_SIZE, errno, "malloc");
-      free(curdev->name);
-      free(curdev);
-      return (nullptr);
-    }
-  }
-  curdev->addresses = nullptr; /* list starts out as empty */
-  curdev->flags = flags;
-
-  /*
-   * Add it to the list, in the appropriate location.
-   * First, get the "figure of merit" for this interface.
-   */
-  this_figure_of_merit = get_figure_of_merit(curdev);
-
-  /*
-   * Now look for the last interface with an figure of merit
-   * less than or equal to the new interface's figure of merit.
-   *
-   * We start with "prevdev" being nullptr, meaning we're before
-   * the first element in the list.
-   */
-  prevdev = nullptr;
-  for (;;) {
-    /*
-     * Get the interface after this one.
-     */
-    if (prevdev == nullptr) {
-      /*
-       * The next element is the first element.
-       */
-      nextdev = devlistp->beginning;
-    } else
-      nextdev = prevdev->next;
-
-    /*
-     * Are we at the end of the list?
-     */
-    if (nextdev == nullptr) {
-      /*
-       * Yes - we have to put the new entry after "prevdev".
-       */
-      break;
-    }
-
-    /*
-     * Is the new interface's figure of merit less
-     * than the next interface's figure of merit,
-     * meaning that the new interface is better
-     * than the next interface?
-     */
-    nextdev_figure_of_merit = get_figure_of_merit(nextdev);
-    if (this_figure_of_merit < nextdev_figure_of_merit) {
-      /*
-       * Yes - we should put the new entry
-       * before "nextdev", i.e. after "prevdev".
-       */
-      break;
-    }
-
-    prevdev = nextdev;
-  }
-
-  /*
-   * Insert before "nextdev".
-   */
-  curdev->next = nextdev;
-
-  /*
-   * Insert after "prevdev" - unless "prevdev" is nullptr,
-   * in which case this is the first interface.
-   */
-  if (prevdev == nullptr) {
-    /*
-     * This is the first interface.  Make it
-     * the first element in the list of devices.
-     */
-    devlistp->beginning = curdev;
-  } else
-    prevdev->next = curdev;
-  return (curdev);
-}
-
-/*
- * Free a list of interfaces.
- */
-void pcap_freealldevs(pcap_if_t *alldevs) {
-  pcap_if_t *curdev, *nextdev;
-  pcap_addr_t *curaddr, *nextaddr;
-
-  for (curdev = alldevs; curdev != nullptr; curdev = nextdev) {
-    nextdev = curdev->next;
-
-    /*
-     * Free all addresses.
-     */
-    for (curaddr = curdev->addresses; curaddr != nullptr; curaddr = nextaddr) {
-      nextaddr = curaddr->next;
-      if (curaddr->addr)
-        free(curaddr->addr);
-      if (curaddr->netmask)
-        free(curaddr->netmask);
-      if (curaddr->broadaddr)
-        free(curaddr->broadaddr);
-      if (curaddr->dstaddr)
-        free(curaddr->dstaddr);
-      free(curaddr);
-    }
-
-    /*
-     * Free the name string.
-     */
-    free(curdev->name);
-
-    /*
-     * Free the description string, if any.
-     */
-    if (curdev->description != nullptr)
-      free(curdev->description);
-
-    /*
-     * Free the interface.
-     */
-    free(curdev);
-  }
+  return devlistp.emplace(std::piecewise_construct,
+                          std::forward_as_tuple(priority),
+                          std::forward_as_tuple(name, description, {}, flags));
 }
 
 /*
@@ -1418,11 +1153,11 @@ char *pcap_lookupdev(char *errbuf) {
 
   auto find_devs_ret = pcap_findalldevs();
 
-  if (!std::holds_alternative<pcap_if_list_t>(find_devs_ret)) {
+  if (!std::holds_alternative<Interfaces>(find_devs_ret)) {
     return (nullptr);
   }
 
-  auto *alldevs = std::get<pcap_if_list_t>(find_devs_ret).beginning;
+  auto *alldevs = std::get<Interfaces>(find_devs_ret).beginning;
 
   if (alldevs == nullptr || (alldevs->flags & PCAP_IF_LOOPBACK)) {
     /*
@@ -3782,32 +3517,36 @@ static int pcap_can_set_rfmon_dead(pcap_t *p) {
   return (PCAP_ERROR);
 }
 
-static int pcap_read_dead(pcap_t *p, int cnt _U_, pcap_handler callback _U_,
-                          u_char *user _U_) {
+static int pcap_read_dead(pcap_t *p, [[maybe_unused]] int cnt,
+                          [[maybe_unused]] pcap_handler callback,
+                          [[maybe_unused]] u_char *user) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "Packets aren't available from a pcap_open_dead pcap_t");
   return (-1);
 }
 
-static int pcap_inject_dead(pcap_t *p, const void *buf _U_, int size _U_) {
+static int pcap_inject_dead(pcap_t *p, [[maybe_unused]] const void *buf,
+                            [[maybe_unused]] int size) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "Packets can't be sent on a pcap_open_dead pcap_t");
   return (-1);
 }
 
-static int pcap_setfilter_dead(pcap_t *p, struct bpf_program *fp _U_) {
+static int pcap_setfilter_dead(pcap_t *p,
+                               [[maybe_unused]] struct bpf_program *fp) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "A filter cannot be set on a pcap_open_dead pcap_t");
   return (-1);
 }
 
-static int pcap_setdirection_dead(pcap_t *p, pcap_direction_t d _U_) {
+static int pcap_setdirection_dead(pcap_t *p,
+                                  [[maybe_unused]] pcap_direction_t d) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "The packet direction cannot be set on a pcap_open_dead pcap_t");
   return (-1);
 }
 
-static int pcap_set_datalink_dead(pcap_t *p, int dlt _U_) {
+static int pcap_set_datalink_dead(pcap_t *p, [[maybe_unused]] int dlt) {
   snprintf(
       p->errbuf, PCAP_ERRBUF_SIZE,
       "The link-layer header type cannot be set on a pcap_open_dead pcap_t");
@@ -3820,39 +3559,39 @@ static int pcap_getnonblock_dead(pcap_t *p) {
   return (-1);
 }
 
-static int pcap_setnonblock_dead(pcap_t *p, int nonblock _U_) {
+static int pcap_setnonblock_dead(pcap_t *p, [[maybe_unused]] int nonblock) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "A pcap_open_dead pcap_t does not have a non-blocking mode setting");
   return (-1);
 }
 
-static int pcap_stats_dead(pcap_t *p, struct pcap_stat *ps _U_) {
+static int pcap_stats_dead(pcap_t *p, [[maybe_unused]] struct pcap_stat *ps) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "Statistics aren't available from a pcap_open_dead pcap_t");
   return (-1);
 }
 
 #ifdef _WIN32
-static struct pcap_stat *pcap_stats_ex_dead(pcap_t *p,
-                                            int *pcap_stat_size _U_) {
+static struct pcap_stat *
+pcap_stats_ex_dead(pcap_t *p, [[maybe_unused]] int *pcap_stat_size) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "Statistics aren't available from a pcap_open_dead pcap_t");
   return (nullptr);
 }
 
-static int pcap_setbuff_dead(pcap_t *p, int dim _U_) {
+static int pcap_setbuff_dead(pcap_t *p, i [[maybe_unused]] nt dim) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "The kernel buffer size cannot be set on a pcap_open_dead pcap_t");
   return (-1);
 }
 
-static int pcap_setmode_dead(pcap_t *p, int mode _U_) {
+static int pcap_setmode_dead(pcap_t *p, [[maybe_unused]] int mode) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "impossible to set mode on a pcap_open_dead pcap_t");
   return (-1);
 }
 
-static int pcap_setmintocopy_dead(pcap_t *p, int size _U_) {
+static int pcap_setmintocopy_dead(pcap_t *p, [[maybe_unused]] int size) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "The mintocopy parameter cannot be set on a pcap_open_dead pcap_t");
   return (-1);
@@ -3864,54 +3603,60 @@ static HANDLE pcap_getevent_dead(pcap_t *p) {
   return (INVALID_HANDLE_VALUE);
 }
 
-static int pcap_oid_get_request_dead(pcap_t *p, bpf_u_int32 oid _U_,
-                                     void *data _U_, size_t *lenp _U_) {
+static int pcap_oid_get_request_dead(pcap_t *p,
+                                     [[maybe_unused]] bpf_u_int32 oid,
+                                     [[maybe_unused]] void *data,
+                                     [[maybe_unused]] size_t *lenp) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "An OID get request cannot be performed on a pcap_open_dead pcap_t");
   return (PCAP_ERROR);
 }
 
-static int pcap_oid_set_request_dead(pcap_t *p, bpf_u_int32 oid _U_,
-                                     const void *data _U_, size_t *lenp _U_) {
+static int pcap_oid_set_request_dead(pcap_t *p,
+                                     [[maybe_unused]] bpf_u_int32 oid,
+                                     [[maybe_unused]] const void *data,
+                                     [[maybe_unused]] size_t *lenp) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "An OID set request cannot be performed on a pcap_open_dead pcap_t");
   return (PCAP_ERROR);
 }
 
-static u_int pcap_sendqueue_transmit_dead(pcap_t *p, pcap_send_queue *queue _U_,
-                                          int sync _U_) {
+static u_int
+pcap_sendqueue_transmit_dead(pcap_t *p, [[maybe_unused]] pcap_send_queue *queue,
+                             [[maybe_unused]] int sync) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "Packets cannot be transmitted on a pcap_open_dead pcap_t");
   return (0);
 }
 
-static int pcap_setuserbuffer_dead(pcap_t *p, int size _U_) {
+static int pcap_setuserbuffer_dead(pcap_t *p, [[maybe_unused]] int size) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "The user buffer cannot be set on a pcap_open_dead pcap_t");
   return (-1);
 }
 
-static int pcap_live_dump_dead(pcap_t *p, char *filename _U_, int maxsize _U_,
-                               int maxpacks _U_) {
+static int pcap_live_dump_dead(pcap_t *p, [[maybe_unused]] char *filename,
+                               [[maybe_unused]] int maxsize,
+                               [[maybe_unused]] int maxpacks) {
   snprintf(
       p->errbuf, PCAP_ERRBUF_SIZE,
       "Live packet dumping cannot be performed on a pcap_open_dead pcap_t");
   return (-1);
 }
 
-static int pcap_live_dump_ended_dead(pcap_t *p, int sync _U_) {
+static int pcap_live_dump_ended_dead(pcap_t *p, [[maybe_unused]] int sync) {
   snprintf(
       p->errbuf, PCAP_ERRBUF_SIZE,
       "Live packet dumping cannot be performed on a pcap_open_dead pcap_t");
   return (-1);
 }
 
-static PAirpcapHandle pcap_get_airpcap_handle_dead(pcap_t *p _U_) {
+static PAirpcapHandle pcap_get_airpcap_handle_dead([[maybe_unused]] pcap_t *p) {
   return (nullptr);
 }
 #endif /* _WIN32 */
 
-static void pcap_cleanup_dead(pcap_t *p _U_) { /* Nothing to do. */
+static void pcap_cleanup_dead([[maybe_unused]] pcap_t *p) { /* Nothing to do. */
 }
 
 pcap_t *pcap_open_dead_with_tstamp_precision(int linktype, int snaplen,
@@ -3997,3 +3742,5 @@ PCAP_API void pcap_set_parser_debug(int value);
 
 PCAP_API_DEF void pcap_set_parser_debug(int value) { pcap_debug = value; }
 #endif
+
+} // namespace pcap

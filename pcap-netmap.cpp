@@ -275,6 +275,7 @@ pcap_t *pcap_netmap_create(const char *device, char *ebuf, int *is_ours) {
  * an expression that indicates how the device should be set up, so
  * there's no way to enumerate them.
  */
-int pcap_netmap_findalldevs(pcap_if_list_t *devlistp _U_, char *err_str _U_) {
+int pcap_netmap_findalldevs(Interfaces [[maybe_unused]] * devlistp,
+                            [[maybe_unused]] char *err_str) {
   return 0;
 }

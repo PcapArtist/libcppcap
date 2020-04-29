@@ -73,7 +73,7 @@ struct rtentry; /* declarations in <net/if.h> */
  * but don't have "getifaddrs()".  (Solaris 8 and later; we use
  * SIOCGLIFCONF rather than SIOCGIFCONF in order to get IPv6 addresses.)
  */
-int pcap_findalldevs_interfaces(pcap_if_list_t *devlistp, char *errbuf,
+int pcap_findalldevs_interfaces(Interfaces *devlistp, char *errbuf,
                                 int (*check_usable)(const char *),
                                 get_if_flags_func get_flags_func) {
   int fd4, fd6, fd;
@@ -317,7 +317,8 @@ int pcap_findalldevs_interfaces(pcap_if_list_t *devlistp, char *errbuf,
                        sizeof(struct sockaddr_storage), netmask,
                        sizeof(struct sockaddr_storage), broadaddr,
                        sizeof(struct sockaddr_storage), dstaddr,
-                       sizeof(struct sockaddr_storage), errbuf) < 0) {
+                       sizeof(struct sockaddr_storage),
+                       errbuf) != std::nullopt) {
       ret = -1;
       break;
     }

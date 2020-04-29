@@ -25,4 +25,4 @@
  */
 
 pcap_t *pcap_dpdk_create(const char *, char *, int *);
-int pcap_dpdk_findalldevs(pcap_if_list_t *devlistp, char *errbuf);
+int pcap_dpdk_findalldevs(Interfaces *devlistp, char *errbuf);

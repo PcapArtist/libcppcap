@@ -317,8 +317,9 @@ static int netfilter_stats_linux(pcap_t *handle, struct pcap_stat *stats) {
   return 0;
 }
 
-static int netfilter_inject_linux(pcap_t *handle, const void *buf _U_,
-                                  int size _U_) {
+static int netfilter_inject_linux(pcap_t *handle,
+                                  [[maybe_unused]] const void *buf,
+                                  [[maybe_unused]] int size) {
   snprintf(handle->errbuf, PCAP_ERRBUF_SIZE,
            "Packet injection is not supported on netfilter devices");
   return (-1);
@@ -753,7 +754,7 @@ pcap_t *netfilter_create(const char *device, char *ebuf, int *is_ours) {
   return (p);
 }
 
-int netfilter_findalldevs(pcap_if_list_t *devlistp, char *err_str) {
+int netfilter_findalldevs(Interfaces *devlistp, char *err_str) {
   int sock;
 
   sock = socket(AF_NETLINK, SOCK_RAW, NETLINK_NETFILTER);

@@ -59,7 +59,7 @@ struct hci_mon_hdr {
   uint16_t len;
 } __attribute__((packed));
 
-int bt_monitor_findalldevs(pcap_if_list_t *devlistp, char *err_str) {
+int bt_monitor_findalldevs(Interfaces *devlistp, char *err_str) {
   int ret = 0;
 
   /*
@@ -79,7 +79,7 @@ int bt_monitor_findalldevs(pcap_if_list_t *devlistp, char *err_str) {
   return ret;
 }
 
-static int bt_monitor_read(pcap_t *handle, int max_packets _U_,
+static int bt_monitor_read(pcap_t *handle, [[maybe_unused]] int max_packets,
                            pcap_handler callback, u_char *user) {
   struct cmsghdr *cmsg;
   struct msghdr msg;
@@ -144,15 +144,16 @@ static int bt_monitor_read(pcap_t *handle, int max_packets _U_,
   return 0; /* didn't pass filter */
 }
 
-static int bt_monitor_inject(pcap_t *handle, const void *buf _U_,
-                             int size _U_) {
+static int bt_monitor_inject(pcap_t *handle, [[maybe_unused]] const void *buf,
+                             [[maybe_unused]] int size) {
   snprintf(
       handle->errbuf, PCAP_ERRBUF_SIZE,
       "Packet injection is not supported yet on Bluetooth monitor devices");
   return -1;
 }
 
-static int bt_monitor_stats(pcap_t *handle _U_, struct pcap_stat *stats) {
+static int bt_monitor_stats([[maybe_unused]] pcap_t *handle,
+                            struct pcap_stat *stats) {
   stats->ps_recv = 0;
   stats->ps_drop = 0;
   stats->ps_ifdrop = 0;
