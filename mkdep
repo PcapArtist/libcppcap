@@ -37,7 +37,7 @@ while :
 			DEPENDENCY_CFLAG=$2
 			shift; shift ;;
 
-		# the -p flag produces "program: program.c" style dependencies
+		# the -p flag produces "program: program.cpp" style dependencies
 		# so .o's don't get produced
 		-p)
 			SED='s;\.o;;'
@@ -87,8 +87,8 @@ _EOF_
 # hack can't deal with anything that requires a search path, and doesn't
 # even try for anything using bracket (<>) syntax.
 #
-# egrep '^#include[ 	]*".*"' /dev/null $* |
-# sed -e 's/:[^"]*"\([^"]*\)".*/: \1/' -e 's/\.c/.o/' |
+# egrep '^#include[ 	]*".*"' /dev/nullptr $* |
+# sed -e 's/:[^"]*"\([^"]*\)".*/: \1/' -e 's/\.cpp/.o/' |
 
 #
 # Construct a list of source files with paths relative to the source directory.

@@ -95,10 +95,10 @@ and
 return a
 .I pcap_t *
 on success and
-.B NULL
+.B nullptr
 on failure.
 If
-.B NULL
+.B nullptr
 is returned,
 .I errbuf
 is filled in with an appropriate error message.

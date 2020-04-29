@@ -114,14 +114,14 @@ A { text-decoration:none }
 		<TR><TH VALIGN=TOP NOWRAP>SMP -> IOP</TH>
 			<TD>
 			The SMP will open a connection to the selected IOP on its 'sniffer' port
-			to ensure it is available.  It sends a null terminated string identifying
+			to ensure it is available.  It sends a nullptr terminated string identifying
 			the interface to be monitored.
 			</TD>
 		</TR>
 		<TR><TH VALIGN=TOP NOWRAP>IOP -> SMP</TH>
 			<TD>
 			After any required processing is complete, the IOP will return a
-			null terminated string containing an error message if one occured.
+			nullptr terminated string containing an error message if one occured.
 			If no error occured, a empty string is still returned.
 			Errors are:
 			<UL>
@@ -147,7 +147,7 @@ A { text-decoration:none }
 			<TD>
 			The SMP will sequentially open a connection to each IOP on its 'sniffer' port to ensure
 			the IOP is available.
-			It sends a null terminated empty interface ID followed by the query request command.
+			It sends a nullptr terminated empty interface ID followed by the query request command.
 			</TD>
 		</TR>
 		<TR><TH VALIGN=TOP NOWRAP>IOP -> SMP</TH>
@@ -321,8 +321,8 @@ A { text-decoration:none }
 		</TR>
 		<TR><TH VALIGN=TOP NOWRAP>IOP -> SMP</TH>
 			<TD>
-			The IOP returns a null terminated error string if it failed to accept the filter.
-			If no error occured, then a NULL terminated empty string is returned instead.
+			The IOP returns a nullptr terminated error string if it failed to accept the filter.
+			If no error occured, then a nullptr terminated empty string is returned instead.
 			Errors are:
 			<UL>
 			<LI>"Invalid BPF."
@@ -385,7 +385,7 @@ A { text-decoration:none }
 			between an ephemeral port on the SMP and the well known port of 49152
 			(which is the first available port in the 'dynamic and/or private port'
 			range) on an IOP.
-	<LI><P>Following a TCP open operation the IOP receives a null terminated
+	<LI><P>Following a TCP open operation the IOP receives a nullptr terminated
 			'interface ID' string to determine the type of operation that follows:
 	<LI><P>Every command received by an IOP implies a 'stop trace/stop forwarding' operation must
 			occur before executing the received command.
@@ -411,14 +411,14 @@ A { text-decoration:none }
 					<TR>
 						<TD VALIGN=TOP>Interface ID</TD>
 						<TD VALIGN=TOP ALIGN=CENTER>1</TD>
-						<TD VALIGN=TOP>A NULL to indicate an empty 'interface ID'.</TD>
+						<TD VALIGN=TOP>A nullptr to indicate an empty 'interface ID'.</TD>
 					</TR>
 				</TABLE>
 			</TD>
 		</TR>
 		<TR>
 			<TD VALIGN=TOP ALIGN=CENTER NOWRAP>IOP -> SMP</TD>
-			<TD VALIGN=TOP>Send its (possibly empty) NULL terminated error response string.</TD>
+			<TD VALIGN=TOP>Send its (possibly empty) nullptr terminated error response string.</TD>
 		</TR>
 		<TR>
 			<TD VALIGN=TOP ALIGN=CENTER NOWRAP>SMP -> IOP</TD>
@@ -552,14 +552,14 @@ A { text-decoration:none }
 					<TR>
 						<TD VALIGN=TOP>Interface ID</TD>
 						<TD VALIGN=TOP ALIGN=CENTER>'n'</TD>
-						<TD VALIGN=TOP>'n' octets containing a NULL terminated interface name string.</TD>
+						<TD VALIGN=TOP>'n' octets containing a nullptr terminated interface name string.</TD>
 					</TR>
 				</TABLE>
 			</TD>
 		</TR>
 		<TR>
 			<TD VALIGN=TOP ALIGN=CENTER NOWRAP>IOP -> SMP</TD>
-			<TD VALIGN=TOP>Send its NULL terminated error response string.</TD>
+			<TD VALIGN=TOP>Send its nullptr terminated error response string.</TD>
 		</TR>
 		<TR><TH COLSPAN=3><HR WIDTH=100%></TH></TR>
 		<TR>
@@ -673,7 +673,7 @@ A { text-decoration:none }
 		</TR>
 		<TR>
 			<TD VALIGN=TOP ALIGN=CENTER NOWRAP>IOP -> SMP</TD>
-			<TD VALIGN=TOP>In return the IOP will send its (possibly empty) NULL terminated error response string.</TD>
+			<TD VALIGN=TOP>In return the IOP will send its (possibly empty) nullptr terminated error response string.</TD>
 		</TR>
 		<TR><TH COLSPAN=3><HR WIDTH=100%></TH></TR>
 		<TR>

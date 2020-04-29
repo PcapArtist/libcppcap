@@ -42,7 +42,7 @@ link-layer header type name, which is the
 name for the link-layer header type value with the
 .B DLT_
 removed.
-.B NULL
+.B nullptr
 is returned if the type value does not correspond to a known
 .B DLT_
 value.
@@ -50,7 +50,7 @@ value.
 .BR pcap_datalink_val_to_description ()
 translates a link-layer header type value to a short description of that
 link-layer header type.
-.B NULL
+.B nullptr
 is returned if the type value does not correspond to a known
 .B DLT_
 value.

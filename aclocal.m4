@@ -278,13 +278,13 @@ AC_DEFUN(AC_LBL_CHECK_COMPILER_OPT,
     [
 	AC_MSG_CHECKING([whether the compiler supports the $2 option])
 	save_CFLAGS="$CFLAGS"
-	if expr "x$2" : "x-W.*" >/dev/null
+	if expr "x$2" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error $2"
-	elif expr "x$2" : "x-f.*" >/dev/null
+	elif expr "x$2" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror $2"
-	elif expr "x$2" : "x-m.*" >/dev/null
+	elif expr "x$2" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror $2"
 	else
@@ -422,7 +422,7 @@ AC_DEFUN(AC_LBL_CHECK_DEPENDENCY_GENERATION_OPT,
 	if test ! -z "$ac_lbl_dependency_flag"; then
 		AC_LANG_CONFTEST(
 		    [AC_LANG_SOURCE([[int main(void) { return 0; }]])])
-		if AC_RUN_LOG([eval "$CC $ac_lbl_dependency_flag conftest.c >/dev/null 2>&1"]); then
+		if AC_RUN_LOG([eval "$CC $ac_lbl_dependency_flag conftest.cpp >/dev/nullptr 2>&1"]); then
 			AC_MSG_RESULT([yes, with $ac_lbl_dependency_flag])
 			DEPENDENCY_CFLAG="$ac_lbl_dependency_flag"
 			MKDEP='${top_srcdir}/mkdep'
@@ -613,7 +613,7 @@ AC_DEFUN(AC_LBL_SHLIBS_INIT,
 
 #
 # Try compiling a sample of the type of code that appears in
-# gencode.c with "inline", "__inline__", and "__inline".
+# gencode.cpp with "inline", "__inline__", and "__inline".
 #
 # Autoconf's AC_C_INLINE, at least in autoconf 2.13, isn't good enough,
 # as it just tests whether a function returning "int" can be inlined;
@@ -741,8 +741,8 @@ dnl
 AC_DEFUN(AC_LBL_HAVE_RUN_PATH,
     [AC_MSG_CHECKING(for ${CC-cc} -R)
     AC_CACHE_VAL(ac_cv_lbl_have_run_path,
-	[echo 'main(){}' > conftest.c
-	${CC-cc} -o conftest conftest.c -R/a1/b2/c3 >conftest.out 2>&1
+	[echo 'main(){}' > conftest.cpp
+	${CC-cc} -o conftest conftest.cpp -R/a1/b2/c3 >conftest.out 2>&1
 	if test ! -s conftest.out ; then
 		ac_cv_lbl_have_run_path=yes
 	else
@@ -1099,7 +1099,7 @@ m4_define([_PKG_CONFIG],
     pkg_cv_[]$1="$$1"
  elif test -n "$PKG_CONFIG"; then
     PKG_CHECK_EXISTS([$3],
-                     [pkg_cv_[]$1=`$PKG_CONFIG --[]$2 "$3" 2>/dev/null`
+                     [pkg_cv_[]$1=`$PKG_CONFIG --[]$2 "$3" 2>/dev/nullptr`
 		      test "x$?" != "x0" && pkg_failed=yes ],
 		     [pkg_failed=yes])
  else

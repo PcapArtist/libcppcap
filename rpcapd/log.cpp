@@ -23,8 +23,8 @@
 #include <config.h>
 #endif
 
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #ifdef _WIN32
@@ -40,60 +40,60 @@
 static int log_to_systemlog;
 static int log_debug_messages;
 
-static void rpcapd_vlog_stderr(log_priority,
-    PCAP_FORMAT_STRING(const char *), va_list) PCAP_PRINTFLIKE(2, 0);
+static void rpcapd_vlog_stderr(log_priority, PCAP_FORMAT_STRING(const char *),
+                               va_list) PCAP_PRINTFLIKE(2, 0);
 
-static void rpcapd_vlog_stderr(log_priority priority, const char *message, va_list ap)
-{
-	const char *tag;
+static void rpcapd_vlog_stderr(log_priority priority, const char *message,
+                               va_list ap) {
+  const char *tag;
 
-	/*
-	 * Squelch warnings from compilers that *don't* assume that
-	 * priority always has a valid enum value and therefore don't
-	 * assume that we'll always go through one of the case arms.
-	 *
-	 * If we have a default case, compilers that *do* assume that
-	 * will then complain about the default case code being
-	 * unreachable.
-	 *
-	 * Damned if you do, damned if you don't.
-	 */
-	tag = "";
+  /*
+   * Squelch warnings from compilers that *don't* assume that
+   * priority always has a valid enum value and therefore don't
+   * assume that we'll always go through one of the case arms.
+   *
+   * If we have a default case, compilers that *do* assume that
+   * will then complain about the default case code being
+   * unreachable.
+   *
+   * Damned if you do, damned if you don't.
+   */
+  tag = "";
 
-	switch (priority) {
+  switch (priority) {
 
-	case LOGPRIO_DEBUG:
-		tag = "DEBUG: ";
-		break;
+  case LOGPRIO_DEBUG:
+    tag = "DEBUG: ";
+    break;
 
-	case LOGPRIO_INFO:
-		tag = "";
-		break;
+  case LOGPRIO_INFO:
+    tag = "";
+    break;
 
-	case LOGPRIO_WARNING:
-		tag = "warning: ";
-		break;
+  case LOGPRIO_WARNING:
+    tag = "warning: ";
+    break;
 
-	case LOGPRIO_ERROR:
-		tag = "error: ";
-		break;
-	}
+  case LOGPRIO_ERROR:
+    tag = "error: ";
+    break;
+  }
 
-	fprintf(stderr, "rpcapd: %s", tag);
-	vfprintf(stderr, message, ap);
-	putc('\n', stderr);
+  fprintf(stderr, "rpcapd: %s", tag);
+  vfprintf(stderr, message, ap);
+  putc('\n', stderr);
 }
 
 static void rpcapd_vlog_systemlog(log_priority,
-    PCAP_FORMAT_STRING(const char *), va_list) PCAP_PRINTFLIKE(2, 0);
+                                  PCAP_FORMAT_STRING(const char *), va_list)
+    PCAP_PRINTFLIKE(2, 0);
 
 #ifdef _WIN32
-#define MESSAGE_SUBKEY \
-    "SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application\\rpcapd"
+#define MESSAGE_SUBKEY                                                         \
+  "SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application\\rpcapd"
 
 static void rpcapd_vlog_systemlog(log_priority priority, const char *message,
-    va_list ap)
-{
+                                  va_list ap) {
 #if 0
 	static int initialized = 0;
 	HKEY hey_handle;
@@ -123,7 +123,7 @@ static void rpcapd_vlog_systemlog(log_priority priority, const char *message,
 			rpcapd_vlog_stderr(priority, message, ap);
 			return;
 		}
-		log_handle = RegisterEventSource(NULL, "rpcapd");
+		log_handle = RegisterEventSource(nullptr, "rpcapd");
 		initialized = 1;
 	}
 
@@ -163,98 +163,92 @@ static void rpcapd_vlog_systemlog(log_priority priority, const char *message,
 	/*
 	 * If this fails, how are we going to report it?
 	 */
-	(void) ReportEvent(log_handle, eventlog_type, 0, event_id, NULL, 1, 0,
-	    strings, NULL);
+	(void) ReportEvent(log_handle, eventlog_type, 0, event_id, nullptr, 1, 0,
+	    strings, nullptr);
 #else
-	rpcapd_vlog_stderr(priority, message, ap);
+  rpcapd_vlog_stderr(priority, message, ap);
 #endif
 }
 #else
 static void rpcapd_vlog_systemlog(log_priority priority, const char *message,
-    va_list ap)
-{
-	static int initialized = 0;
-	int syslog_priority;
+                                  va_list ap) {
+  static int initialized = 0;
+  int syslog_priority;
 
-	if (!initialized) {
-		//
-		// Open the log.
-		//
-		openlog("rpcapd", LOG_PID, LOG_DAEMON);
-		initialized = 1;
-	}
+  if (!initialized) {
+    //
+    // Open the log.
+    //
+    openlog("rpcapd", LOG_PID, LOG_DAEMON);
+    initialized = 1;
+  }
 
-	switch (priority) {
+  switch (priority) {
 
-	case LOGPRIO_DEBUG:
-		syslog_priority = LOG_DEBUG;
-		break;
+  case LOGPRIO_DEBUG:
+    syslog_priority = LOG_DEBUG;
+    break;
 
-	case LOGPRIO_INFO:
-		syslog_priority = LOG_INFO;
-		break;
+  case LOGPRIO_INFO:
+    syslog_priority = LOG_INFO;
+    break;
 
-	case LOGPRIO_WARNING:
-		syslog_priority = LOG_WARNING;
-		break;
+  case LOGPRIO_WARNING:
+    syslog_priority = LOG_WARNING;
+    break;
 
-	case LOGPRIO_ERROR:
-		syslog_priority = LOG_ERR;
-		break;
+  case LOGPRIO_ERROR:
+    syslog_priority = LOG_ERR;
+    break;
 
-	default:
-		/* Don't do this. */
-		return;
-	}
+  default:
+    /* Don't do this. */
+    return;
+  }
 
 #ifdef HAVE_VSYSLOG
-	vsyslog(syslog_priority, message, ap);
+  vsyslog(syslog_priority, message, ap);
 #else
-	/*
-	 * Thanks, IBM, for not providing vsyslog() in AIX!
-	 *
-	 * They also warn that the syslog functions shouldn't
-	 * be used in multithreaded programs, but the only thing
-	 * obvious that seems to make the syslog_r functions
-	 * better is that they have an additional argument
-	 * that points to the information that's static to
-	 * the syslog code in non-thread-safe versions.  Most
-	 * of that data is set by openlog(); since we already
-	 * do an openlog before doing logging, and don't
-	 * change that data afterwards, I suspect that, in
-	 * practice, the regular syslog routines are OK for
-	 * us (especially given that we'd end up having one
-	 * static struct syslog_data anyway, which means we'd
-	 * just be like the non-thread-safe version).
-	 */
-	char logbuf[1024+1];
+  /*
+   * Thanks, IBM, for not providing vsyslog() in AIX!
+   *
+   * They also warn that the syslog functions shouldn't
+   * be used in multithreaded programs, but the only thing
+   * obvious that seems to make the syslog_r functions
+   * better is that they have an additional argument
+   * that points to the information that's static to
+   * the syslog code in non-thread-safe versions.  Most
+   * of that data is set by openlog(); since we already
+   * do an openlog before doing logging, and don't
+   * change that data afterwards, I suspect that, in
+   * practice, the regular syslog routines are OK for
+   * us (especially given that we'd end up having one
+   * static struct syslog_data anyway, which means we'd
+   * just be like the non-thread-safe version).
+   */
+  char logbuf[1024 + 1];
 
-	vsnprintf(logbuf, sizeof logbuf, message, ap);
-	syslog(syslog_priority, "%s", logbuf);
+  vsnprintf(logbuf, sizeof logbuf, message, ap);
+  syslog(syslog_priority, "%s", logbuf);
 #endif
 }
 #endif
 
-void rpcapd_log_set(int log_to_systemlog_arg, int log_debug_messages_arg)
-{
-	log_debug_messages = log_debug_messages_arg;
-	log_to_systemlog = log_to_systemlog_arg;
+void rpcapd_log_set(int log_to_systemlog_arg, int log_debug_messages_arg) {
+  log_debug_messages = log_debug_messages_arg;
+  log_to_systemlog = log_to_systemlog_arg;
 }
 
-void rpcapd_log(log_priority priority, const char *message, ...)
-{
-	va_list ap;
+void rpcapd_log(log_priority priority, const char *message, ...) {
+  va_list ap;
 
-	if (priority != LOGPRIO_DEBUG || log_debug_messages) {
-		va_start(ap, message);
-		if (log_to_systemlog)
-		{
-			rpcapd_vlog_systemlog(priority, message, ap);
-		}
-		else
-		{
-			rpcapd_vlog_stderr(priority, message, ap);
-		}
-		va_end(ap);
-	}
+  if (priority != LOGPRIO_DEBUG || log_debug_messages) {
+    va_start(ap, message);
+    if (log_to_systemlog) {
+      rpcapd_vlog_systemlog(priority, message, ap);
+    } else {
+      rpcapd_vlog_stderr(priority, message, ap);
+    }
+    va_end(ap);
+  }
 }

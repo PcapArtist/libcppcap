@@ -76,16 +76,16 @@ INSTALL_DATA = @INSTALL_DATA@
 # Explicitly define compilation rule since SunOS 4's make doesn't like gcc.
 # Also, gcc does not remove the .o before forking 'as', which can be a
 # problem if you don't own the file but can write to the directory.
-.c.o:
+.cpp.o:
 	@rm -f $@
-	$(CC) $(FULL_CFLAGS) -c $(srcdir)/$*.c
+	$(CC) $(FULL_CFLAGS) -c $(srcdir)/$*.cpp
 
-SRC =	daemon.c \
-	fileconf.c \
-	log.c \
-	rpcapd.c
+SRC =	daemon.cpp \
+	fileconf.cpp \
+	log.cpp \
+	rpcapd.cpp
 
-OBJ =	$(SRC:.c=.o) ../rpcap-protocol.o ../sockutils.o ../fmtutils.o ../sslutils.o
+OBJ =	$(SRC:.cpp=.o) ../rpcap-protocol.o ../sockutils.o ../fmtutils.o ../sslutils.o
 PUBHDR =
 
 HDR = $(PUBHDR) log.h

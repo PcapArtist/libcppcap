@@ -14,7 +14,7 @@
 
 # Be more Bourne compatible
 DUALCASE=1; export DUALCASE # for MKS sh
-if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then :
+if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/nullptr 2>&1; then :
   emulate sh
   NULLCMD=:
   # Pre-4.2 versions of Zsh do word splitting on ${1+"$@"}, which
@@ -22,7 +22,7 @@ if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then :
   alias -g '${1+"$@"}'='"$@"'
   setopt NO_GLOB_SUBST
 else
-  case `(set -o) 2>/dev/null` in #(
+  case `(set -o) 2>/dev/nullptr` in #(
   *posix*) :
     set -o posix ;; #(
   *) :
@@ -41,14 +41,14 @@ as_echo=$as_echo$as_echo$as_echo$as_echo$as_echo$as_echo
 # Prefer a ksh shell builtin over an external printf program on Solaris,
 # but without wasting forks for bash or zsh.
 if test -z "$BASH_VERSION$ZSH_VERSION" \
-    && (test "X`print -r -- $as_echo`" = "X$as_echo") 2>/dev/null; then
+    && (test "X`print -r -- $as_echo`" = "X$as_echo") 2>/dev/nullptr; then
   as_echo='print -r --'
   as_echo_n='print -rn --'
-elif (test "X`printf %s $as_echo`" = "X$as_echo") 2>/dev/null; then
+elif (test "X`printf %s $as_echo`" = "X$as_echo") 2>/dev/nullptr; then
   as_echo='printf %s\n'
   as_echo_n='printf %s'
 else
-  if test "X`(/usr/ucb/echo -n -n $as_echo) 2>/dev/null`" = "X-n $as_echo"; then
+  if test "X`(/usr/ucb/echo -n -n $as_echo) 2>/dev/nullptr`" = "X-n $as_echo"; then
     as_echo_body='eval /usr/ucb/echo -n "$1$as_nl"'
     as_echo_n='/usr/ucb/echo -n'
   else
@@ -72,8 +72,8 @@ fi
 # The user is always right.
 if test "${PATH_SEPARATOR+set}" != set; then
   PATH_SEPARATOR=:
-  (PATH='/bin;/bin'; FPATH=$PATH; sh -c :) >/dev/null 2>&1 && {
-    (PATH='/bin:/bin'; FPATH=$PATH; sh -c :) >/dev/null 2>&1 ||
+  (PATH='/bin;/bin'; FPATH=$PATH; sh -c :) >/dev/nullptr 2>&1 && {
+    (PATH='/bin:/bin'; FPATH=$PATH; sh -c :) >/dev/nullptr 2>&1 ||
       PATH_SEPARATOR=';'
   }
 fi
@@ -117,7 +117,7 @@ fi
 # trigger a bug in pdksh 5.2.14.
 for as_var in BASH_ENV ENV MAIL MAILPATH
 do eval test x\${$as_var+set} = xset \
-  && ( (unset $as_var) || exit 1) >/dev/null 2>&1 && unset $as_var || :
+  && ( (unset $as_var) || exit 1) >/dev/nullptr 2>&1 && unset $as_var || :
 done
 PS1='$ '
 PS2='> '
@@ -130,7 +130,7 @@ LANGUAGE=C
 export LANGUAGE
 
 # CDPATH.
-(unset CDPATH) >/dev/null 2>&1 && unset CDPATH
+(unset CDPATH) >/dev/nullptr 2>&1 && unset CDPATH
 
 # Use a proper internal environment variable to ensure we don't fall
   # into an infinite loop, continuously re-executing ourselves.
@@ -140,9 +140,9 @@ export LANGUAGE
 # neutralization value for shells without unset; and this also
 # works around shells that cannot unset nonexistent variables.
 # Preserve -v and -x to the replacement shell.
-BASH_ENV=/dev/null
-ENV=/dev/null
-(unset BASH_ENV) >/dev/null 2>&1 && unset BASH_ENV ENV
+BASH_ENV=/dev/nullptr
+ENV=/dev/nullptr
+(unset BASH_ENV) >/dev/nullptr 2>&1 && unset BASH_ENV ENV
 case $- in # ((((
   *v*x* | *x*v* ) as_opts=-vx ;;
   *v* ) as_opts=-v ;;
@@ -158,7 +158,7 @@ as_fn_exit 255
   # We don't want this to propagate to other subprocesses.
           { _as_can_reexec=; unset _as_can_reexec;}
 if test "x$CONFIG_SHELL" = x; then
-  as_bourne_compatible="if test -n \"\${ZSH_VERSION+set}\" && (emulate sh) >/dev/null 2>&1; then :
+  as_bourne_compatible="if test -n \"\${ZSH_VERSION+set}\" && (emulate sh) >/dev/nullptr 2>&1; then :
   emulate sh
   NULLCMD=:
   # Pre-4.2 versions of Zsh do word splitting on \${1+\"\$@\"}, which
@@ -166,7 +166,7 @@ if test "x$CONFIG_SHELL" = x; then
   alias -g '\${1+\"\$@\"}'='\"\$@\"'
   setopt NO_GLOB_SUBST
 else
-  case \`(set -o) 2>/dev/null\` in #(
+  case \`(set -o) 2>/dev/nullptr\` in #(
   *posix*) :
     set -o posix ;; #(
   *) :
@@ -197,12 +197,12 @@ test -x / || exit 1"
   eval 'test \"x\$as_lineno_1'\$as_run'\" != \"x\$as_lineno_2'\$as_run'\" &&
   test \"x\`expr \$as_lineno_1'\$as_run' + 1\`\" = \"x\$as_lineno_2'\$as_run'\"' || exit 1
 test \$(( 1 + 1 )) = 2 || exit 1"
-  if (eval "$as_required") 2>/dev/null; then :
+  if (eval "$as_required") 2>/dev/nullptr; then :
   as_have_required=yes
 else
   as_have_required=no
 fi
-  if test x$as_have_required = xyes && (eval "$as_suggested") 2>/dev/null; then :
+  if test x$as_have_required = xyes && (eval "$as_suggested") 2>/dev/nullptr; then :
 
 else
   as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
@@ -218,9 +218,9 @@ do
 	     # Try only shells that exist, to save several forks.
 	     as_shell=$as_dir/$as_base
 	     if { test -f "$as_shell" || test -f "$as_shell.exe"; } &&
-		    { $as_echo "$as_bourne_compatible""$as_required" | as_run=a "$as_shell"; } 2>/dev/null; then :
+		    { $as_echo "$as_bourne_compatible""$as_required" | as_run=a "$as_shell"; } 2>/dev/nullptr; then :
   CONFIG_SHELL=$as_shell as_have_required=yes
-		   if { $as_echo "$as_bourne_compatible""$as_suggested" | as_run=a "$as_shell"; } 2>/dev/null; then :
+		   if { $as_echo "$as_bourne_compatible""$as_suggested" | as_run=a "$as_shell"; } 2>/dev/nullptr; then :
   break 2
 fi
 fi
@@ -229,7 +229,7 @@ fi
   as_found=false
 done
 $as_found || { if { test -f "$SHELL" || test -f "$SHELL.exe"; } &&
-	      { $as_echo "$as_bourne_compatible""$as_required" | as_run=a "$SHELL"; } 2>/dev/null; then :
+	      { $as_echo "$as_bourne_compatible""$as_required" | as_run=a "$SHELL"; } 2>/dev/nullptr; then :
   CONFIG_SHELL=$SHELL as_have_required=yes
 fi; }
 IFS=$as_save_IFS
@@ -241,9 +241,9 @@ IFS=$as_save_IFS
 # neutralization value for shells without unset; and this also
 # works around shells that cannot unset nonexistent variables.
 # Preserve -v and -x to the replacement shell.
-BASH_ENV=/dev/null
-ENV=/dev/null
-(unset BASH_ENV) >/dev/null 2>&1 && unset BASH_ENV ENV
+BASH_ENV=/dev/nullptr
+ENV=/dev/nullptr
+(unset BASH_ENV) >/dev/nullptr 2>&1 && unset BASH_ENV ENV
 case $- in # ((((
   *v*x* | *x*v* ) as_opts=-vx ;;
   *v* ) as_opts=-v ;;
@@ -330,7 +330,7 @@ as_fn_mkdir_p ()
 $as_expr X"$as_dir" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
 	 X"$as_dir" : 'X\(//\)[^/]' \| \
 	 X"$as_dir" : 'X\(//\)$' \| \
-	 X"$as_dir" : 'X\(/\)' \| . 2>/dev/null ||
+	 X"$as_dir" : 'X\(/\)' \| . 2>/dev/nullptr ||
 $as_echo X"$as_dir" |
     sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{
 	    s//\1/
@@ -370,7 +370,7 @@ as_fn_executable_p ()
 # advantage of any shell optimizations that allow amortized linear growth over
 # repeated appends, instead of the typical quadratic growth present in naive
 # implementations.
-if (eval "as_var=1; as_var+=2; test x\$as_var = x12") 2>/dev/null; then :
+if (eval "as_var=1; as_var+=2; test x\$as_var = x12") 2>/dev/nullptr; then :
   eval 'as_fn_append ()
   {
     eval $1+=\$2
@@ -387,7 +387,7 @@ fi # as_fn_append
 # Perform arithmetic evaluation on the ARGs, and store the result in the
 # global $as_val. Take advantage of shells that can avoid forks. The arguments
 # must be portable across $(()) and expr.
-if (eval "test \$(( 1 + 1 )) = 2") 2>/dev/null; then :
+if (eval "test \$(( 1 + 1 )) = 2") 2>/dev/nullptr; then :
   eval 'as_fn_arith ()
   {
     as_val=$(( $* ))
@@ -416,20 +416,20 @@ as_fn_error ()
   as_fn_exit $as_status
 } # as_fn_error
 
-if expr a : '\(a\)' >/dev/null 2>&1 &&
+if expr a : '\(a\)' >/dev/nullptr 2>&1 &&
    test "X`expr 00001 : '.*\(...\)'`" = X001; then
   as_expr=expr
 else
   as_expr=false
 fi
 
-if (basename -- /) >/dev/null 2>&1 && test "X`basename -- / 2>&1`" = "X/"; then
+if (basename -- /) >/dev/nullptr 2>&1 && test "X`basename -- / 2>&1`" = "X/"; then
   as_basename=basename
 else
   as_basename=false
 fi
 
-if (as_dir=`dirname -- /` && test "X$as_dir" = X/) >/dev/null 2>&1; then
+if (as_dir=`dirname -- /` && test "X$as_dir" = X/) >/dev/nullptr 2>&1; then
   as_dirname=dirname
 else
   as_dirname=false
@@ -438,7 +438,7 @@ fi
 as_me=`$as_basename -- "$0" ||
 $as_expr X/"$0" : '.*/\([^/][^/]*\)/*$' \| \
 	 X"$0" : 'X\(//\)$' \| \
-	 X"$0" : 'X\(/\)' \| . 2>/dev/null ||
+	 X"$0" : 'X\(/\)' \| . 2>/dev/nullptr ||
 $as_echo X/"$0" |
     sed '/^.*\/\([^/][^/]*\)\/*$/{
 	    s//\1/
@@ -503,7 +503,7 @@ case `echo -n x` in #(((((
   case `echo 'xy\c'` in
   *c*) ECHO_T='	';;	# ECHO_T is single tab character.
   xy)  ECHO_C='\c';;
-  *)   echo `echo ksh88 bug on AIX 6.1` > /dev/null
+  *)   echo `echo ksh88 bug on AIX 6.1` > /dev/nullptr
        ECHO_T='	';;
   esac;;
 *)
@@ -515,18 +515,18 @@ if test -d conf$$.dir; then
   rm -f conf$$.dir/conf$$.file
 else
   rm -f conf$$.dir
-  mkdir conf$$.dir 2>/dev/null
+  mkdir conf$$.dir 2>/dev/nullptr
 fi
-if (echo >conf$$.file) 2>/dev/null; then
-  if ln -s conf$$.file conf$$ 2>/dev/null; then
+if (echo >conf$$.file) 2>/dev/nullptr; then
+  if ln -s conf$$.file conf$$ 2>/dev/nullptr; then
     as_ln_s='ln -s'
     # ... but there are two gotchas:
     # 1) On MSYS, both `ln -s file dir' and `ln file dir' fail.
     # 2) DJGPP < 2.04 has no symlinks; `ln -s' creates a wrapper executable.
     # In both cases, we have to default to `cp -pR'.
-    ln -s conf$$.file conf$$.dir 2>/dev/null && test ! -f conf$$.exe ||
+    ln -s conf$$.file conf$$.dir 2>/dev/nullptr && test ! -f conf$$.exe ||
       as_ln_s='cp -pR'
-  elif ln conf$$.file conf$$ 2>/dev/null; then
+  elif ln conf$$.file conf$$ 2>/dev/nullptr; then
     as_ln_s=ln
   else
     as_ln_s='cp -pR'
@@ -535,9 +535,9 @@ else
   as_ln_s='cp -pR'
 fi
 rm -f conf$$ conf$$.exe conf$$.dir/conf$$.file conf$$.file
-rmdir conf$$.dir 2>/dev/null
+rmdir conf$$.dir 2>/dev/nullptr
 
-if mkdir -p . 2>/dev/null; then
+if mkdir -p . 2>/dev/nullptr; then
   as_mkdir_p='mkdir -p "$as_dir"'
 else
   test -d ./-p && rmdir ./-p
@@ -554,13 +554,13 @@ as_tr_cpp="eval sed 'y%*$as_cr_letters%P$as_cr_LETTERS%;s%[^_$as_cr_alnum]%_%g'"
 as_tr_sh="eval sed 'y%*+%pp%;s%[^_$as_cr_alnum]%_%g'"
 
 
-test -n "$DJDIR" || exec 7<&0 </dev/null
+test -n "$DJDIR" || exec 7<&0 </dev/nullptr
 exec 6>&1
 
 # Name of the host.
 # hostname on some systems (SVR3.2, old GNU/Linux) returns a bogus exit status,
 # so uname gets run too.
-ac_hostname=`(hostname || uname -n) 2>/dev/null | sed 1q`
+ac_hostname=`(hostname || uname -n) 2>/dev/nullptr | sed 1q`
 
 #
 # Initializations.
@@ -582,7 +582,7 @@ PACKAGE_STRING='pcap 1.10.0-PRE-GIT'
 PACKAGE_BUGREPORT=''
 PACKAGE_URL=''
 
-ac_unique_file="pcap.c"
+ac_unique_file="pcap.cpp"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -789,7 +789,7 @@ ac_unrecognized_opts=
 ac_unrecognized_sep=
 # The variables have the same names as the options, with
 # dashes changed to underlines.
-cache_file=/dev/null
+cache_file=/dev/nullptr
 exec_prefix=NONE
 no_create=
 no_recursion=
@@ -888,7 +888,7 @@ do
   -disable-* | --disable-*)
     ac_useropt=`expr "x$ac_option" : 'x-*disable-\(.*\)'`
     # Reject names that are not valid shell variable names.
-    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/null &&
+    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/nullptr &&
       as_fn_error $? "invalid feature name: $ac_useropt"
     ac_useropt_orig=$ac_useropt
     ac_useropt=`$as_echo "$ac_useropt" | sed 's/[-+.]/_/g'`
@@ -914,7 +914,7 @@ do
   -enable-* | --enable-*)
     ac_useropt=`expr "x$ac_option" : 'x-*enable-\([^=]*\)'`
     # Reject names that are not valid shell variable names.
-    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/null &&
+    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/nullptr &&
       as_fn_error $? "invalid feature name: $ac_useropt"
     ac_useropt_orig=$ac_useropt
     ac_useropt=`$as_echo "$ac_useropt" | sed 's/[-+.]/_/g'`
@@ -1118,7 +1118,7 @@ do
   -with-* | --with-*)
     ac_useropt=`expr "x$ac_option" : 'x-*with-\([^=]*\)'`
     # Reject names that are not valid shell variable names.
-    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/null &&
+    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/nullptr &&
       as_fn_error $? "invalid package name: $ac_useropt"
     ac_useropt_orig=$ac_useropt
     ac_useropt=`$as_echo "$ac_useropt" | sed 's/[-+.]/_/g'`
@@ -1134,7 +1134,7 @@ do
   -without-* | --without-*)
     ac_useropt=`expr "x$ac_option" : 'x-*without-\(.*\)'`
     # Reject names that are not valid shell variable names.
-    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/null &&
+    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/nullptr &&
       as_fn_error $? "invalid package name: $ac_useropt"
     ac_useropt_orig=$ac_useropt
     ac_useropt=`$as_echo "$ac_useropt" | sed 's/[-+.]/_/g'`
@@ -1182,7 +1182,7 @@ Try \`$0 --help' for more information"
   *)
     # FIXME: should be removed in autoconf 3.0.
     $as_echo "$as_me: WARNING: you should use --build, --host, --target" >&2
-    expr "x$ac_option" : ".*[^-._$as_cr_alnum]" >/dev/null &&
+    expr "x$ac_option" : ".*[^-._$as_cr_alnum]" >/dev/nullptr &&
       $as_echo "$as_me: WARNING: invalid host type: $ac_option" >&2
     : "${build_alias=$ac_option} ${host_alias=$ac_option} ${target_alias=$ac_option}"
     ;;
@@ -1243,7 +1243,7 @@ fi
 ac_tool_prefix=
 test -n "$host_alias" && ac_tool_prefix=$host_alias-
 
-test "$silent" = yes && exec 6>/dev/null
+test "$silent" = yes && exec 6>/dev/nullptr
 
 
 ac_pwd=`pwd` && test -n "$ac_pwd" &&
@@ -1262,7 +1262,7 @@ if test -z "$srcdir"; then
 $as_expr X"$as_myself" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
 	 X"$as_myself" : 'X\(//\)[^/]' \| \
 	 X"$as_myself" : 'X\(//\)$' \| \
-	 X"$as_myself" : 'X\(/\)' \| . 2>/dev/null ||
+	 X"$as_myself" : 'X\(/\)' \| . 2>/dev/nullptr ||
 $as_echo X"$as_myself" |
     sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{
 	    s//\1/
@@ -2099,22 +2099,22 @@ cat <<_ASUNAME
 ## Platform. ##
 ## --------- ##
 
-hostname = `(hostname || uname -n) 2>/dev/null | sed 1q`
-uname -m = `(uname -m) 2>/dev/null || echo unknown`
-uname -r = `(uname -r) 2>/dev/null || echo unknown`
-uname -s = `(uname -s) 2>/dev/null || echo unknown`
-uname -v = `(uname -v) 2>/dev/null || echo unknown`
+hostname = `(hostname || uname -n) 2>/dev/nullptr | sed 1q`
+uname -m = `(uname -m) 2>/dev/nullptr || echo unknown`
+uname -r = `(uname -r) 2>/dev/nullptr || echo unknown`
+uname -s = `(uname -s) 2>/dev/nullptr || echo unknown`
+uname -v = `(uname -v) 2>/dev/nullptr || echo unknown`
 
-/usr/bin/uname -p = `(/usr/bin/uname -p) 2>/dev/null || echo unknown`
-/bin/uname -X     = `(/bin/uname -X) 2>/dev/null     || echo unknown`
+/usr/bin/uname -p = `(/usr/bin/uname -p) 2>/dev/nullptr || echo unknown`
+/bin/uname -X     = `(/bin/uname -X) 2>/dev/nullptr     || echo unknown`
 
-/bin/arch              = `(/bin/arch) 2>/dev/null              || echo unknown`
-/usr/bin/arch -k       = `(/usr/bin/arch -k) 2>/dev/null       || echo unknown`
-/usr/convex/getsysinfo = `(/usr/convex/getsysinfo) 2>/dev/null || echo unknown`
-/usr/bin/hostinfo      = `(/usr/bin/hostinfo) 2>/dev/null      || echo unknown`
-/bin/machine           = `(/bin/machine) 2>/dev/null           || echo unknown`
-/usr/bin/oslevel       = `(/usr/bin/oslevel) 2>/dev/null       || echo unknown`
-/bin/universe          = `(/bin/universe) 2>/dev/null          || echo unknown`
+/bin/arch              = `(/bin/arch) 2>/dev/nullptr              || echo unknown`
+/usr/bin/arch -k       = `(/usr/bin/arch -k) 2>/dev/nullptr       || echo unknown`
+/usr/convex/getsysinfo = `(/usr/convex/getsysinfo) 2>/dev/nullptr || echo unknown`
+/usr/bin/hostinfo      = `(/usr/bin/hostinfo) 2>/dev/nullptr      || echo unknown`
+/bin/machine           = `(/bin/machine) 2>/dev/nullptr           || echo unknown`
+/usr/bin/oslevel       = `(/usr/bin/oslevel) 2>/dev/nullptr       || echo unknown`
+/bin/universe          = `(/bin/universe) 2>/dev/nullptr          || echo unknown`
 
 _ASUNAME
 
@@ -2337,7 +2337,7 @@ fi
 for ac_site_file in "$ac_site_file1" "$ac_site_file2"
 do
   test "x$ac_site_file" = xNONE && continue
-  if test /dev/null != "$ac_site_file" && test -r "$ac_site_file"; then
+  if test /dev/nullptr != "$ac_site_file" && test -r "$ac_site_file"; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: loading site script $ac_site_file" >&5
 $as_echo "$as_me: loading site script $ac_site_file" >&6;}
     sed 's/^/| /' "$ac_site_file" >&5
@@ -2350,9 +2350,9 @@ See \`config.log' for more details" "$LINENO" 5; }
 done
 
 if test -r "$cache_file"; then
-  # Some versions of bash will fail to source /dev/null (special files
+  # Some versions of bash will fail to source /dev/nullptr (special files
   # actually), so we avoid doing that.  DJGPP emulates it as a regular file.
-  if test /dev/null != "$cache_file" && test -f "$cache_file"; then
+  if test /dev/nullptr != "$cache_file" && test -f "$cache_file"; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: loading cache $cache_file" >&5
 $as_echo "$as_me: loading cache $cache_file" >&6;}
     case $cache_file in
@@ -2467,7 +2467,7 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 
 # Make sure we can run config.sub.
-$SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
+$SHELL "$ac_aux_dir/config.sub" sun4 >/dev/nullptr 2>&1 ||
   as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking build system type" >&5
@@ -3909,13 +3909,13 @@ esac
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -fvisibility=hidden option" >&5
 $as_echo_n "checking whether the compiler supports the -fvisibility=hidden option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-fvisibility=hidden" : "x-W.*" >/dev/null
+	if expr "x-fvisibility=hidden" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -fvisibility=hidden"
-	elif expr "x-fvisibility=hidden" : "x-f.*" >/dev/null
+	elif expr "x-fvisibility=hidden" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -fvisibility=hidden"
-	elif expr "x-fvisibility=hidden" : "x-m.*" >/dev/null
+	elif expr "x-fvisibility=hidden" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -fvisibility=hidden"
 	else
@@ -4009,13 +4009,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -fvisibility=hidden option" >&5
 $as_echo_n "checking whether the compiler supports the -fvisibility=hidden option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-fvisibility=hidden" : "x-W.*" >/dev/null
+	if expr "x-fvisibility=hidden" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -fvisibility=hidden"
-	elif expr "x-fvisibility=hidden" : "x-f.*" >/dev/null
+	elif expr "x-fvisibility=hidden" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -fvisibility=hidden"
-	elif expr "x-fvisibility=hidden" : "x-m.*" >/dev/null
+	elif expr "x-fvisibility=hidden" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -fvisibility=hidden"
 	else
@@ -4171,13 +4171,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -xldscope=hidden option" >&5
 $as_echo_n "checking whether the compiler supports the -xldscope=hidden option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-xldscope=hidden" : "x-W.*" >/dev/null
+	if expr "x-xldscope=hidden" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -xldscope=hidden"
-	elif expr "x-xldscope=hidden" : "x-f.*" >/dev/null
+	elif expr "x-xldscope=hidden" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -xldscope=hidden"
-	elif expr "x-xldscope=hidden" : "x-m.*" >/dev/null
+	elif expr "x-xldscope=hidden" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -xldscope=hidden"
 	else
@@ -4940,8 +4940,8 @@ case `"$ac_path_GREP" --version 2>&1` in
     mv "conftest.tmp" "conftest.in"
     cp "conftest.in" "conftest.nl"
     $as_echo 'GREP' >> "conftest.nl"
-    "$ac_path_GREP" -e 'GREP$' -e '-(cannot match)-' < "conftest.nl" >"conftest.out" 2>/dev/null || break
-    diff "conftest.out" "conftest.nl" >/dev/null 2>&1 || break
+    "$ac_path_GREP" -e 'GREP$' -e '-(cannot match)-' < "conftest.nl" >"conftest.out" 2>/dev/nullptr || break
+    diff "conftest.out" "conftest.nl" >/dev/nullptr 2>&1 || break
     as_fn_arith $ac_count + 1 && ac_count=$as_val
     if test $ac_count -gt ${ac_path_GREP_max-0}; then
       # Best one so far, save it but keep looking for a better one
@@ -4977,7 +4977,7 @@ $as_echo_n "checking for egrep... " >&6; }
 if ${ac_cv_path_EGREP+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  if echo a | $GREP -E '(a|b)' >/dev/null 2>&1
+  if echo a | $GREP -E '(a|b)' >/dev/nullptr 2>&1
    then ac_cv_path_EGREP="$GREP -E"
    else
      if test -z "$EGREP"; then
@@ -5006,8 +5006,8 @@ case `"$ac_path_EGREP" --version 2>&1` in
     mv "conftest.tmp" "conftest.in"
     cp "conftest.in" "conftest.nl"
     $as_echo 'EGREP' >> "conftest.nl"
-    "$ac_path_EGREP" 'EGREP$' < "conftest.nl" >"conftest.out" 2>/dev/null || break
-    diff "conftest.out" "conftest.nl" >/dev/null 2>&1 || break
+    "$ac_path_EGREP" 'EGREP$' < "conftest.nl" >"conftest.out" 2>/dev/nullptr || break
+    diff "conftest.out" "conftest.nl" >/dev/nullptr 2>&1 || break
     as_fn_arith $ac_count + 1 && ac_count=$as_val
     if test $ac_count -gt ${ac_path_EGREP_max-0}; then
       # Best one so far, save it but keep looking for a better one
@@ -5074,7 +5074,7 @@ if test $ac_cv_header_stdc = yes; then
 
 _ACEOF
 if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "memchr" >/dev/null 2>&1; then :
+  $EGREP "memchr" >/dev/nullptr 2>&1; then :
 
 else
   ac_cv_header_stdc=no
@@ -5091,7 +5091,7 @@ if test $ac_cv_header_stdc = yes; then
 
 _ACEOF
 if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "free" >/dev/null 2>&1; then :
+  $EGREP "free" >/dev/nullptr 2>&1; then :
 
 else
   ac_cv_header_stdc=no
@@ -5828,7 +5828,7 @@ main ()
 			struct netent netent_buf;
 			char buf[1024];
 
-			return getnetbyname_r((const char *)0, &netent_buf, buf, (int)sizeof buf) != NULL;
+			return getnetbyname_r((const char *)0, &netent_buf, buf, (int)sizeof buf) != nullptr;
 
   ;
   return 0;
@@ -5954,7 +5954,7 @@ main ()
 			struct protoent protoent_buf;
 			char buf[1024];
 
-			return getprotobyname_r((const char *)0, &protoent_buf, buf, (int)sizeof buf) != NULL;
+			return getprotobyname_r((const char *)0, &protoent_buf, buf, (int)sizeof buf) != nullptr;
 
   ;
   return 0;
@@ -6556,7 +6556,7 @@ done
 		case "$host_os" in
 
 		freebsd*|darwin*|linux*)
-			VALGRINDTEST_SRC=valgrindtest.c
+			VALGRINDTEST_SRC=valgrindtest.cpp
 			;;
 		esac
 	elif test "$ac_cv_header_linux_socket_h" = yes; then
@@ -6564,7 +6564,7 @@ done
 		# No prizes for guessing this one.
 		#
 		V_PCAP=linux
-		VALGRINDTEST_SRC=valgrindtest.c
+		VALGRINDTEST_SRC=valgrindtest.cpp
 	elif test "$ac_cv_header_net_pfilt_h" = yes; then
 	        #
 	        # DEC OSF/1, Digital UNIX, Tru64 UNIX
@@ -6604,7 +6604,7 @@ done
 		#
 		# Nothing we support.
 		#
-		V_PCAP=null
+		V_PCAP=nullptr
 		{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: cannot determine packet capture interface" >&5
 $as_echo "$as_me: WARNING: cannot determine packet capture interface" >&2;}
 		{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: (see the INSTALL doc for more info)" >&5
@@ -6695,9 +6695,9 @@ if test "x$ac_cv_lib_dlpi_dlpi_walk" = xyes; then :
 
 			#
 			# Capture module plus common code needed for
-			# common functions used by pcap-[dlpi,libdlpi].c
+			# common functions used by pcap-[dlpi,libdlpi].cpp
 			#
-			PLATFORM_C_SRC="pcap-libdlpi.c dlpisubs.c"
+			PLATFORM_C_SRC="pcap-libdlpi.cpp dlpisubs.cpp"
 
 $as_echo "#define HAVE_LIBDLPI 1" >>confdefs.h
 
@@ -6708,9 +6708,9 @@ else
 
 			#
 			# Capture module plus common code needed for
-			# common functions used by pcap-[dlpi,libdlpi].c
+			# common functions used by pcap-[dlpi,libdlpi].cpp
 			#
-			PLATFORM_C_SRC="pcap-dlpi.c dlpisubs.c"
+			PLATFORM_C_SRC="pcap-dlpi.cpp dlpisubs.cpp"
 
 fi
 
@@ -6780,7 +6780,7 @@ enet)
 	#
 	# Capture module
 	#
- 	PLATFORM_C_SRC="pcap-enet.c"
+ 	PLATFORM_C_SRC="pcap-enet.cpp"
 	;;
 
 haiku)
@@ -6811,7 +6811,7 @@ linux)
 	#
 	# Capture module
 	#
- 	PLATFORM_C_SRC="pcap-linux.c"
+ 	PLATFORM_C_SRC="pcap-linux.cpp"
 
 	#
 	# Do we have the wireless extensions?
@@ -7084,7 +7084,7 @@ bpf)
 	#
 	# Capture module
 	#
- 	PLATFORM_C_SRC="pcap-bpf.c"
+ 	PLATFORM_C_SRC="pcap-bpf.cpp"
 
 	#
 	# Check whether we have the *BSD-style ioctls.
@@ -7129,21 +7129,21 @@ pf)
 	#
 	# Capture module
 	#
- 	PLATFORM_C_SRC="pcap-pf.c"
+ 	PLATFORM_C_SRC="pcap-pf.cpp"
 	;;
 
 snit)
 	#
 	# Capture module
 	#
- 	PLATFORM_C_SRC="pcap-snit.c"
+ 	PLATFORM_C_SRC="pcap-snit.cpp"
 	;;
 
 snoop)
 	#
 	# Capture module
 	#
- 	PLATFORM_C_SRC="pcap-snoop.c"
+ 	PLATFORM_C_SRC="pcap-snoop.cpp"
 	;;
 
 dag)
@@ -7152,7 +7152,7 @@ dag)
 	# "DAG support but nothing else"
 	#
 	V_DEFS="$V_DEFS -DDAG_ONLY"
-	PLATFORM_C_SRC="pcap-dag.c"
+	PLATFORM_C_SRC="pcap-dag.cpp"
 	xxx_only=yes
 	;;
 
@@ -7162,7 +7162,7 @@ dpdk)
 	# "DPDK support but nothing else"
 	#
 	V_DEFS="$V_DEFS -DDPDK_ONLY"
-	PLATFORM_C_SRC="pcap-dpdk.c"
+	PLATFORM_C_SRC="pcap-dpdk.cpp"
 	xxx_only=yes
 	;;
 
@@ -7172,7 +7172,7 @@ septel)
 	# "Septel support but nothing else"
 	#
 	V_DEFS="$V_DEFS -DSEPTEL_ONLY"
-	PLATFORM_C_SRC="pcap-septel.c"
+	PLATFORM_C_SRC="pcap-septel.cpp"
 	xxx_only=yes
 	;;
 
@@ -7182,15 +7182,15 @@ snf)
 	# "SNF support but nothing else"
 	#
 	V_DEFS="$V_DEFS -DSNF_ONLY"
-	PLATFORM_C_SRC="pcap-snf.c"
+	PLATFORM_C_SRC="pcap-snf.cpp"
 	xxx_only=yes
 	;;
 
-null)
+nullptr)
 	#
 	# Capture module
 	#
- 	PLATFORM_C_SRC="pcap-null.c"
+ 	PLATFORM_C_SRC="pcap-nullptr.cpp"
 	;;
 
 *)
@@ -7198,7 +7198,7 @@ null)
 	;;
 esac
 
-if test "$V_PCAP" != null
+if test "$V_PCAP" != nullptr
 then
 	ac_fn_c_check_func "$LINENO" "getifaddrs" "ac_cv_func_getifaddrs"
 if test "x$ac_cv_func_getifaddrs" = xyes; then :
@@ -7214,7 +7214,7 @@ if test "x$ac_cv_header_ifaddrs_h" = xyes; then :
 		    # We have the header, so we use "getifaddrs()" to
 		    # get the list of interfaces.
 		    #
-		    PLATFORM_C_SRC="$PLATFORM_C_SRC fad-getad.c"
+		    PLATFORM_C_SRC="$PLATFORM_C_SRC fad-getad.cpp"
 
 else
 
@@ -7283,9 +7283,9 @@ fi
 		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lbl_have_siocglifconf" >&5
 $as_echo "$ac_cv_lbl_have_siocglifconf" >&6; }
 		if test $ac_cv_lbl_have_siocglifconf = yes ; then
-			PLATFORM_C_SRC="$PLATFORM_C_SRC fad-glifc.c"
+			PLATFORM_C_SRC="$PLATFORM_C_SRC fad-glifc.cpp"
 		else
-			PLATFORM_C_SRC="$PLATFORM_C_SRC fad-gifc.c"
+			PLATFORM_C_SRC="$PLATFORM_C_SRC fad-gifc.cpp"
 		fi
 
 fi
@@ -7484,7 +7484,7 @@ done
 	if test "$ac_cv_header_dagapi_h" = yes; then
 
 		if test $V_PCAP != dag ; then
-			 MODULE_C_SRC="$MODULE_C_SRC pcap-dag.c"
+			 MODULE_C_SRC="$MODULE_C_SRC pcap-dag.cpp"
 		fi
 
 		# Check for various DAG API functions.
@@ -7816,7 +7816,7 @@ $as_echo "yes ($septel_include_dir)" >&6; }
 		ADDLARCHIVEOBJS="$ADDLARCHIVEOBJS $septel_tools_dir/asciibin.o $septel_tools_dir/bit2byte.o $septel_tools_dir/confirm.o $septel_tools_dir/fmtmsg.o $septel_tools_dir/gct_unix.o $septel_tools_dir/hqueue.o $septel_tools_dir/ident.o $septel_tools_dir/mem.o $septel_tools_dir/pack.o $septel_tools_dir/parse.o $septel_tools_dir/pool.o $septel_tools_dir/sdlsig.o $septel_tools_dir/strtonum.o $septel_tools_dir/timer.o $septel_tools_dir/trace.o"
 
 		if test "$V_PCAP" != septel ; then
-			 MODULE_C_SRC="$MODULE_C_SRC pcap-septel.c"
+			 MODULE_C_SRC="$MODULE_C_SRC pcap-septel.cpp"
 		fi
 
 
@@ -7978,7 +7978,7 @@ $as_echo "yes ($snf_root)" >&6; }
 		LDFLAGS="$LDFLAGS -L$snf_lib_dir"
 
 		if test "$V_PCAP" != snf ; then
-			MODULE_C_SRC="$MODULE_C_SRC pcap-snf.c"
+			MODULE_C_SRC="$MODULE_C_SRC pcap-snf.cpp"
 		fi
 
 
@@ -8076,7 +8076,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
-		MODULE_C_SRC="$MODULE_C_SRC pcap-tc.c"
+		MODULE_C_SRC="$MODULE_C_SRC pcap-tc.cpp"
 		V_INCLS="$V_INCLS $TURBOCAP_CFLAGS"
 		LIBS="$LIBS $TURBOCAP_LIBS -lTcApi -lpthread -lstdc++"
 
@@ -8363,7 +8363,7 @@ $as_echo "$as_me: OpenSSL not found" >&6;}
 
 $as_echo "#define ENABLE_REMOTE /**/" >>confdefs.h
 
-	REMOTE_C_SRC="$REMOTE_C_SRC pcap-new.c pcap-rpcap.c rpcap-protocol.c sockutils.c sslutils.c"
+	REMOTE_C_SRC="$REMOTE_C_SRC pcap-new.cpp pcap-rpcap.cpp rpcap-protocol.cpp sockutils.cpp sslutils.cpp"
 	BUILD_RPCAPD=build-rpcapd
 	INSTALL_RPCAPD=install-rpcapd
 	;;
@@ -8486,9 +8486,9 @@ if ${ac_cv_prog_lex_root+:} false; then :
   $as_echo_n "(cached) " >&6
 else
 
-if test -f lex.yy.c; then
+if test -f lex.yy.cpp; then
   ac_cv_prog_lex_root=lex.yy
-elif test -f lexyy.c; then
+elif test -f lexyy.cpp; then
   ac_cv_prog_lex_root=lexyy
 else
   as_fn_error $? "cannot find output from $LEX; giving up" "$LINENO" 5
@@ -8511,7 +8511,7 @@ else
       LIBS="$ac_lib $ac_save_LIBS"
       cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-`cat $LEX_OUTPUT_ROOT.c`
+`cat $LEX_OUTPUT_ROOT.cpp`
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
   ac_cv_lib_lex=$ac_lib
@@ -8544,7 +8544,7 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
   #define YYTEXT_POINTER 1
-`cat $LEX_OUTPUT_ROOT.c`
+`cat $LEX_OUTPUT_ROOT.cpp`
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
   ac_cv_prog_lex_yytext_pointer=yes
@@ -8561,7 +8561,7 @@ if test $ac_cv_prog_lex_yytext_pointer = yes; then
 $as_echo "#define YYTEXT_POINTER 1" >>confdefs.h
 
 fi
-rm -f conftest.l $LEX_OUTPUT_ROOT.c
+rm -f conftest.l $LEX_OUTPUT_ROOT.cpp
 
 fi
 if test "$LEX" = ":"; then
@@ -8577,7 +8577,7 @@ $as_echo_n "checking for capable lex... " >&6; }
 if ${tcpdump_cv_capable_lex+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  if $LEX -P pcap_ --header-file=/dev/null --nounput -t $srcdir/scanner.l > /dev/null 2>&1; then
+  if $LEX -P pcap_ --header-file=/dev/nullptr --nounput -t $srcdir/scanner.l > /dev/nullptr 2>&1; then
 	    tcpdump_cv_capable_lex=yes
 	else
 	    tcpdump_cv_capable_lex=insufficient
@@ -8646,7 +8646,7 @@ $as_echo_n "checking for capable yacc/bison... " >&6; }
 if ${tcpdump_cv_capable_yacc+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  if $YACC -p pcap_ -o /dev/null $srcdir/grammar.y >/dev/null 2>&1; then
+  if $YACC -p pcap_ -o /dev/nullptr $srcdir/grammar.y >/dev/nullptr 2>&1; then
 	    tcpdump_cv_capable_yacc=yes
 	else
 	    tcpdump_cv_capable_yacc=insufficient
@@ -9325,13 +9325,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -W option" >&5
 $as_echo_n "checking whether the compiler supports the -W option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-W" : "x-W.*" >/dev/null
+	if expr "x-W" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -W"
-	elif expr "x-W" : "x-f.*" >/dev/null
+	elif expr "x-W" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -W"
-	elif expr "x-W" : "x-m.*" >/dev/null
+	elif expr "x-W" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -W"
 	else
@@ -9407,13 +9407,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -Wall option" >&5
 $as_echo_n "checking whether the compiler supports the -Wall option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-Wall" : "x-W.*" >/dev/null
+	if expr "x-Wall" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -Wall"
-	elif expr "x-Wall" : "x-f.*" >/dev/null
+	elif expr "x-Wall" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wall"
-	elif expr "x-Wall" : "x-m.*" >/dev/null
+	elif expr "x-Wall" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wall"
 	else
@@ -9489,13 +9489,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -Wcomma option" >&5
 $as_echo_n "checking whether the compiler supports the -Wcomma option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-Wcomma" : "x-W.*" >/dev/null
+	if expr "x-Wcomma" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -Wcomma"
-	elif expr "x-Wcomma" : "x-f.*" >/dev/null
+	elif expr "x-Wcomma" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wcomma"
-	elif expr "x-Wcomma" : "x-m.*" >/dev/null
+	elif expr "x-Wcomma" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wcomma"
 	else
@@ -9571,13 +9571,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -Wdocumentation option" >&5
 $as_echo_n "checking whether the compiler supports the -Wdocumentation option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-Wdocumentation" : "x-W.*" >/dev/null
+	if expr "x-Wdocumentation" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -Wdocumentation"
-	elif expr "x-Wdocumentation" : "x-f.*" >/dev/null
+	elif expr "x-Wdocumentation" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wdocumentation"
-	elif expr "x-Wdocumentation" : "x-m.*" >/dev/null
+	elif expr "x-Wdocumentation" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wdocumentation"
 	else
@@ -9653,13 +9653,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -Wformat-nonliteral option" >&5
 $as_echo_n "checking whether the compiler supports the -Wformat-nonliteral option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-Wformat-nonliteral" : "x-W.*" >/dev/null
+	if expr "x-Wformat-nonliteral" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -Wformat-nonliteral"
-	elif expr "x-Wformat-nonliteral" : "x-f.*" >/dev/null
+	elif expr "x-Wformat-nonliteral" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wformat-nonliteral"
-	elif expr "x-Wformat-nonliteral" : "x-m.*" >/dev/null
+	elif expr "x-Wformat-nonliteral" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wformat-nonliteral"
 	else
@@ -9735,13 +9735,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -Wmissing-noreturn option" >&5
 $as_echo_n "checking whether the compiler supports the -Wmissing-noreturn option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-Wmissing-noreturn" : "x-W.*" >/dev/null
+	if expr "x-Wmissing-noreturn" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -Wmissing-noreturn"
-	elif expr "x-Wmissing-noreturn" : "x-f.*" >/dev/null
+	elif expr "x-Wmissing-noreturn" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wmissing-noreturn"
-	elif expr "x-Wmissing-noreturn" : "x-m.*" >/dev/null
+	elif expr "x-Wmissing-noreturn" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wmissing-noreturn"
 	else
@@ -9817,13 +9817,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -Wmissing-prototypes option" >&5
 $as_echo_n "checking whether the compiler supports the -Wmissing-prototypes option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-Wmissing-prototypes" : "x-W.*" >/dev/null
+	if expr "x-Wmissing-prototypes" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -Wmissing-prototypes"
-	elif expr "x-Wmissing-prototypes" : "x-f.*" >/dev/null
+	elif expr "x-Wmissing-prototypes" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wmissing-prototypes"
-	elif expr "x-Wmissing-prototypes" : "x-m.*" >/dev/null
+	elif expr "x-Wmissing-prototypes" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wmissing-prototypes"
 	else
@@ -9899,13 +9899,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -Wmissing-variable-declarations option" >&5
 $as_echo_n "checking whether the compiler supports the -Wmissing-variable-declarations option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-Wmissing-variable-declarations" : "x-W.*" >/dev/null
+	if expr "x-Wmissing-variable-declarations" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -Wmissing-variable-declarations"
-	elif expr "x-Wmissing-variable-declarations" : "x-f.*" >/dev/null
+	elif expr "x-Wmissing-variable-declarations" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wmissing-variable-declarations"
-	elif expr "x-Wmissing-variable-declarations" : "x-m.*" >/dev/null
+	elif expr "x-Wmissing-variable-declarations" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wmissing-variable-declarations"
 	else
@@ -9981,13 +9981,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -Wpointer-arith option" >&5
 $as_echo_n "checking whether the compiler supports the -Wpointer-arith option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-Wpointer-arith" : "x-W.*" >/dev/null
+	if expr "x-Wpointer-arith" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -Wpointer-arith"
-	elif expr "x-Wpointer-arith" : "x-f.*" >/dev/null
+	elif expr "x-Wpointer-arith" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wpointer-arith"
-	elif expr "x-Wpointer-arith" : "x-m.*" >/dev/null
+	elif expr "x-Wpointer-arith" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wpointer-arith"
 	else
@@ -10063,13 +10063,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -Wpointer-sign option" >&5
 $as_echo_n "checking whether the compiler supports the -Wpointer-sign option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-Wpointer-sign" : "x-W.*" >/dev/null
+	if expr "x-Wpointer-sign" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -Wpointer-sign"
-	elif expr "x-Wpointer-sign" : "x-f.*" >/dev/null
+	elif expr "x-Wpointer-sign" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wpointer-sign"
-	elif expr "x-Wpointer-sign" : "x-m.*" >/dev/null
+	elif expr "x-Wpointer-sign" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wpointer-sign"
 	else
@@ -10145,13 +10145,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -Wshadow option" >&5
 $as_echo_n "checking whether the compiler supports the -Wshadow option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-Wshadow" : "x-W.*" >/dev/null
+	if expr "x-Wshadow" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -Wshadow"
-	elif expr "x-Wshadow" : "x-f.*" >/dev/null
+	elif expr "x-Wshadow" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wshadow"
-	elif expr "x-Wshadow" : "x-m.*" >/dev/null
+	elif expr "x-Wshadow" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wshadow"
 	else
@@ -10227,13 +10227,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -Wsign-compare option" >&5
 $as_echo_n "checking whether the compiler supports the -Wsign-compare option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-Wsign-compare" : "x-W.*" >/dev/null
+	if expr "x-Wsign-compare" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -Wsign-compare"
-	elif expr "x-Wsign-compare" : "x-f.*" >/dev/null
+	elif expr "x-Wsign-compare" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wsign-compare"
-	elif expr "x-Wsign-compare" : "x-m.*" >/dev/null
+	elif expr "x-Wsign-compare" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wsign-compare"
 	else
@@ -10309,13 +10309,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -Wstrict-prototypes option" >&5
 $as_echo_n "checking whether the compiler supports the -Wstrict-prototypes option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-Wstrict-prototypes" : "x-W.*" >/dev/null
+	if expr "x-Wstrict-prototypes" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -Wstrict-prototypes"
-	elif expr "x-Wstrict-prototypes" : "x-f.*" >/dev/null
+	elif expr "x-Wstrict-prototypes" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wstrict-prototypes"
-	elif expr "x-Wstrict-prototypes" : "x-m.*" >/dev/null
+	elif expr "x-Wstrict-prototypes" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wstrict-prototypes"
 	else
@@ -10391,13 +10391,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -Wunused-parameter option" >&5
 $as_echo_n "checking whether the compiler supports the -Wunused-parameter option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-Wunused-parameter" : "x-W.*" >/dev/null
+	if expr "x-Wunused-parameter" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -Wunused-parameter"
-	elif expr "x-Wunused-parameter" : "x-f.*" >/dev/null
+	elif expr "x-Wunused-parameter" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wunused-parameter"
-	elif expr "x-Wunused-parameter" : "x-m.*" >/dev/null
+	elif expr "x-Wunused-parameter" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wunused-parameter"
 	else
@@ -10473,13 +10473,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -Wused-but-marked-unused option" >&5
 $as_echo_n "checking whether the compiler supports the -Wused-but-marked-unused option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-Wused-but-marked-unused" : "x-W.*" >/dev/null
+	if expr "x-Wused-but-marked-unused" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -Wused-but-marked-unused"
-	elif expr "x-Wused-but-marked-unused" : "x-f.*" >/dev/null
+	elif expr "x-Wused-but-marked-unused" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wused-but-marked-unused"
-	elif expr "x-Wused-but-marked-unused" : "x-m.*" >/dev/null
+	elif expr "x-Wused-but-marked-unused" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wused-but-marked-unused"
 	else
@@ -10582,13 +10582,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -Wunreachable-code option" >&5
 $as_echo_n "checking whether the compiler supports the -Wunreachable-code option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-Wunreachable-code" : "x-W.*" >/dev/null
+	if expr "x-Wunreachable-code" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -Wunreachable-code"
-	elif expr "x-Wunreachable-code" : "x-f.*" >/dev/null
+	elif expr "x-Wunreachable-code" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wunreachable-code"
-	elif expr "x-Wunreachable-code" : "x-m.*" >/dev/null
+	elif expr "x-Wunreachable-code" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wunreachable-code"
 	else
@@ -10671,13 +10671,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the compiler supports the -Wshorten-64-to-32 option" >&5
 $as_echo_n "checking whether the compiler supports the -Wshorten-64-to-32 option... " >&6; }
 	save_CFLAGS="$CFLAGS"
-	if expr "x-Wshorten-64-to-32" : "x-W.*" >/dev/null
+	if expr "x-Wshorten-64-to-32" : "x-W.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS $ac_lbl_unknown_warning_option_error -Wshorten-64-to-32"
-	elif expr "x-Wshorten-64-to-32" : "x-f.*" >/dev/null
+	elif expr "x-Wshorten-64-to-32" : "x-f.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wshorten-64-to-32"
-	elif expr "x-Wshorten-64-to-32" : "x-m.*" >/dev/null
+	elif expr "x-Wshorten-64-to-32" : "x-m.*" >/dev/nullptr
 	then
 	    CFLAGS="$CFLAGS -Werror -Wshorten-64-to-32"
 	else
@@ -10821,8 +10821,8 @@ $as_echo_n "checking whether the compiler supports generating dependencies... " 
 /* end confdefs.h.  */
 int main(void) { return 0; }
 _ACEOF
-		if { { $as_echo "$as_me:${as_lineno-$LINENO}: eval \"\$CC \$ac_lbl_dependency_flag conftest.c >/dev/null 2>&1\""; } >&5
-  (eval "$CC $ac_lbl_dependency_flag conftest.c >/dev/null 2>&1") 2>&5
+		if { { $as_echo "$as_me:${as_lineno-$LINENO}: eval \"\$CC \$ac_lbl_dependency_flag conftest.cpp >/dev/nullptr 2>&1\""; } >&5
+  (eval "$CC $ac_lbl_dependency_flag conftest.cpp >/dev/nullptr 2>&1") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
@@ -10991,10 +10991,10 @@ $as_echo_n "checking for Linux usbmon USB sniffing support... " >&6; }
 
 $as_echo "#define PCAP_SUPPORT_LINUX_USBMON 1" >>confdefs.h
 
-      MODULE_C_SRC="$MODULE_C_SRC pcap-usb-linux.c"
+      MODULE_C_SRC="$MODULE_C_SRC pcap-usb-linux.cpp"
       { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-      ac_usb_dev_name=`udevinfo -q name -p /sys/class/usb_device/usbmon 2>/dev/null`
+      ac_usb_dev_name=`udevinfo -q name -p /sys/class/usb_device/usbmon 2>/dev/nullptr`
       if test $? -ne 0 ; then
         ac_usb_dev_name="usbmon"
       fi
@@ -11130,7 +11130,7 @@ $as_echo "$ac_cv_netfilter_can_compile" >&6; }
 
 $as_echo "#define PCAP_SUPPORT_NETFILTER 1" >>confdefs.h
 
-      MODULE_C_SRC="$MODULE_C_SRC pcap-netfilter-linux.c"
+      MODULE_C_SRC="$MODULE_C_SRC pcap-netfilter-linux.cpp"
     fi
     ;;
   esac
@@ -11186,7 +11186,7 @@ $as_echo "$ac_cv_net_netmap_user_can_compile" >&6; }
 
 $as_echo "#define PCAP_SUPPORT_NETMAP 1" >>confdefs.h
 
-	    MODULE_C_SRC="$MODULE_C_SRC pcap-netmap.c"
+	    MODULE_C_SRC="$MODULE_C_SRC pcap-netmap.cpp"
 	fi
 
 fi
@@ -11330,7 +11330,7 @@ done
 $as_echo "#define PCAP_SUPPORT_DPDK 1" >>confdefs.h
 
 		if test $V_PCAP != dpdk ; then
-			MODULE_C_SRC="$MODULE_C_SRC pcap-dpdk.c"
+			MODULE_C_SRC="$MODULE_C_SRC pcap-dpdk.cpp"
 		fi
 	else
 		if test "$V_PCAP" = dpdk; then
@@ -11374,7 +11374,7 @@ if test "x$ac_cv_header_bluetooth_bluetooth_h" = xyes; then :
 
 $as_echo "#define PCAP_SUPPORT_BT 1" >>confdefs.h
 
-			MODULE_C_SRC="$MODULE_C_SRC pcap-bt-linux.c"
+			MODULE_C_SRC="$MODULE_C_SRC pcap-bt-linux.cpp"
 			{ $as_echo "$as_me:${as_lineno-$LINENO}: Bluetooth sniffing is supported" >&5
 $as_echo "$as_me: Bluetooth sniffing is supported" >&6;}
 			ac_lbl_bluetooth_available=yes
@@ -11426,7 +11426,7 @@ $as_echo "yes" >&6; }
 
 $as_echo "#define PCAP_SUPPORT_BT_MONITOR /**/" >>confdefs.h
 
-					    MODULE_C_SRC="$MODULE_C_SRC pcap-bt-monitor-linux.c"
+					    MODULE_C_SRC="$MODULE_C_SRC pcap-bt-monitor-linux.cpp"
 
 else
 
@@ -11542,7 +11542,7 @@ $as_echo_n "checking whether the D-Bus library defines dbus_connection_read_writ
 int
 main ()
 {
-return dbus_connection_read_write(NULL, 0);
+return dbus_connection_read_write(nullptr, 0);
   ;
   return 0;
 }
@@ -11554,7 +11554,7 @@ $as_echo "yes" >&6; }
 
 $as_echo "#define PCAP_SUPPORT_DBUS 1" >>confdefs.h
 
-				MODULE_C_SRC="$MODULE_C_SRC pcap-dbus.c"
+				MODULE_C_SRC="$MODULE_C_SRC pcap-dbus.cpp"
 				V_INCLS="$V_INCLS $DBUS_CFLAGS"
 
 else
@@ -11659,8 +11659,8 @@ int
 main ()
 {
 
-					(void) ibv_create_flow((struct ibv_qp *) NULL,
-							       (struct ibv_flow_attr *) NULL);
+					(void) ibv_create_flow((struct ibv_qp *) nullptr,
+							       (struct ibv_flow_attr *) nullptr);
 
   ;
   return 0;
@@ -11673,7 +11673,7 @@ $as_echo "yes" >&6; }
 
 $as_echo "#define PCAP_SUPPORT_RDMASNIFF /**/" >>confdefs.h
 
-					MODULE_C_SRC="$MODULE_C_SRC pcap-rdmasniff.c"
+					MODULE_C_SRC="$MODULE_C_SRC pcap-rdmasniff.cpp"
 					LIBS="-libverbs $LIBS"
 
 else
@@ -11734,11 +11734,11 @@ case $as_dir/ in #((
       for ac_exec_ext in '' $ac_executable_extensions; do
 	if as_fn_executable_p "$as_dir/$ac_prog$ac_exec_ext"; then
 	  if test $ac_prog = install &&
-	    grep dspmsg "$as_dir/$ac_prog$ac_exec_ext" >/dev/null 2>&1; then
+	    grep dspmsg "$as_dir/$ac_prog$ac_exec_ext" >/dev/nullptr 2>&1; then
 	    # AIX install.  It has an incompatible calling convention.
 	    :
 	  elif test $ac_prog = install &&
-	    grep pwplus "$as_dir/$ac_prog$ac_exec_ext" >/dev/null 2>&1; then
+	    grep pwplus "$as_dir/$ac_prog$ac_exec_ext" >/dev/nullptr 2>&1; then
 	    # program-specific install script used by HP pwplus--don't use.
 	    :
 	  else
@@ -11858,9 +11858,9 @@ $as_echo "$as_me: WARNING: cache variable $ac_var contains a newline" >&2;} ;;
      t end
      s/^\([^=]*\)=\(.*\)$/\1=${\1=\2}/
      :end' >>confcache
-if diff "$cache_file" confcache >/dev/null 2>&1; then :; else
+if diff "$cache_file" confcache >/dev/nullptr 2>&1; then :; else
   if test -w "$cache_file"; then
-    if test "x$cache_file" != "x/dev/null"; then
+    if test "x$cache_file" != "x/dev/nullptr"; then
       { $as_echo "$as_me:${as_lineno-$LINENO}: updating cache $cache_file" >&5
 $as_echo "$as_me: updating cache $cache_file" >&6;}
       if test ! -f "$cache_file" || test -h "$cache_file"; then
@@ -11934,7 +11934,7 @@ cat >>$CONFIG_STATUS <<\_ASEOF || as_write_fail=1
 
 # Be more Bourne compatible
 DUALCASE=1; export DUALCASE # for MKS sh
-if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then :
+if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/nullptr 2>&1; then :
   emulate sh
   NULLCMD=:
   # Pre-4.2 versions of Zsh do word splitting on ${1+"$@"}, which
@@ -11942,7 +11942,7 @@ if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then :
   alias -g '${1+"$@"}'='"$@"'
   setopt NO_GLOB_SUBST
 else
-  case `(set -o) 2>/dev/null` in #(
+  case `(set -o) 2>/dev/nullptr` in #(
   *posix*) :
     set -o posix ;; #(
   *) :
@@ -11961,14 +11961,14 @@ as_echo=$as_echo$as_echo$as_echo$as_echo$as_echo$as_echo
 # Prefer a ksh shell builtin over an external printf program on Solaris,
 # but without wasting forks for bash or zsh.
 if test -z "$BASH_VERSION$ZSH_VERSION" \
-    && (test "X`print -r -- $as_echo`" = "X$as_echo") 2>/dev/null; then
+    && (test "X`print -r -- $as_echo`" = "X$as_echo") 2>/dev/nullptr; then
   as_echo='print -r --'
   as_echo_n='print -rn --'
-elif (test "X`printf %s $as_echo`" = "X$as_echo") 2>/dev/null; then
+elif (test "X`printf %s $as_echo`" = "X$as_echo") 2>/dev/nullptr; then
   as_echo='printf %s\n'
   as_echo_n='printf %s'
 else
-  if test "X`(/usr/ucb/echo -n -n $as_echo) 2>/dev/null`" = "X-n $as_echo"; then
+  if test "X`(/usr/ucb/echo -n -n $as_echo) 2>/dev/nullptr`" = "X-n $as_echo"; then
     as_echo_body='eval /usr/ucb/echo -n "$1$as_nl"'
     as_echo_n='/usr/ucb/echo -n'
   else
@@ -11992,8 +11992,8 @@ fi
 # The user is always right.
 if test "${PATH_SEPARATOR+set}" != set; then
   PATH_SEPARATOR=:
-  (PATH='/bin;/bin'; FPATH=$PATH; sh -c :) >/dev/null 2>&1 && {
-    (PATH='/bin:/bin'; FPATH=$PATH; sh -c :) >/dev/null 2>&1 ||
+  (PATH='/bin;/bin'; FPATH=$PATH; sh -c :) >/dev/nullptr 2>&1 && {
+    (PATH='/bin:/bin'; FPATH=$PATH; sh -c :) >/dev/nullptr 2>&1 ||
       PATH_SEPARATOR=';'
   }
 fi
@@ -12037,7 +12037,7 @@ fi
 # trigger a bug in pdksh 5.2.14.
 for as_var in BASH_ENV ENV MAIL MAILPATH
 do eval test x\${$as_var+set} = xset \
-  && ( (unset $as_var) || exit 1) >/dev/null 2>&1 && unset $as_var || :
+  && ( (unset $as_var) || exit 1) >/dev/nullptr 2>&1 && unset $as_var || :
 done
 PS1='$ '
 PS2='> '
@@ -12050,7 +12050,7 @@ LANGUAGE=C
 export LANGUAGE
 
 # CDPATH.
-(unset CDPATH) >/dev/null 2>&1 && unset CDPATH
+(unset CDPATH) >/dev/nullptr 2>&1 && unset CDPATH
 
 
 # as_fn_error STATUS ERROR [LINENO LOG_FD]
@@ -12102,7 +12102,7 @@ as_unset=as_fn_unset
 # advantage of any shell optimizations that allow amortized linear growth over
 # repeated appends, instead of the typical quadratic growth present in naive
 # implementations.
-if (eval "as_var=1; as_var+=2; test x\$as_var = x12") 2>/dev/null; then :
+if (eval "as_var=1; as_var+=2; test x\$as_var = x12") 2>/dev/nullptr; then :
   eval 'as_fn_append ()
   {
     eval $1+=\$2
@@ -12119,7 +12119,7 @@ fi # as_fn_append
 # Perform arithmetic evaluation on the ARGs, and store the result in the
 # global $as_val. Take advantage of shells that can avoid forks. The arguments
 # must be portable across $(()) and expr.
-if (eval "test \$(( 1 + 1 )) = 2") 2>/dev/null; then :
+if (eval "test \$(( 1 + 1 )) = 2") 2>/dev/nullptr; then :
   eval 'as_fn_arith ()
   {
     as_val=$(( $* ))
@@ -12132,20 +12132,20 @@ else
 fi # as_fn_arith
 
 
-if expr a : '\(a\)' >/dev/null 2>&1 &&
+if expr a : '\(a\)' >/dev/nullptr 2>&1 &&
    test "X`expr 00001 : '.*\(...\)'`" = X001; then
   as_expr=expr
 else
   as_expr=false
 fi
 
-if (basename -- /) >/dev/null 2>&1 && test "X`basename -- / 2>&1`" = "X/"; then
+if (basename -- /) >/dev/nullptr 2>&1 && test "X`basename -- / 2>&1`" = "X/"; then
   as_basename=basename
 else
   as_basename=false
 fi
 
-if (as_dir=`dirname -- /` && test "X$as_dir" = X/) >/dev/null 2>&1; then
+if (as_dir=`dirname -- /` && test "X$as_dir" = X/) >/dev/nullptr 2>&1; then
   as_dirname=dirname
 else
   as_dirname=false
@@ -12154,7 +12154,7 @@ fi
 as_me=`$as_basename -- "$0" ||
 $as_expr X/"$0" : '.*/\([^/][^/]*\)/*$' \| \
 	 X"$0" : 'X\(//\)$' \| \
-	 X"$0" : 'X\(/\)' \| . 2>/dev/null ||
+	 X"$0" : 'X\(/\)' \| . 2>/dev/nullptr ||
 $as_echo X/"$0" |
     sed '/^.*\/\([^/][^/]*\)\/*$/{
 	    s//\1/
@@ -12183,7 +12183,7 @@ case `echo -n x` in #(((((
   case `echo 'xy\c'` in
   *c*) ECHO_T='	';;	# ECHO_T is single tab character.
   xy)  ECHO_C='\c';;
-  *)   echo `echo ksh88 bug on AIX 6.1` > /dev/null
+  *)   echo `echo ksh88 bug on AIX 6.1` > /dev/nullptr
        ECHO_T='	';;
   esac;;
 *)
@@ -12195,18 +12195,18 @@ if test -d conf$$.dir; then
   rm -f conf$$.dir/conf$$.file
 else
   rm -f conf$$.dir
-  mkdir conf$$.dir 2>/dev/null
+  mkdir conf$$.dir 2>/dev/nullptr
 fi
-if (echo >conf$$.file) 2>/dev/null; then
-  if ln -s conf$$.file conf$$ 2>/dev/null; then
+if (echo >conf$$.file) 2>/dev/nullptr; then
+  if ln -s conf$$.file conf$$ 2>/dev/nullptr; then
     as_ln_s='ln -s'
     # ... but there are two gotchas:
     # 1) On MSYS, both `ln -s file dir' and `ln file dir' fail.
     # 2) DJGPP < 2.04 has no symlinks; `ln -s' creates a wrapper executable.
     # In both cases, we have to default to `cp -pR'.
-    ln -s conf$$.file conf$$.dir 2>/dev/null && test ! -f conf$$.exe ||
+    ln -s conf$$.file conf$$.dir 2>/dev/nullptr && test ! -f conf$$.exe ||
       as_ln_s='cp -pR'
-  elif ln conf$$.file conf$$ 2>/dev/null; then
+  elif ln conf$$.file conf$$ 2>/dev/nullptr; then
     as_ln_s=ln
   else
     as_ln_s='cp -pR'
@@ -12215,7 +12215,7 @@ else
   as_ln_s='cp -pR'
 fi
 rm -f conf$$ conf$$.exe conf$$.dir/conf$$.file conf$$.file
-rmdir conf$$.dir 2>/dev/null
+rmdir conf$$.dir 2>/dev/nullptr
 
 
 # as_fn_mkdir_p
@@ -12239,7 +12239,7 @@ as_fn_mkdir_p ()
 $as_expr X"$as_dir" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
 	 X"$as_dir" : 'X\(//\)[^/]' \| \
 	 X"$as_dir" : 'X\(//\)$' \| \
-	 X"$as_dir" : 'X\(/\)' \| . 2>/dev/null ||
+	 X"$as_dir" : 'X\(/\)' \| . 2>/dev/nullptr ||
 $as_echo X"$as_dir" |
     sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{
 	    s//\1/
@@ -12265,7 +12265,7 @@ $as_echo X"$as_dir" |
 
 
 } # as_fn_mkdir_p
-if mkdir -p . 2>/dev/null; then
+if mkdir -p . 2>/dev/nullptr; then
   as_mkdir_p='mkdir -p "$as_dir"'
 else
   test -d ./-p && rmdir ./-p
@@ -12311,7 +12311,7 @@ generated by GNU Autoconf 2.69.  Invocation command line was
   CONFIG_COMMANDS = $CONFIG_COMMANDS
   $ $0 $@
 
-on `(hostname || uname -n) 2>/dev/null | sed 1q`
+on `(hostname || uname -n) 2>/dev/nullptr | sed 1q`
 "
 
 _ACEOF
@@ -12454,7 +12454,7 @@ done
 ac_configure_extra_args=
 
 if $ac_cs_silent; then
-  exec 6>/dev/null
+  exec 6>/dev/nullptr
   ac_configure_extra_args="$ac_configure_extra_args --silent"
 fi
 
@@ -12552,7 +12552,7 @@ $debug ||
 # Create a (secure) tmp directory for tmp files.
 
 {
-  tmp=`(umask 077 && mktemp -d "./confXXXXXX") 2>/dev/null` &&
+  tmp=`(umask 077 && mktemp -d "./confXXXXXX") 2>/dev/nullptr` &&
   test -d "$tmp"
 }  ||
 {
@@ -12574,7 +12574,7 @@ ac_cr=`echo X | tr X '\015'`
 if test "x$ac_cr" = x; then
   eval ac_cr=\$\'\\r\'
 fi
-ac_cs_awk_cr=`$AWK 'BEGIN { print "a\rb" }' </dev/null 2>/dev/null`
+ac_cs_awk_cr=`$AWK 'BEGIN { print "a\rb" }' </dev/nullptr 2>/dev/nullptr`
 if test "$ac_cs_awk_cr" = "a${ac_cr}b"; then
   ac_cs_awk_cr='\\r'
 else
@@ -12685,7 +12685,7 @@ cat >>"\$ac_tmp/subs1.awk" <<_ACAWK &&
 _ACAWK
 _ACEOF
 cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
-if sed "s/$ac_cr//" < /dev/null > /dev/null 2>&1; then
+if sed "s/$ac_cr//" < /dev/nullptr > /dev/nullptr 2>&1; then
   sed "s/$ac_cr\$//; s/$ac_cr/$ac_cs_awk_cr/g"
 else
   cat
@@ -12901,7 +12901,7 @@ $as_echo "$as_me: creating $ac_file" >&6;}
 $as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
 	 X"$ac_file" : 'X\(//\)[^/]' \| \
 	 X"$ac_file" : 'X\(//\)$' \| \
-	 X"$ac_file" : 'X\(/\)' \| . 2>/dev/null ||
+	 X"$ac_file" : 'X\(/\)' \| . 2>/dev/nullptr ||
 $as_echo X"$ac_file" |
     sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{
 	    s//\1/
@@ -13051,7 +13051,7 @@ which seems to be undefined.  Please make sure it is defined" >&2;}
       && eval '$AWK -f "$ac_tmp/defines.awk"' "$ac_file_inputs"
     } >"$ac_tmp/config.h" \
       || as_fn_error $? "could not create $ac_file" "$LINENO" 5
-    if diff "$ac_file" "$ac_tmp/config.h" >/dev/null 2>&1; then
+    if diff "$ac_file" "$ac_tmp/config.h" >/dev/nullptr 2>&1; then
       { $as_echo "$as_me:${as_lineno-$LINENO}: $ac_file is unchanged" >&5
 $as_echo "$as_me: $ac_file is unchanged" >&6;}
     else
@@ -13095,7 +13095,7 @@ test $ac_write_fail = 0 ||
 # config.status does its own redirection, appending to config.log.
 # Unfortunately, on DOS this fails, as config.log is still kept open
 # by configure, so config.status won't be able to write to it; its
-# output is simply discarded.  So we exec the FD to /dev/null,
+# output is simply discarded.  So we exec the FD to /dev/nullptr,
 # effectively closing config.log, so it can be properly (re)opened and
 # appended to by config.status.  When coming back to configure, we
 # need to make the FD available again.
@@ -13104,7 +13104,7 @@ if test "$no_create" != yes; then
   ac_config_status_args=
   test "$silent" = yes &&
     ac_config_status_args="$ac_config_status_args --quiet"
-  exec 5>/dev/null
+  exec 5>/dev/nullptr
   $SHELL $CONFIG_STATUS $ac_config_status_args || ac_cs_success=false
   exec 5>>config.log
   # Use ||, not &&, to avoid exiting from the if with $? = 1, which

@@ -36,17 +36,17 @@
 #include <config.h>
 #endif
 
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 
 #include <net/if.h>
 
 #include <errno.h>
+#include <ifaddrs.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ifaddrs.h>
 
 #include "pcap-int.h"
 
@@ -61,20 +61,20 @@
  * and their definitions of some data structures collide.
  */
 #if (defined(linux) || defined(__Lynx__)) && defined(AF_PACKET)
-# ifdef HAVE_NETPACKET_PACKET_H
+#ifdef HAVE_NETPACKET_PACKET_H
 /* Linux distributions with newer glibc */
-#  include <netpacket/packet.h>
-# else /* HAVE_NETPACKET_PACKET_H */
+#include <netpacket/packet.h>
+#else /* HAVE_NETPACKET_PACKET_H */
 /* LynxOS, Linux distributions with older glibc */
-# ifdef __Lynx__
+#ifdef __Lynx__
 /* LynxOS */
-#  include <netpacket/if_packet.h>
-# else /* __Lynx__ */
+#include <netpacket/if_packet.h>
+#else /* __Lynx__ */
 /* Linux */
-#  include <linux/types.h>
-#  include <linux/if_packet.h>
-# endif /* __Lynx__ */
-# endif /* HAVE_NETPACKET_PACKET_H */
+#include <linux/if_packet.h>
+#include <linux/types.h>
+#endif /* __Lynx__ */
+#endif /* HAVE_NETPACKET_PACKET_H */
 #endif /* (defined(linux) || defined(__Lynx__)) && defined(AF_PACKET) */
 
 /*
@@ -102,36 +102,34 @@
  */
 #ifndef SA_LEN
 #ifdef HAVE_STRUCT_SOCKADDR_SA_LEN
-#define SA_LEN(addr)	((addr)->sa_len)
+#define SA_LEN(addr) ((addr)->sa_len)
 #else /* HAVE_STRUCT_SOCKADDR_SA_LEN */
 #ifdef HAVE_STRUCT_SOCKADDR_STORAGE
-static size_t
-get_sa_len(struct sockaddr *addr)
-{
-	switch (addr->sa_family) {
+static size_t get_sa_len(struct sockaddr *addr) {
+  switch (addr->sa_family) {
 
 #ifdef AF_INET
-	case AF_INET:
-		return (sizeof (struct sockaddr_in));
+  case AF_INET:
+    return (sizeof(struct sockaddr_in));
 #endif
 
 #ifdef AF_INET6
-	case AF_INET6:
-		return (sizeof (struct sockaddr_in6));
+  case AF_INET6:
+    return (sizeof(struct sockaddr_in6));
 #endif
 
 #if (defined(linux) || defined(__Lynx__)) && defined(AF_PACKET)
-	case AF_PACKET:
-		return (sizeof (struct sockaddr_ll));
+  case AF_PACKET:
+    return (sizeof(struct sockaddr_ll));
 #endif
 
-	default:
-		return (sizeof (struct sockaddr));
-	}
+  default:
+    return (sizeof(struct sockaddr));
+  }
 }
-#define SA_LEN(addr)	(get_sa_len(addr))
+#define SA_LEN(addr) (get_sa_len(addr))
 #else /* HAVE_STRUCT_SOCKADDR_STORAGE */
-#define SA_LEN(addr)	(sizeof (struct sockaddr))
+#define SA_LEN(addr) (sizeof(struct sockaddr))
 #endif /* HAVE_STRUCT_SOCKADDR_STORAGE */
 #endif /* HAVE_STRUCT_SOCKADDR_SA_LEN */
 #endif /* SA_LEN */
@@ -139,141 +137,135 @@ get_sa_len(struct sockaddr *addr)
 /*
  * Get a list of all interfaces that are up and that we can open.
  * Returns -1 on error, 0 otherwise.
- * The list, as returned through "alldevsp", may be null if no interfaces
+ * The list, as returned through "alldevsp", may be nullptr if no interfaces
  * could be opened.
  */
-int
-pcap_findalldevs_interfaces(pcap_if_list_t *devlistp, char *errbuf,
-    int (*check_usable)(const char *), get_if_flags_func get_flags_func)
-{
-	struct ifaddrs *ifap, *ifa;
-	struct sockaddr *addr, *netmask, *broadaddr, *dstaddr;
-	size_t addr_size, broadaddr_size, dstaddr_size;
-	int ret = 0;
-	char *p, *q;
+int pcap_findalldevs_interfaces(pcap_if_list_t *devlistp, char *errbuf,
+                                int (*check_usable)(const char *),
+                                get_if_flags_func get_flags_func) {
+  struct ifaddrs *ifap, *ifa;
+  struct sockaddr *addr, *netmask, *broadaddr, *dstaddr;
+  size_t addr_size, broadaddr_size, dstaddr_size;
+  int ret = 0;
+  char *p, *q;
 
-	/*
-	 * Get the list of interface addresses.
-	 *
-	 * Note: this won't return information about interfaces
-	 * with no addresses, so, if a platform has interfaces
-	 * with no interfaces on which traffic can be captured,
-	 * we must check for those interfaces as well (see, for
-	 * example, what's done on Linux).
-	 *
-	 * LAN interfaces will probably have link-layer
-	 * addresses; I don't know whether all implementations
-	 * of "getifaddrs()" now, or in the future, will return
-	 * those.
-	 */
-	if (getifaddrs(&ifap) != 0) {
-		pcap_fmt_errmsg_for_errno(errbuf, PCAP_ERRBUF_SIZE,
-		    errno, "getifaddrs");
-		return (-1);
-	}
-	for (ifa = ifap; ifa != NULL; ifa = ifa->ifa_next) {
-		/*
-		 * If this entry has a colon followed by a number at
-		 * the end, we assume it's a logical interface.  Those
-		 * are just the way you assign multiple IP addresses to
-		 * a real interface on Linux, so an entry for a logical
-		 * interface should be treated like the entry for the
-		 * real interface; we do that by stripping off the ":"
-		 * and the number.
-		 *
-		 * XXX - should we do this only on Linux?
-		 */
-		p = strchr(ifa->ifa_name, ':');
-		if (p != NULL) {
-			/*
-			 * We have a ":"; is it followed by a number?
-			 */
-			q = p + 1;
-			while (PCAP_ISDIGIT(*q))
-				q++;
-			if (*q == '\0') {
-				/*
-				 * All digits after the ":" until the end.
-				 * Strip off the ":" and everything after
-				 * it.
-				 */
-			       *p = '\0';
-			}
-		}
+  /*
+   * Get the list of interface addresses.
+   *
+   * Note: this won't return information about interfaces
+   * with no addresses, so, if a platform has interfaces
+   * with no interfaces on which traffic can be captured,
+   * we must check for those interfaces as well (see, for
+   * example, what's done on Linux).
+   *
+   * LAN interfaces will probably have link-layer
+   * addresses; I don't know whether all implementations
+   * of "getifaddrs()" now, or in the future, will return
+   * those.
+   */
+  if (getifaddrs(&ifap) != 0) {
+    pcap_fmt_errmsg_for_errno(errbuf, PCAP_ERRBUF_SIZE, errno, "getifaddrs");
+    return (-1);
+  }
+  for (ifa = ifap; ifa != nullptr; ifa = ifa->ifa_next) {
+    /*
+     * If this entry has a colon followed by a number at
+     * the end, we assume it's a logical interface.  Those
+     * are just the way you assign multiple IP addresses to
+     * a real interface on Linux, so an entry for a logical
+     * interface should be treated like the entry for the
+     * real interface; we do that by stripping off the ":"
+     * and the number.
+     *
+     * XXX - should we do this only on Linux?
+     */
+    p = strchr(ifa->ifa_name, ':');
+    if (p != nullptr) {
+      /*
+       * We have a ":"; is it followed by a number?
+       */
+      q = p + 1;
+      while (PCAP_ISDIGIT(*q))
+        q++;
+      if (*q == '\0') {
+        /*
+         * All digits after the ":" until the end.
+         * Strip off the ":" and everything after
+         * it.
+         */
+        *p = '\0';
+      }
+    }
 
-		/*
-		 * Can we capture on this device?
-		 */
-		if (!(*check_usable)(ifa->ifa_name)) {
-			/*
-			 * No.
-			 */
-			continue;
-		}
+    /*
+     * Can we capture on this device?
+     */
+    if (!(*check_usable)(ifa->ifa_name)) {
+      /*
+       * No.
+       */
+      continue;
+    }
 
-		/*
-		 * "ifa_addr" was apparently null on at least one
-		 * interface on some system.  Therefore, we supply
-		 * the address and netmask only if "ifa_addr" is
-		 * non-null (if there's no address, there's obviously
-		 * no netmask).
-		 */
-		if (ifa->ifa_addr != NULL) {
-			addr = ifa->ifa_addr;
-			addr_size = SA_LEN(addr);
-			netmask = ifa->ifa_netmask;
-		} else {
-			addr = NULL;
-			addr_size = 0;
-			netmask = NULL;
-		}
+    /*
+     * "ifa_addr" was apparently nullptr on at least one
+     * interface on some system.  Therefore, we supply
+     * the address and netmask only if "ifa_addr" is
+     * non-nullptr (if there's no address, there's obviously
+     * no netmask).
+     */
+    if (ifa->ifa_addr != nullptr) {
+      addr = ifa->ifa_addr;
+      addr_size = SA_LEN(addr);
+      netmask = ifa->ifa_netmask;
+    } else {
+      addr = nullptr;
+      addr_size = 0;
+      netmask = nullptr;
+    }
 
-		/*
-		 * Note that, on some platforms, ifa_broadaddr and
-		 * ifa_dstaddr could be the same field (true on at
-		 * least some versions of *BSD and macOS), so we
-		 * can't just check whether the broadcast address
-		 * is null and add it if so and check whether the
-		 * destination address is null and add it if so.
-		 *
-		 * Therefore, we must also check the IFF_BROADCAST
-		 * flag, and only add a broadcast address if it's
-		 * set, and check the IFF_POINTTOPOINT flag, and
-		 * only add a destination address if it's set (as
-		 * per man page recommendations on some of those
-		 * platforms).
-		 */
-		if (ifa->ifa_flags & IFF_BROADCAST &&
-		    ifa->ifa_broadaddr != NULL) {
-			broadaddr = ifa->ifa_broadaddr;
-			broadaddr_size = SA_LEN(broadaddr);
-		} else {
-			broadaddr = NULL;
-			broadaddr_size = 0;
-		}
-		if (ifa->ifa_flags & IFF_POINTOPOINT &&
-		    ifa->ifa_dstaddr != NULL) {
-			dstaddr = ifa->ifa_dstaddr;
-			dstaddr_size = SA_LEN(ifa->ifa_dstaddr);
-		} else {
-			dstaddr = NULL;
-			dstaddr_size = 0;
-		}
+    /*
+     * Note that, on some platforms, ifa_broadaddr and
+     * ifa_dstaddr could be the same field (true on at
+     * least some versions of *BSD and macOS), so we
+     * can't just check whether the broadcast address
+     * is nullptr and add it if so and check whether the
+     * destination address is nullptr and add it if so.
+     *
+     * Therefore, we must also check the IFF_BROADCAST
+     * flag, and only add a broadcast address if it's
+     * set, and check the IFF_POINTTOPOINT flag, and
+     * only add a destination address if it's set (as
+     * per man page recommendations on some of those
+     * platforms).
+     */
+    if (ifa->ifa_flags & IFF_BROADCAST && ifa->ifa_broadaddr != nullptr) {
+      broadaddr = ifa->ifa_broadaddr;
+      broadaddr_size = SA_LEN(broadaddr);
+    } else {
+      broadaddr = nullptr;
+      broadaddr_size = 0;
+    }
+    if (ifa->ifa_flags & IFF_POINTOPOINT && ifa->ifa_dstaddr != nullptr) {
+      dstaddr = ifa->ifa_dstaddr;
+      dstaddr_size = SA_LEN(ifa->ifa_dstaddr);
+    } else {
+      dstaddr = nullptr;
+      dstaddr_size = 0;
+    }
 
-		/*
-		 * Add information for this address to the list.
-		 */
-		if (add_addr_to_if(devlistp, ifa->ifa_name, ifa->ifa_flags,
-		    get_flags_func,
-		    addr, addr_size, netmask, addr_size,
-		    broadaddr, broadaddr_size, dstaddr, dstaddr_size,
-		    errbuf) < 0) {
-			ret = -1;
-			break;
-		}
-	}
+    /*
+     * Add information for this address to the list.
+     */
+    if (add_addr_to_if(devlistp, ifa->ifa_name, ifa->ifa_flags, get_flags_func,
+                       addr, addr_size, netmask, addr_size, broadaddr,
+                       broadaddr_size, dstaddr, dstaddr_size, errbuf) < 0) {
+      ret = -1;
+      break;
+    }
+  }
 
-	freeifaddrs(ifap);
+  freeifaddrs(ifap);
 
-	return (ret);
+  return (ret);
 }

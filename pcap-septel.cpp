@@ -1,5 +1,5 @@
 /*
- * pcap-septel.c: Packet capture interface for Intel/Septel card.
+ * pcap-septel.cpp: Packet capture interface for Intel/Septel card.
  *
  * Authors: Gilbert HOYEK (gil_hoyek@hotmail.com), Elias M. KHOURY
  * (+961 3 485243)
@@ -11,9 +11,9 @@
 
 #include <sys/param.h>
 
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 
 #include "pcap-int.h"
 
@@ -24,9 +24,9 @@
 #include <unistd.h>
 
 #include <msg.h>
+#include <pack.h>
 #include <ss7_inc.h>
 #include <sysgct.h>
-#include <pack.h>
 #include <system.h>
 
 #include "pcap-septel.h"
@@ -39,7 +39,7 @@ static int septel_setnonblock(pcap_t *p, int nonblock);
  * Private data for capturing on Septel devices.
  */
 struct pcap_septel {
-	struct pcap_stat stat;
+  struct pcap_stat stat;
 }
 
 /*
@@ -47,33 +47,35 @@ struct pcap_septel {
  *  for each of them. Returns the number of packets handled, -1 if an
  *  error occured, or -2 if we were told to break out of the loop.
  */
-static int septel_read(pcap_t *p, int cnt, pcap_handler callback, u_char *user) {
+static int
+septel_read(pcap_t *p, int cnt, pcap_handler callback, u_char *user) {
 
   struct pcap_septel *ps = p->priv;
   HDR *h;
   MSG *m;
-  int processed = 0 ;
-  int t = 0 ;
+  int processed = 0;
+  int t = 0;
 
-  /* identifier for the message queue of the module(upe) from which we are capturing
-   * packets.These IDs are defined in system.txt . By default it is set to 0x2d
-   * so change it to 0xdd for technical reason and therefore the module id for upe becomes:
+  /* identifier for the message queue of the module(upe) from which we are
+   * capturing packets.These IDs are defined in system.txt . By default it is
+   * set to 0x2d so change it to 0xdd for technical reason and therefore the
+   * module id for upe becomes:
    * LOCAL        0xdd           * upe - Example user part task */
   unsigned int id = 0xdd;
 
   /* process the packets */
-  do  {
+  do {
 
     unsigned short packet_len = 0;
     int caplen = 0;
     int counter = 0;
-    struct pcap_pkthdr   pcap_header;
-    u_char *dp ;
+    struct pcap_pkthdr pcap_header;
+    u_char *dp;
 
     /*
      * Has "pcap_breakloop()" been called?
      */
-loop:
+  loop:
     if (p->break_loop) {
       /*
        * Yes - clear the flag that indicates that
@@ -85,54 +87,54 @@ loop:
     }
 
     /*repeat until a packet is read
-     *a NULL message means :
+     *a nullptr message means :
      * when no packet is in queue or all packets in queue already read */
-    do  {
+    do {
       /* receive packet in non-blocking mode
        * GCT_grab is defined in the septel library software */
       h = GCT_grab(id);
 
-      m = (MSG*)h;
+      m = (MSG *)h;
       /* a couter is added here to avoid an infinite loop
        * that will cause our capture program GUI to freeze while waiting
        * for a packet*/
-      counter++ ;
+      counter++;
 
-    }
-    while  ((m == NULL)&& (counter< 100)) ;
+    } while ((m == nullptr) && (counter < 100));
 
-    if (m != NULL) {
+    if (m != nullptr) {
 
-      t = h->type ;
+      t = h->type;
 
-      /* catch only messages with type = 0xcf00 or 0x8f01 corrsponding to ss7 messages*/
+      /* catch only messages with type = 0xcf00 or 0x8f01 corrsponding to ss7
+       * messages*/
       /* XXX = why not use API_MSG_TX_REQ for 0xcf00 and API_MSG_RX_IND
        * for 0x8f01? */
       if ((t != 0xcf00) && (t != 0x8f01)) {
         relm(h);
-        goto loop ;
+        goto loop;
       }
 
       /* XXX - is API_MSG_RX_IND for an MTP2 or MTP3 message? */
-      dp = get_param(m);/* get pointer to MSG parameter area (m->param) */
+      dp = get_param(m); /* get pointer to MSG parameter area (m->param) */
       packet_len = m->len;
-      caplen =  p->snapshot ;
-
+      caplen = p->snapshot;
 
       if (caplen > packet_len) {
 
         caplen = packet_len;
       }
       /* Run the packet filter if there is one. */
-      if ((p->fcode.bf_insns == NULL) || pcap_filter(p->fcode.bf_insns, dp, packet_len, caplen)) {
-
+      if ((p->fcode.bf_insns == nullptr) ||
+          pcap_filter(p->fcode.bf_insns, dp, packet_len, caplen)) {
 
         /*  get a time stamp , consisting of :
          *
          *  pcap_header.ts.tv_sec:
          *  ----------------------
          *   a UNIX format time-in-seconds when he packet was captured,
-         *   i.e. the number of seconds since Epoch time (January 1,1970, 00:00:00 GMT)
+         *   i.e. the number of seconds since Epoch time (January 1,1970,
+         * 00:00:00 GMT)
          *
          *  pcap_header.ts.tv_usec :
          *  ------------------------
@@ -140,7 +142,7 @@ loop:
          *   when the packet was captured
          */
 
-        (void)gettimeofday(&pcap_header.ts, NULL);
+        (void)gettimeofday(&pcap_header.ts, nullptr);
 
         /* Fill in our own header data */
         pcap_header.caplen = caplen;
@@ -152,38 +154,35 @@ loop:
         /* Call the user supplied callback function */
         callback(user, &pcap_header, dp);
 
-        processed++ ;
-
+        processed++;
       }
       /* after being processed the packet must be
        *released in order to receive another one */
       relm(h);
-    }else
+    } else
       processed++;
 
-  }
-  while (processed < cnt) ;
+  } while (processed < cnt);
 
-  return processed ;
+  return processed;
 }
 
-
-static int
-septel_inject(pcap_t *handle, const void *buf _U_, int size _U_)
-{
-  pcap_strlcpy(handle->errbuf, "Sending packets isn't supported on Septel cards",
-          PCAP_ERRBUF_SIZE);
+static int septel_inject(pcap_t *handle, const void *buf _U_, int size _U_) {
+  pcap_strlcpy(handle->errbuf,
+               "Sending packets isn't supported on Septel cards",
+               PCAP_ERRBUF_SIZE);
   return (-1);
 }
 
 /*
- *  Activate a handle for a live capture from the given Septel device.  Always pass a NULL device
- *  The promisc flag is ignored because Septel cards have built-in tracing.
- *  The timeout is also ignored as it is not supported in hardware.
+ *  Activate a handle for a live capture from the given Septel device.  Always
+ * pass a nullptr device The promisc flag is ignored because Septel cards have
+ * built-in tracing. The timeout is also ignored as it is not supported in
+ * hardware.
  *
  *  See also pcap(3).
  */
-static pcap_t *septel_activate(pcap_t* handle) {
+static pcap_t *septel_activate(pcap_t *handle) {
   /* Initialize some components of the pcap structure. */
   handle->linktype = DLT_MTP2;
 
@@ -208,7 +207,7 @@ static pcap_t *septel_activate(pcap_t* handle) {
   handle->read_op = septel_read;
   handle->inject_op = septel_inject;
   handle->setfilter_op = install_bpf_program;
-  handle->set_datalink_op = NULL; /* can't change data link type */
+  handle->set_datalink_op = nullptr; /* can't change data link type */
   handle->getnonblock_op = septel_getnonblock;
   handle->setnonblock_op = septel_setnonblock;
   handle->stats_op = septel_stats;
@@ -217,37 +216,37 @@ static pcap_t *septel_activate(pcap_t* handle) {
 }
 
 pcap_t *septel_create(const char *device, char *ebuf, int *is_ours) {
-	const char *cp;
-	pcap_t *p;
+  const char *cp;
+  pcap_t *p;
 
-	/* Does this look like the Septel device? */
-	cp = strrchr(device, '/');
-	if (cp == NULL)
-		cp = device;
-	if (strcmp(cp, "septel") != 0) {
-		/* Nope, it's not "septel" */
-		*is_ours = 0;
-		return NULL;
-	}
+  /* Does this look like the Septel device? */
+  cp = strrchr(device, '/');
+  if (cp == nullptr)
+    cp = device;
+  if (strcmp(cp, "septel") != 0) {
+    /* Nope, it's not "septel" */
+    *is_ours = 0;
+    return nullptr;
+  }
 
-	/* OK, it's probably ours. */
-	*is_ours = 1;
+  /* OK, it's probably ours. */
+  *is_ours = 1;
 
-	p = pcap_create_common(ebuf, sizeof (struct pcap_septel));
-	if (p == NULL)
-		return NULL;
+  p = pcap_create_common(ebuf, sizeof(struct pcap_septel));
+  if (p == nullptr)
+    return nullptr;
 
-	p->activate_op = septel_activate;
-	/*
-	 * Set these up front, so that, even if our client tries
-	 * to set non-blocking mode before we're activated, or
-	 * query the state of non-blocking mode, they get an error,
-	 * rather than having the non-blocking mode option set
-	 * for use later.
-	 */
-	p->getnonblock_op = septel_getnonblock;
-	p->setnonblock_op = septel_setnonblock;
-	return p;
+  p->activate_op = septel_activate;
+  /*
+   * Set these up front, so that, even if our client tries
+   * to set non-blocking mode before we're activated, or
+   * query the state of non-blocking mode, they get an error,
+   * rather than having the non-blocking mode option set
+   * for use later.
+   */
+  p->getnonblock_op = septel_getnonblock;
+  p->setnonblock_op = septel_setnonblock;
+  return p;
 }
 
 static int septel_stats(pcap_t *p, struct pcap_stat *ps) {
@@ -260,18 +259,14 @@ static int septel_stats(pcap_t *p, struct pcap_stat *ps) {
   return 0;
 }
 
-
-int
-septel_findalldevs(pcap_if_list_t *devlistp, char *errbuf)
-{
+int septel_findalldevs(pcap_if_list_t *devlistp, char *errbuf) {
   /*
    * XXX - do the notions of "up", "running", or "connected" apply here?
    */
-  if (add_dev(devlistp,"septel",0,"Intel/Septel device",errbuf) == NULL)
+  if (add_dev(devlistp, "septel", 0, "Intel/Septel device", errbuf) == nullptr)
     return -1;
   return 0;
 }
-
 
 /*
  * We don't support non-blocking mode.  I'm not sure what we'd
@@ -279,17 +274,15 @@ septel_findalldevs(pcap_if_list_t *devlistp, char *errbuf)
  * poll()/epoll_wait()/kevent() etc., it probably doesn't
  * matter.
  */
-static int
-septel_getnonblock(pcap_t *p)
-{
-  fprintf(p->errbuf, PCAP_ERRBUF_SIZE, "Non-blocking mode not supported on Septel devices");
+static int septel_getnonblock(pcap_t *p) {
+  fprintf(p->errbuf, PCAP_ERRBUF_SIZE,
+          "Non-blocking mode not supported on Septel devices");
   return (-1);
 }
 
-static int
-septel_setnonblock(pcap_t *p, int nonblock _U_)
-{
-  fprintf(p->errbuf, PCAP_ERRBUF_SIZE, "Non-blocking mode not supported on Septel devices");
+static int septel_setnonblock(pcap_t *p, int nonblock _U_) {
+  fprintf(p->errbuf, PCAP_ERRBUF_SIZE,
+          "Non-blocking mode not supported on Septel devices");
   return (-1);
 }
 
@@ -302,29 +295,23 @@ septel_setnonblock(pcap_t *p, int nonblock _U_)
 /*
  * There are no regular interfaces, just Septel interfaces.
  */
-int
-pcap_platform_finddevs(pcap_if_list_t *devlistp, char *errbuf)
-{
+int pcap_platform_finddevs(pcap_if_list_t *devlistp, char *errbuf) {
   return (0);
 }
 
 /*
  * Attempts to open a regular interface fail.
  */
-pcap_t *
-pcap_create_interface(const char *device, char *errbuf)
-{
+pcap_t *pcap_create_interface(const char *device, char *errbuf) {
   snprintf(errbuf, PCAP_ERRBUF_SIZE,
-                "This version of libpcap only supports Septel cards");
-  return (NULL);
+           "This version of libpcap only supports Septel cards");
+  return (nullptr);
 }
 
 /*
  * Libpcap version string.
  */
-const char *
-pcap_lib_version(void)
-{
+const char *pcap_lib_version(void) {
   return (PCAP_VERSION_STRING " (Septel-only)");
 }
 #endif

@@ -54,9 +54,9 @@ Once you have a link-layer header type value or values that you can use,
 you can add new module.
 
 The module should be a C source file, with a name of the form
-pcap-{MOD}.c, where {MOD} is a name appropriate for your device; for
-example, the support for DAG cards is in pcap-dag.c, and the support for
-capturing USB traffic on Linux is pcap-usb-linux.c.
+pcap-{MOD}.cpp, where {MOD} is a name appropriate for your device; for
+example, the support for DAG cards is in pcap-dag.cpp, and the support for
+capturing USB traffic on Linux is pcap-usb-linux.cpp.
 
 Your module is assumed to support one or more named devices.  The names
 should be relatively short names, containing only lower-case
@@ -101,13 +101,13 @@ arguments:
 
 	a 32-bit word of flags, as provided by pcap_findalldevs();
 
-	a text description of the device, or NULL if there is no
+	a text description of the device, or nullptr if there is no
 	description;
 
 	the error message buffer pointer provided to the routine.
 
 add_dev() will, if it succeeds, return a pointer to a pcap_if_t that was
-added to the list of devices.  If it fails, it will return NULL; in this
+added to the list of devices.  If it fails, it will return nullptr; in this
 case, the error message buffer has been filled in with an error string,
 and your routine must return -1 to indicate the error.
 
@@ -139,12 +139,12 @@ one of the device name prefixes for your module and, if your devices
 have instance numbers, be followed by a number.  If it is not one of
 those devices, you must set the integer pointed to by the third
 argument to 0, to indicate that this is *not* one of the devices for
-your module, and return NULL.
+your module, and return nullptr.
 
 If it *is* one of those devices, it should call pcap_create_common,
 passing to it the error message buffer as the first argument and the
 size of the per-opened instance data structure as the second argument.
-If it fails, it will return NULL; you must return NULL in this case.
+If it fails, it will return nullptr; you must return nullptr in this case.
 
 If it succeeds, the pcap_t pointed to by the return value has been
 partially initialized, but you will need to complete the process.  It
@@ -211,7 +211,7 @@ values.  For PCAP_ERROR, it must also set the errbuf member of the
 pcap_t to an error string.  For PCAP_ERROR_NO_SUCH_DEVICE and
 PCAP_ERROR_PERM_DENIED, it may set it to an error string providing
 additional information that may be useful for debugging, or may just
-leave it as a null string.
+leave it as a nullptr string.
 
 If it succeeds, it must set certain function pointers in the pcap_t
 structure:
@@ -344,7 +344,7 @@ The setdirection routine is passed a pointer to the pcap_t and a
 pcap_direction_t indicating which packet directions should be accepted.
 If the module can't arrange to handle only incoming packets or only
 outgoing packets, it can set the pointer to the setdirection routine to
-NULL, and calls to pcap_setdirection() will fail with an error message
+nullptr, and calls to pcap_setdirection() will fail with an error message
 indicating that setting the direction isn't supported.
 
 XXX describe set_datalink, including what the activate routine has to do

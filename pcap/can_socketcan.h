@@ -3,7 +3,7 @@
  *	The Regents of the University of California.  All rights reserved.
  *
  * This code is derived from the Stanford/CMU enet packet filter,
- * (net/enet.c) distributed as part of 4.3BSD, and code contributed
+ * (net/enet.cpp) distributed as part of 4.3BSD, and code contributed
  * to Berkeley by Steven McCanne and Van Jacobson both of Lawrence
  * Berkeley Laboratory.
  *
@@ -46,11 +46,11 @@
  * Linux source.
  */
 typedef struct {
-	uint32_t can_id;
-	uint8_t payload_length;
-	uint8_t pad;
-	uint8_t reserved1;
-	uint8_t reserved2;
+  uint32_t can_id;
+  uint8_t payload_length;
+  uint8_t pad;
+  uint8_t reserved1;
+  uint8_t reserved2;
 } pcap_can_socketcan_hdr;
 
 #endif

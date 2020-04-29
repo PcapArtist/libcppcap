@@ -21,14 +21,14 @@ DEFS   = -DMSDOS -DDEBUG -DNDIS_DEBUG -D_U_= -Dinline= \
 
 ASM    = tasm.exe -t -l -mx -m2 -DDEBUG
 
-SOURCE = grammar.c  scanner.c bpf_filt.c bpf_imag.c bpf_dump.c \
-         etherent.c gencode.c nametoad.c pcap-dos.c optimize.c \
-         savefile.c pcap.c msdos\ndis2.c msdos\pktdrvr.c \
-         missing\snprintf.c
+SOURCE = grammar.cpp  scanner.cpp bpf_filt.cpp bpf_imag.cpp bpf_dump.cpp \
+         etherent.cpp gencode.cpp nametoad.cpp pcap-dos.cpp optimize.cpp \
+         savefile.cpp pcap.cpp msdos\ndis2.cpp msdos\pktdrvr.cpp \
+         missing\snprintf.cpp
 
-BORLAND_OBJ = $(SOURCE:.c=.obj) msdos\pkt_rx0.obj msdos\ndis_0.obj
+BORLAND_OBJ = $(SOURCE:.cpp=.obj) msdos\pkt_rx0.obj msdos\ndis_0.obj
 
-HIGHC_OBJ   = $(SOURCE:.c=.o32) msdos\pkt_rx0.o32
+HIGHC_OBJ   = $(SOURCE:.cpp=.o32) msdos\pkt_rx0.o32
 
 all:
             @echo Usage: make pcap_bc.lib or pcap_hc.lib
@@ -47,11 +47,11 @@ pcap_bc:    $(BORLAND_OBJ)
                -+$(**:.obj=-+)
 |
 
-.c.obj:
-            bcc.exe @bcc.arg -o$*.obj $*.c
+.cpp.obj:
+            bcc.exe @bcc.arg -o$*.obj $*.cpp
 
-.c.o32:
-            hc386.exe @hc386.arg -o $*.o32 $*.c
+.cpp.o32:
+            hc386.exe @hc386.arg -o $*.o32 $*.cpp
 
 .asm.obj:
             $(ASM) $*.asm, $*.obj
@@ -59,14 +59,14 @@ pcap_bc:    $(BORLAND_OBJ)
 .asm.o32:
             $(ASM) -DDOSX=1 $*.asm, $*.o32
 
-scanner.c: scanner.l
-            flex -Ppcap_ -7 -oscanner.c scanner.l
+scanner.cpp: scanner.l
+            flex -Ppcap_ -7 -oscanner.cpp scanner.l
 
-grammar.c tokdefs.h: grammar.y
+grammar.cpp tokdefs.h: grammar.y
             bison --name-prefix=pcap_ --yacc --defines grammar.y
-            - @del grammar.c
+            - @del grammar.cpp
             - @del tokdefs.h
-            ren y_tab.c grammar.c
+            ren y_tab.cpp grammar.cpp
             ren y_tab.h tokdefs.h
 
 bcc.arg:    msdos\Makefile
@@ -94,9 +94,9 @@ clean:
             @del *.map
             @del bcc.arg
             @del hc386.arg
-            @del grammar.c
+            @del grammar.cpp
             @del tokdefs.h
-            @del scanner.c
+            @del scanner.cpp
             @echo Cleaned
 
 #
@@ -104,77 +104,77 @@ clean:
 #
 pkt_rx0.obj:  msdos\pkt_rx0.asm
 
-bpf_filt.obj: bpf_filt.c pcap-int.h pcap.h pcap-bpf.h gnuc.h
+bpf_filt.obj: bpf_filt.cpp pcap-int.h pcap.h pcap-bpf.h gnuc.h
 
-bpf_imag.obj: bpf_imag.c pcap-int.h pcap.h pcap-bpf.h
+bpf_imag.obj: bpf_imag.cpp pcap-int.h pcap.h pcap-bpf.h
 
-bpf_dump.obj: bpf_dump.c pcap.h pcap-bpf.h
+bpf_dump.obj: bpf_dump.cpp pcap.h pcap-bpf.h
 
-etherent.obj: etherent.c pcap-int.h pcap.h pcap-bpf.h pcap-namedb.h
+etherent.obj: etherent.cpp pcap-int.h pcap.h pcap-bpf.h pcap-namedb.h
 
-optimize.obj: optimize.c pcap-int.h pcap.h pcap-bpf.h gencode.h
+optimize.obj: optimize.cpp pcap-int.h pcap.h pcap-bpf.h gencode.h
 
-savefile.obj: savefile.c pcap-int.h pcap.h pcap-bpf.h
+savefile.obj: savefile.cpp pcap-int.h pcap.h pcap-bpf.h
 
-pcap.obj: pcap.c pcap-dos.h pcap-int.h pcap.h pcap-bpf.h
+pcap.obj: pcap.cpp pcap-dos.h pcap-int.h pcap.h pcap-bpf.h
 
-grammar.obj: grammar.c pcap-int.h pcap.h pcap-bpf.h gencode.h \
+grammar.obj: grammar.cpp pcap-int.h pcap.h pcap-bpf.h gencode.h \
   pf.h pcap-namedb.h
 
-scanner.obj: scanner.c pcap-int.h pcap.h pcap-bpf.h gencode.h \
+scanner.obj: scanner.cpp pcap-int.h pcap.h pcap-bpf.h gencode.h \
   pcap-namedb.h tokdefs.h
 
-gencode.obj: gencode.c pcap-dos.h pcap-int.h pcap.h pcap-bpf.h \
+gencode.obj: gencode.cpp pcap-dos.h pcap-int.h pcap.h pcap-bpf.h \
   ethertype.h nlpid.h llc.h gencode.h atmuni31.h sunatmpos.h ppp.h sll.h \
   arcnet.h pf.h pcap-namedb.h
 
-nametoad.obj: nametoad.c pcap-int.h pcap.h pcap-bpf.h gencode.h \
+nametoad.obj: nametoad.cpp pcap-int.h pcap.h pcap-bpf.h gencode.h \
   pcap-namedb.h ethertype.h
 
-pcap-dos.obj: pcap-dos.c pcap.h pcap-bpf.h pcap-dos.h pcap-int.h \
+pcap-dos.obj: pcap-dos.cpp pcap.h pcap-bpf.h pcap-dos.h pcap-int.h \
   msdos\pktdrvr.h
 
-pktdrvr.obj: msdos\pktdrvr.c gnuc.h pcap-dos.h pcap-int.h \
+pktdrvr.obj: msdos\pktdrvr.cpp gnuc.h pcap-dos.h pcap-int.h \
   pcap.h pcap-bpf.h msdos\pktdrvr.h msdos\pkt_stub.inc
 
-ndis2.obj: msdos\ndis2.c pcap-dos.h pcap-int.h pcap.h pcap-bpf.h \
+ndis2.obj: msdos\ndis2.cpp pcap-dos.h pcap-int.h pcap.h pcap-bpf.h \
   msdos\ndis2.h
 
 pkt_rx0.o32:  msdos\pkt_rx0.asm
 
-bpf_filt.o32: bpf_filt.c pcap-int.h pcap.h pcap-bpf.h gnuc.h
+bpf_filt.o32: bpf_filt.cpp pcap-int.h pcap.h pcap-bpf.h gnuc.h
 
-bpf_imag.o32: bpf_imag.c pcap-int.h pcap.h pcap-bpf.h
+bpf_imag.o32: bpf_imag.cpp pcap-int.h pcap.h pcap-bpf.h
 
-bpf_dump.o32: bpf_dump.c pcap.h pcap-bpf.h
+bpf_dump.o32: bpf_dump.cpp pcap.h pcap-bpf.h
 
-etherent.o32: etherent.c pcap-int.h pcap.h pcap-bpf.h pcap-namedb.h
+etherent.o32: etherent.cpp pcap-int.h pcap.h pcap-bpf.h pcap-namedb.h
 
-optimize.o32: optimize.c pcap-int.h pcap.h pcap-bpf.h gencode.h
+optimize.o32: optimize.cpp pcap-int.h pcap.h pcap-bpf.h gencode.h
 
-savefile.o32: savefile.c pcap-int.h pcap.h pcap-bpf.h
+savefile.o32: savefile.cpp pcap-int.h pcap.h pcap-bpf.h
 
-pcap.o32: pcap.c pcap-dos.h pcap-int.h pcap.h pcap-bpf.h
+pcap.o32: pcap.cpp pcap-dos.h pcap-int.h pcap.h pcap-bpf.h
 
-grammar.o32: grammar.c pcap-int.h pcap.h pcap-bpf.h gencode.h \
+grammar.o32: grammar.cpp pcap-int.h pcap.h pcap-bpf.h gencode.h \
   pf.h pcap-namedb.h
 
-scanner.o32: scanner.c pcap-int.h pcap.h pcap-bpf.h gencode.h \
+scanner.o32: scanner.cpp pcap-int.h pcap.h pcap-bpf.h gencode.h \
   pcap-namedb.h tokdefs.h
 
-gencode.o32: gencode.c pcap-dos.h pcap-int.h pcap.h pcap-bpf.h \
+gencode.o32: gencode.cpp pcap-dos.h pcap-int.h pcap.h pcap-bpf.h \
   ethertype.h nlpid.h llc.h gencode.h atmuni31.h sunatmpos.h ppp.h sll.h \
   arcnet.h pf.h pcap-namedb.h
 
-nametoad.o32: nametoad.c pcap-int.h pcap.h pcap-bpf.h gencode.h \
+nametoad.o32: nametoad.cpp pcap-int.h pcap.h pcap-bpf.h gencode.h \
   pcap-namedb.h ethertype.h
 
-pcap-dos.o32: pcap-dos.c pcap.h pcap-bpf.h pcap-dos.h pcap-int.h \
+pcap-dos.o32: pcap-dos.cpp pcap.h pcap-bpf.h pcap-dos.h pcap-int.h \
   msdos\pktdrvr.h
 
-pktdrvr.o32: msdos\pktdrvr.c gnuc.h pcap-dos.h pcap-int.h \
+pktdrvr.o32: msdos\pktdrvr.cpp gnuc.h pcap-dos.h pcap-int.h \
   pcap.h pcap-bpf.h msdos\pktdrvr.h msdos\pkt_stub.inc
 
-ndis2.o32: msdos\ndis2.c pcap-dos.h pcap-int.h pcap.h pcap-bpf.h \
+ndis2.o32: msdos\ndis2.cpp pcap-dos.h pcap-int.h pcap.h pcap-bpf.h \
   msdos\ndis2.h
 

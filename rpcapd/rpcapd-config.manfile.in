@@ -71,7 +71,7 @@ is either
 or
 .BR NO .
 .B YES
-means that null authentication is permitted;
+means that nullptr authentication is permitted;
 .B No
 means that it is not permitted.
 .SH SEE ALSO

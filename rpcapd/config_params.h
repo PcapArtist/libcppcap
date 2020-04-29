@@ -37,20 +37,28 @@
 // Parameters set from the configuration file.
 //
 
-#define MAX_LINE 2048		/* Maximum chars allowed for the host list (in passive mode) */
+#define MAX_LINE                                                               \
+  2048 /* Maximum chars allowed for the host list (in passive mode) */
 #define MAX_HOST_LIST 64000
 #define MAX_ACTIVE_LIST 10
 
-struct active_pars
-{
-	char address[MAX_LINE + 1];	// keeps the network address (either numeric or literal) to of the active client
-	char port[MAX_LINE + 1];	// keeps the network port to bind to
-	int ai_family;			// address faimly to use
+struct active_pars {
+  char address[MAX_LINE + 1]; // keeps the network address (either numeric or
+                              // literal) to of the active client
+  char port[MAX_LINE + 1];    // keeps the network port to bind to
+  int ai_family;              // address faimly to use
 };
 
-extern char hostlist[MAX_HOST_LIST + 1];	//!< Keeps the list of the hosts that are allowed to connect to this server
-extern struct active_pars activelist[MAX_ACTIVE_LIST];		//!< Keeps the list of the hosts (host, port) on which I want to connect to (active mode)
-extern int nullAuthAllowed;			//!< '1' if we permit NULL authentication, '0' otherwise
-extern char loadfile[MAX_LINE + 1];		//!< Name of the file from which we have to load the configuration
+extern char
+    hostlist[MAX_HOST_LIST + 1]; //!< Keeps the list of the hosts that are
+                                 //!< allowed to connect to this server
+extern struct active_pars
+    activelist[MAX_ACTIVE_LIST]; //!< Keeps the list of the hosts (host, port)
+                                 //!< on which I want to connect to (active
+                                 //!< mode)
+extern int
+    nullAuthAllowed; //!< '1' if we permit nullptr authentication, '0' otherwise
+extern char loadfile[MAX_LINE + 1]; //!< Name of the file from which we have to
+                                    //!< load the configuration
 
 #endif

@@ -41,132 +41,124 @@ static inline int skip_space(FILE *);
 static inline int skip_line(FILE *);
 
 /* Hex digit to integer. */
-static inline u_char
-xdtoi(u_char c)
-{
-	if (c >= '0' && c <= '9')
-		return (u_char)(c - '0');
-	else if (c >= 'a' && c <= 'f')
-		return (u_char)(c - 'a' + 10);
-	else
-		return (u_char)(c - 'A' + 10);
+static inline u_char xdtoi(u_char c) {
+  if (c >= '0' && c <= '9')
+    return (u_char)(c - '0');
+  else if (c >= 'a' && c <= 'f')
+    return (u_char)(c - 'a' + 10);
+  else
+    return (u_char)(c - 'A' + 10);
 }
 
 /*
  * Skip linear white space (space and tab) and any CRs before LF.
  * Stop when we hit a non-white-space character or an end-of-line LF.
  */
-static inline int
-skip_space(FILE *f)
-{
-	int c;
+static inline int skip_space(FILE *f) {
+  int c;
 
-	do {
-		c = getc(f);
-	} while (c == ' ' || c == '\t' || c == '\r');
+  do {
+    c = getc(f);
+  } while (c == ' ' || c == '\t' || c == '\r');
 
-	return c;
+  return c;
 }
 
-static inline int
-skip_line(FILE *f)
-{
-	int c;
+static inline int skip_line(FILE *f) {
+  int c;
 
-	do
-		c = getc(f);
-	while (c != '\n' && c != EOF);
+  do
+    c = getc(f);
+  while (c != '\n' && c != EOF);
 
-	return c;
+  return c;
 }
 
-struct pcap_etherent *
-pcap_next_etherent(FILE *fp)
-{
-	register int c, i;
-	u_char d;
-	char *bp;
-	size_t namesize;
-	static struct pcap_etherent e;
+struct pcap_etherent *pcap_next_etherent(FILE *fp) {
+  register int c, i;
+  u_char d;
+  char *bp;
+  size_t namesize;
+  static struct pcap_etherent e;
 
-	memset((char *)&e, 0, sizeof(e));
-	for (;;) {
-		/* Find addr */
-		c = skip_space(fp);
-		if (c == EOF)
-			return (NULL);
-		if (c == '\n')
-			continue;
+  memset((char *)&e, 0, sizeof(e));
+  for (;;) {
+    /* Find addr */
+    c = skip_space(fp);
+    if (c == EOF)
+      return (nullptr);
+    if (c == '\n')
+      continue;
 
-		/* If this is a comment, or first thing on line
-		   cannot be Ethernet address, skip the line. */
-		if (!PCAP_ISXDIGIT(c)) {
-			c = skip_line(fp);
-			if (c == EOF)
-				return (NULL);
-			continue;
-		}
+    /* If this is a comment, or first thing on line
+       cannot be Ethernet address, skip the line. */
+    if (!PCAP_ISXDIGIT(c)) {
+      c = skip_line(fp);
+      if (c == EOF)
+        return (nullptr);
+      continue;
+    }
 
-		/* must be the start of an address */
-		for (i = 0; i < 6; i += 1) {
-			d = xdtoi((u_char)c);
-			c = getc(fp);
-			if (c == EOF)
-				return (NULL);
-			if (PCAP_ISXDIGIT(c)) {
-				d <<= 4;
-				d |= xdtoi((u_char)c);
-				c = getc(fp);
-				if (c == EOF)
-					return (NULL);
-			}
-			e.addr[i] = d;
-			if (c != ':')
-				break;
-			c = getc(fp);
-			if (c == EOF)
-				return (NULL);
-		}
+    /* must be the start of an address */
+    for (i = 0; i < 6; i += 1) {
+      d = xdtoi((u_char)c);
+      c = getc(fp);
+      if (c == EOF)
+        return (nullptr);
+      if (PCAP_ISXDIGIT(c)) {
+        d <<= 4;
+        d |= xdtoi((u_char)c);
+        c = getc(fp);
+        if (c == EOF)
+          return (nullptr);
+      }
+      e.addr[i] = d;
+      if (c != ':')
+        break;
+      c = getc(fp);
+      if (c == EOF)
+        return (nullptr);
+    }
 
-		/* Must be whitespace */
-		if (c != ' ' && c != '\t' && c != '\r' && c != '\n') {
-			c = skip_line(fp);
-			if (c == EOF)
-				return (NULL);
-			continue;
-		}
-		c = skip_space(fp);
-		if (c == EOF)
-			return (NULL);
+    /* Must be whitespace */
+    if (c != ' ' && c != '\t' && c != '\r' && c != '\n') {
+      c = skip_line(fp);
+      if (c == EOF)
+        return (nullptr);
+      continue;
+    }
+    c = skip_space(fp);
+    if (c == EOF)
+      return (nullptr);
 
-		/* hit end of line... */
-		if (c == '\n')
-			continue;
+    /* hit end of line... */
+    if (c == '\n')
+      continue;
 
-		if (c == '#') {
-			c = skip_line(fp);
-			if (c == EOF)
-				return (NULL);
-			continue;
-		}
+    if (c == '#') {
+      c = skip_line(fp);
+      if (c == EOF)
+        return (nullptr);
+      continue;
+    }
 
-		/* pick up name */
-		bp = e.name;
-		/* Use 'namesize' to prevent buffer overflow. */
-		namesize = sizeof(e.name) - 1;
-		do {
-			*bp++ = (u_char)c;
-			c = getc(fp);
-			if (c == EOF)
-				return (NULL);
-		} while (c != ' ' && c != '\t' && c != '\r' && c != '\n'
-		    && --namesize != 0);
-		*bp = '\0';
+    /* pick up name */
+    bp = e.name;
+    /* Use 'namesize' to prevent buffer overflow. */
+    namesize = sizeof(e.name) - 1;
+    do {
+      *bp++ = (u_char)c;
+      c = getc(fp);
+      if (c == EOF)
+        return (nullptr);
+    } while (c != ' ' && c != '\t' && c != '\r' && c != '\n' &&
+             --namesize != 0);
+    *bp = '\0';
 
-		/* Eat trailing junk */
-		if (c != '\n')
-			(void)skip_line(fp);
+    /* Eat trailing junk */
+    if (c != '\n')
+      (void)skip_line(fp);
 
-		return &e;
-	}
+    return &e;
+  }
 }

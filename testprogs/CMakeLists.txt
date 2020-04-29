@@ -1,5 +1,5 @@
 if(MSVC)
-  file(GLOB PROJECT_SOURCE_LIST_WIN32_C ${pcap_SOURCE_DIR}/missing/getopt.c)
+  file(GLOB PROJECT_SOURCE_LIST_WIN32_C ${pcap_SOURCE_DIR}/missing/getopt.cpp)
   include_directories(${pcap_SOURCE_DIR}/missing)
 endif(MSVC)
 
@@ -7,7 +7,7 @@ add_custom_target(testprogs)
 
 macro(add_test_executable _executable)
   add_executable(${_executable} EXCLUDE_FROM_ALL
-    ${_executable}.c ${PROJECT_SOURCE_LIST_WIN32_C})
+    ${_executable}.cpp ${PROJECT_SOURCE_LIST_WIN32_C})
   if(NOT C_ADDITIONAL_FLAGS STREQUAL "")
     set_target_properties(${_executable} PROPERTIES
       COMPILE_FLAGS ${C_ADDITIONAL_FLAGS})
