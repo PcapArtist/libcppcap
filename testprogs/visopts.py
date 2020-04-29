@@ -61,8 +61,8 @@ html_template = string.Template("""
       var logs = JSON.parse('$logs');
       logs[gcount] = "";
 
-      var leftsvg = null;
-      var rightsvg = null;
+      var leftsvg = nullptr;
+      var rightsvg = nullptr;
 
       function gurl(index) {
          index += 1;
@@ -117,7 +117,7 @@ html_template = string.Template("""
       function wait_leftsvg() {
          if (leftsvg) return;
          var doc = document.getElementById("leftsvgc").getSVGDocument();
-         if (doc == null) {
+         if (doc == nullptr) {
             setTimeout(wait_leftsvg, 500);
             return;
          }
@@ -130,7 +130,7 @@ html_template = string.Template("""
       function wait_rightsvg() {
          if (rightsvg) return;
          var doc = document.getElementById("rightsvgc").getSVGDocument();
-         if (doc == null) {
+         if (doc == nullptr) {
             setTimeout(wait_rightsvg, 500);
             return;
          }
@@ -146,7 +146,7 @@ html_template = string.Template("""
         $$("#lsvg").html(frag);
         $$("#lcomment").html(logs[index]);
         $$("#lsvglink").attr("href", url);
-        leftsvg = null;
+        leftsvg = nullptr;
         wait_leftsvg();
       }
       function load_right(index) {
@@ -155,7 +155,7 @@ html_template = string.Template("""
         $$("#rsvg").html(frag);
         $$("#rcomment").html(logs[index]);
         $$("#rsvglink").attr("href", url);
-        rightsvg = null;
+        rightsvg = nullptr;
         wait_rightsvg();
       }
 

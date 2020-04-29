@@ -49,27 +49,27 @@ if(WIN32 OR ((CMAKE_USE_PTHREADS_INIT OR PTHREADS_FOUND) AND HAVE_CRYPT))
 
   if(WIN32)
     set(RPCAPD_EXTRA_SOURCES
-        win32-svc.c
-        ${pcap_SOURCE_DIR}/charconv.c
-        ${pcap_SOURCE_DIR}/missing/getopt.c
+        win32-svc.cpp
+        ${pcap_SOURCE_DIR}/charconv.cpp
+        ${pcap_SOURCE_DIR}/missing/getopt.cpp
         rpcapd.rc)
     include_directories(${pcap_SOURCE_DIR}/rpcapd ${pcap_SOURCE_DIR}/missing)
   endif(WIN32)
 
   add_executable(rpcapd
-    daemon.c
-    fileconf.c
-    log.c
-    rpcapd.c
-    ${pcap_SOURCE_DIR}/rpcap-protocol.c
-    ${pcap_SOURCE_DIR}/sockutils.c
-    ${pcap_SOURCE_DIR}/sslutils.c
-    ${pcap_SOURCE_DIR}/fmtutils.c
+    daemon.cpp
+    fileconf.cpp
+    log.cpp
+    rpcapd.cpp
+    ${pcap_SOURCE_DIR}/rpcap-protocol.cpp
+    ${pcap_SOURCE_DIR}/sockutils.cpp
+    ${pcap_SOURCE_DIR}/sslutils.cpp
+    ${pcap_SOURCE_DIR}/fmtutils.cpp
     ${RPCAPD_EXTRA_SOURCES}
   )
 
-  if(NOT C_ADDITIONAL_FLAGS STREQUAL "")
-    set_target_properties(rpcapd PROPERTIES COMPILE_FLAGS ${C_ADDITIONAL_FLAGS})
+  if(NOT CXX_ADDITIONAL_FLAGS STREQUAL "")
+    set_target_properties(rpcapd PROPERTIES COMPILE_FLAGS ${CXX_ADDITIONAL_FLAGS})
   endif()
 
   if(NOT "${SANITIZER_FLAGS}" STREQUAL "")

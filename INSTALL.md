@@ -32,14 +32,14 @@ will abort if your compiler is not ANSI compliant. If this happens, use
 the generally available GNU C compiler (GCC).
 
 You will need either Flex 2.5.31 or later, or a version of Lex
-compatible with it (if any exist), to build libpcap.  The configure
-script will abort if there isn't any such program.  If you have an older
+compatible with it (if any exist), to build libpcap. The configure
+script will abort if there isn't any such program. If you have an older
 version of Flex, or don't have a compatible version of Lex, the current
 version of flex is available at flex.sourceforge.net.
 
 You will need either Bison, Berkeley YACC, or a version of YACC
-compatible with them (if any exist), to build libpcap.  The configure
-script will abort if there isn't any such program.  If you don't have
+compatible with them (if any exist), to build libpcap. The configure
+script will abort if there isn't any such program. If you don't have
 any such program, the current version of Bison can be found at
 https://ftp.gnu.org/gnu/bison/ and the current version of Berkeley YACC
 can be found at https://invisible-island.net/byacc/.
@@ -51,7 +51,7 @@ You can get around this by installing GCC.
 If you use Solaris, there is a bug with bufmod(7) that is fixed in
 Solaris 2.3.2 (aka SunOS 5.3.2). Setting a snapshot length with the
 broken bufmod(7) results in data be truncated from the FRONT of the
-packet instead of the end.  The work around is to not set a snapshot
+packet instead of the end. The work around is to not set a snapshot
 length but this results in performance problems since the entire packet
 is copied to user space. If you must run an older version of Solaris,
 there is a patch available from Sun; ask for bugid 1149065. After
@@ -82,10 +82,10 @@ when using DLPI, look for the DL_ERROR_ACK error return values, usually
 in /usr/include/sys/dlpi.h, and find the corresponding value.
 
 Under {DEC OSF/1, Digital UNIX, Tru64 UNIX}, packet capture must be
-enabled before it can be used.  For instructions on how to enable packet
+enabled before it can be used. For instructions on how to enable packet
 filter support, see:
 
-	ftp://ftp.digital.com/pub/Digital/dec-faq/Digital-UNIX
+    ftp://ftp.digital.com/pub/Digital/dec-faq/Digital-UNIX
 
 Look for the "How do I configure the Berkeley Packet Filter and capture
 tcpdump traces?" item.
@@ -96,7 +96,7 @@ natively.
 Under Ultrix, packet capture must be enabled before it can be used. For
 instructions on how to enable packet filter support, see:
 
-	ftp://ftp.digital.com/pub/Digital/dec-faq/ultrix
+    ftp://ftp.digital.com/pub/Digital/dec-faq/ultrix
 
 If you use HP-UX, you must have at least version 9 and either the
 version of cc that supports ANSI C (cc -Aa) or else use the GNU C
@@ -113,7 +113,7 @@ need to install the "9.X LAN and DLPI drivers cumulative" patch
 The DLPI streams package is standard starting with HP-UX 10.
 
 The HP implementation of DLPI is a little bit eccentric. Unlike
-Solaris, you must attach /dev/dlpi instead of the specific /dev/*
+Solaris, you must attach /dev/dlpi instead of the specific /dev/\*
 network pseudo device entry in order to capture packets. The PPA is
 based on the ifnet "index" number. Under HP-UX 9, it is necessary to
 read /dev/kmem and the kernel symbol file (/hp-ux). Under HP-UX 10,
@@ -122,7 +122,7 @@ to be possible to trace the loopback interface. Unlike other DLPI
 implementations, PHYS implies MULTI and SAP and you get an error if you
 try to enable more than one promiscuous mode at a time.
 
-It is impossible to capture outbound packets on HP-UX 9.  To do so on
+It is impossible to capture outbound packets on HP-UX 9. To do so on
 HP-UX 10, you will, apparently, need a late "LAN products cumulative
 patch" (at one point, it was claimed that this would be PHNE_18173 for
 s700/10.20; at another point, it was claimed that the required patches
@@ -135,7 +135,7 @@ PHNE_20008, and PHNE_20735 did the trick).
 Furthermore, on HP-UX 10, you will need to turn on a kernel switch by
 doing
 
-	echo 'lanc_outbound_promisc_flag/W 1' | adb -w /stand/vmunix /dev/mem
+    echo 'lanc_outbound_promisc_flag/W 1' | adb -w /stand/vmunix /dev/mem
 
 You would have to arrange that this happen on reboots; the right way to
 do that would probably be to put it into an executable script file
@@ -146,13 +146,13 @@ Finally, testing shows that there can't be more than one simultaneous
 DLPI user per network interface.
 
 If you use Linux, this version of libpcap is known to compile and run
-under Red Hat 4.0 with the 2.0.25 kernel.  It may work with earlier 2.X
-versions but is guaranteed not to work with 1.X kernels.  Running more
+under Red Hat 4.0 with the 2.0.25 kernel. It may work with earlier 2.X
+versions but is guaranteed not to work with 1.X kernels. Running more
 than one libpcap program at a time, on a system with a 2.0.X kernel, can
 cause problems since promiscuous mode is implemented by twiddling the
 interface flags from the libpcap application; the packet capture
-mechanism in the 2.2 and later kernels doesn't have this problem.  Also,
-packet timestamps aren't very good.  This appears to be due to haphazard
+mechanism in the 2.2 and later kernels doesn't have this problem. Also,
+packet timestamps aren't very good. This appears to be due to haphazard
 handling of the timestamp in the kernel.
 
 Note well: there is rumoured to be a version of tcpdump floating around
@@ -173,7 +173,7 @@ this.
 
 If you use AIX, you may not be able to build libpcap from this release.
 We do not have an AIX system in house so it's impossible for us to test
-AIX patches submitted to us.  We are told that you must link against
+AIX patches submitted to us. We are told that you must link against
 /lib/pse.exp, that you must use AIX cc or a GNU C compiler newer than
 2.7.2, and that you may need to run strload before running a libpcap
 application.
@@ -190,50 +190,50 @@ V1.0 or V1.1 compiler. But note that in some releases of SINIX, yacc
 emits incorrect code; if grammar.y fails to compile, change every
 occurence of:
 
-	#ifdef YYDEBUG
+    #ifdef YYDEBUG
 
 to:
-	#if YYDEBUG
+#if YYDEBUG
 
 Another workaround is to use flex and bison.
 
 If you use SCO, you might have trouble building libpcap from this
 release. We do not have a machine running SCO and have not had reports
 of anyone successfully building on it; the current release of libpcap
-does not compile on SCO OpenServer 5.  Although SCO apparently supports
+does not compile on SCO OpenServer 5. Although SCO apparently supports
 DLPI to some extent, the DLPI in OpenServer 5 is very non-standard, and
 it appears that completely new code would need to be written to capture
-network traffic.  SCO do not appear to provide tcpdump binaries for
+network traffic. SCO do not appear to provide tcpdump binaries for
 OpenServer 5 or OpenServer 6 as part of SCO Skunkware:
 
-  http://www.sco.com/skunkware/
+http://www.sco.com/skunkware/
 
 If you use UnixWare, you might be able to build libpcap from this
-release, or you might not.  We do not have a machine running UnixWare,
+release, or you might not. We do not have a machine running UnixWare,
 so we have not tested it; however, SCO provide packages for libpcap
 0.6.2 and tcpdump 3.7.1 in the UnixWare 7/Open UNIX 8 part of SCO
 Skunkware, and the source package for libpcap 0.6.2 is not changed from
 the libpcap 0.6.2 source release, so this release of libpcap might also
 build without changes on UnixWare 7.
 
-If linking tcpdump fails with "Undefined: _alloca" when using bison on
+If linking tcpdump fails with "Undefined: \_alloca" when using bison on
 a Sun4, your version of Bison is broken. In any case version 1.16 or
 higher is recommended (1.14 is known to cause problems 1.16 is known to
 work). Either pick up a current version from:
 
-  https://ftp.gnu.org/gnu/bison/
+https://ftp.gnu.org/gnu/bison/
 
 or hack around it by inserting the lines:
 
-	#ifdef __GNUC__
-	#define alloca __builtin_alloca
-	#else
-	#ifdef sparc
-	#include <alloca.h>
-	#else
-	char *alloca ();
-	#endif
-	#endif
+    #ifdef __GNUC__
+    #define alloca __builtin_alloca
+    #else
+    #ifdef sparc
+    #include <alloca.h>
+    #else
+    char *alloca ();
+    #endif
+    #endif
 
 right after the (100 line!) GNU license comment in bison.simple, remove
 grammar.[co] and fire up make again.
@@ -246,106 +246,106 @@ libpcap program and it dies with:
 You must add streams NIT support to your kernel configuration, run
 config and boot the new kernel.
 
-FILES
------
-	CHANGES		    - description of differences between releases
-	ChmodBPF/*	    - macOS startup item to set ownership and permissions on /dev/bpf*
-	CMakeLists.txt	    - CMake file
-	CONTRIBUTING.md	    - guidelines for contributing
-	CREDITS		    - people that have helped libpcap along
-	INSTALL.md	    - this file
-	LICENSE		    - the license under which tcpdump is distributed
-	Makefile.in	    - compilation rules (input to the configure script)
-	README.md	    - description of distribution
-	doc/README.aix	    - notes on using libpcap on AIX
-	doc/README.dag	    - notes on using libpcap to capture on Endace DAG devices
-	doc/README.hpux	    - notes on using libpcap on HP-UX
-	doc/README.linux.md - notes on using libpcap on Linux
-	doc/README.macos    - notes on using libpcap on macOS
-	doc/README.septel   - notes on using libpcap to capture on Intel/Septel devices
-	doc/README.sita	    - notes on using libpcap to capture on SITA devices
-	doc/README.tru64    - notes on using libpcap on Digital/Tru64 UNIX
-	doc/README.Win32.md - notes on using libpcap on Win32 systems (with Npcap)
-	VERSION		    - version of this release
-	acconfig.h	    - support for post-2.13 autoconf
-	aclocal.m4	    - autoconf macros
-	arcnet.h	    - ARCNET definitions
-	atmuni31.h	    - ATM Q.2931 definitions
-	bpf_dump.c	    - BPF program printing routines
-	bpf_filter.c	    - BPF filtering routines
-	bpf_image.c	    - BPF disassembly routine
-	config.guess	    - autoconf support
-	config.h.in	    - autoconf input
-	config.sub	    - autoconf support
-	configure	    - configure script (run this first)
-	configure.ac	    - configure script source
-	dlpisubs.c	    - DLPI-related functions for pcap-dlpi.c and pcap-libdlpi.c
-	dlpisubs.h	    - DLPI-related function declarations
-	etherent.c	    - /etc/ethers support routines
-	ethertype.h	    - Ethernet protocol types and names definitions
-	fad-getad.c	    - pcap_findalldevs() for systems with getifaddrs()
-	fad-gifc.c	    - pcap_findalldevs() for systems with only SIOCGIFLIST
-	fad-glifc.c	    - pcap_findalldevs() for systems with SIOCGLIFCONF
-	filtertest.c	    - test program for BPF compiler
-	findalldevstest.c   - test program for pcap_findalldevs()
-	gencode.c	    - BPF code generation routines
-	gencode.h	    - BPF code generation definitions
-	grammar.y	    - filter string grammar
-	ieee80211.h	    - 802.11 definitions
-	install-sh	    - BSD style install script
-	lbl/os-*.h	    - OS-dependent defines and prototypes
-	llc.h		    - 802.2 LLC SAP definitions
-	missing/*	    - replacements for missing library functions
-	mkdep		    - construct Makefile dependency list
-	msdos/*		    - drivers for MS-DOS capture support
-	nametoaddr.c	    - hostname to address routines
-	nlpid.h		    - OSI network layer protocol identifier definitions
-	net		    - symlink to bpf/net
-	optimize.c	    - BPF optimization routines
-	pcap/bluetooth.h    - public definition of DLT_BLUETOOTH_HCI_H4_WITH_PHDR header
-	pcap/bpf.h	    - BPF definitions
-	pcap/namedb.h	    - public libpcap name database definitions
-	pcap/pcap.h	    - public libpcap definitions
-	pcap/sll.h	    - public definition of DLT_LINUX_SLL header
-	pcap/usb.h	    - public definition of DLT_USB header
-	pcap-bpf.c	    - BSD Packet Filter support
-	pcap-bpf.h	    - header for backwards compatibility
-	pcap-bt-linux.c	    - Bluetooth capture support for Linux
-	pcap-bt-linux.h	    - Bluetooth capture support for Linux
-	pcap-dag.c	    - Endace DAG device capture support
-	pcap-dag.h	    - Endace DAG device capture support
-	pcap-dlpi.c	    - Data Link Provider Interface support
-	pcap-dos.c	    - MS-DOS capture support
-	pcap-dos.h	    - headers for MS-DOS capture support
-	pcap-enet.c	    - enet support
-	pcap-int.h	    - internal libpcap definitions
-	pcap-libdlpi.c	    - Data Link Provider Interface support for systems with libdlpi
-	pcap-linux.c	    - Linux packet socket support
-	pcap-namedb.h	    - header for backwards compatibility
-	pcap-nit.c	    - SunOS Network Interface Tap support
-	pcap-nit.h	    - SunOS Network Interface Tap definitions
-	pcap-npf.c	    - Npcap capture support
-	pcap-null.c	    - dummy monitor support (allows offline use of libpcap)
-	pcap-pf.c	    - Ultrix and Digital/Tru64 UNIX Packet Filter support
-	pcap-pf.h	    - Ultrix and Digital/Tru64 UNIX Packet Filter definitions
-	pcap-septel.c       - Intel/Septel device capture support
-	pcap-septel.h       - Intel/Septel device capture support
-	pcap-sita.c	    - SITA device capture support
-	pcap-sita.h	    - SITA device capture support
-	pcap-sita.html	    - SITA device capture documentation
-	pcap-stdinc.h	    - includes and #defines for compiling on Win32 systems
-	pcap-snit.c	    - SunOS 4.x STREAMS-based Network Interface Tap support
-	pcap-snoop.c	    - IRIX Snoop network monitoring support
-	pcap-usb-linux.c    - USB capture support for Linux
-	pcap-usb-linux.h    - USB capture support for Linux
-	pcap.3pcap	    - manual entry for the library
-	pcap.c		    - pcap utility routines
-	pcap.h		    - header for backwards compatibility
-	pcap_*.3pcap	    - manual entries for library functions
-	pcap-filter.4	    - manual entry for filter syntax
-	pcap-linktype.4	    - manual entry for link-layer header types
-	ppp.h		    - Point to Point Protocol definitions
-	savefile.c	    - offline support
-	scanner.l	    - filter string scanner
-	sunatmpos.h	    - definitions for SunATM capturing
-	Win32		    - headers and routines for building on Win32 systems
+## FILES
+
+    CHANGES		    - description of differences between releases
+    ChmodBPF/*	    - macOS startup item to set ownership and permissions on /dev/bpf*
+    CMakeLists.txt	    - CMake file
+    CONTRIBUTING.md	    - guidelines for contributing
+    CREDITS		    - people that have helped libpcap along
+    INSTALL.md	    - this file
+    LICENSE		    - the license under which tcpdump is distributed
+    Makefile.in	    - compilation rules (input to the configure script)
+    README.md	    - description of distribution
+    doc/README.aix	    - notes on using libpcap on AIX
+    doc/README.dag	    - notes on using libpcap to capture on Endace DAG devices
+    doc/README.hpux	    - notes on using libpcap on HP-UX
+    doc/README.linux.md - notes on using libpcap on Linux
+    doc/README.macos    - notes on using libpcap on macOS
+    doc/README.septel   - notes on using libpcap to capture on Intel/Septel devices
+    doc/README.sita	    - notes on using libpcap to capture on SITA devices
+    doc/README.tru64    - notes on using libpcap on Digital/Tru64 UNIX
+    doc/README.Win32.md - notes on using libpcap on Win32 systems (with Npcap)
+    VERSION		    - version of this release
+    acconfig.h	    - support for post-2.13 autoconf
+    aclocal.m4	    - autoconf macros
+    arcnet.h	    - ARCNET definitions
+    atmuni31.h	    - ATM Q.2931 definitions
+    bpf_dump.cpp	    - BPF program printing routines
+    bpf_filter.cpp	    - BPF filtering routines
+    bpf_image.cpp	    - BPF disassembly routine
+    config.guess	    - autoconf support
+    config.h.in	    - autoconf input
+    config.sub	    - autoconf support
+    configure	    - configure script (run this first)
+    configure.ac	    - configure script source
+    dlpisubs.cpp	    - DLPI-related functions for pcap-dlpi.cpp and pcap-libdlpi.cpp
+    dlpisubs.h	    - DLPI-related function declarations
+    etherent.cpp	    - /etc/ethers support routines
+    ethertype.h	    - Ethernet protocol types and names definitions
+    fad-getad.cpp	    - pcap_findalldevs() for systems with getifaddrs()
+    fad-gifc.cpp	    - pcap_findalldevs() for systems with only SIOCGIFLIST
+    fad-glifc.cpp	    - pcap_findalldevs() for systems with SIOCGLIFCONF
+    filtertest.cpp	    - test program for BPF compiler
+    findalldevstest.cpp   - test program for pcap_findalldevs()
+    gencode.cpp	    - BPF code generation routines
+    gencode.h	    - BPF code generation definitions
+    grammar.y	    - filter string grammar
+    ieee80211.h	    - 802.11 definitions
+    install-sh	    - BSD style install script
+    lbl/os-*.h	    - OS-dependent defines and prototypes
+    llc.h		    - 802.2 LLC SAP definitions
+    missing/*	    - replacements for missing library functions
+    mkdep		    - construct Makefile dependency list
+    msdos/*		    - drivers for MS-DOS capture support
+    nametoaddr.cpp	    - hostname to address routines
+    nlpid.h		    - OSI network layer protocol identifier definitions
+    net		    - symlink to bpf/net
+    optimize.cpp	    - BPF optimization routines
+    pcap/bluetooth.h    - public definition of DLT_BLUETOOTH_HCI_H4_WITH_PHDR header
+    pcap/bpf.h	    - BPF definitions
+    pcap/namedb.h	    - public libpcap name database definitions
+    pcap/pcap.h	    - public libpcap definitions
+    pcap/sll.h	    - public definition of DLT_LINUX_SLL header
+    pcap/usb.h	    - public definition of DLT_USB header
+    pcap-bpf.cpp	    - BSD Packet Filter support
+    pcap-bpf.h	    - header for backwards compatibility
+    pcap-bt-linux.cpp	    - Bluetooth capture support for Linux
+    pcap-bt-linux.h	    - Bluetooth capture support for Linux
+    pcap-dag.cpp	    - Endace DAG device capture support
+    pcap-dag.h	    - Endace DAG device capture support
+    pcap-dlpi.cpp	    - Data Link Provider Interface support
+    pcap-dos.cpp	    - MS-DOS capture support
+    pcap-dos.h	    - headers for MS-DOS capture support
+    pcap-enet.cpp	    - enet support
+    pcap-int.h	    - internal libpcap definitions
+    pcap-libdlpi.cpp	    - Data Link Provider Interface support for systems with libdlpi
+    pcap-linux.cpp	    - Linux packet socket support
+    pcap-namedb.h	    - header for backwards compatibility
+    pcap-nit.cpp	    - SunOS Network Interface Tap support
+    pcap-nit.h	    - SunOS Network Interface Tap definitions
+    pcap-npf.cpp	    - Npcap capture support
+    pcap-nullptr.cpp	    - dummy monitor support (allows offline use of libpcap)
+    pcap-pf.cpp	    - Ultrix and Digital/Tru64 UNIX Packet Filter support
+    pcap-pf.h	    - Ultrix and Digital/Tru64 UNIX Packet Filter definitions
+    pcap-septel.cpp       - Intel/Septel device capture support
+    pcap-septel.h       - Intel/Septel device capture support
+    pcap-sita.cpp	    - SITA device capture support
+    pcap-sita.h	    - SITA device capture support
+    pcap-sita.html	    - SITA device capture documentation
+    pcap-stdinc.h	    - includes and #defines for compiling on Win32 systems
+    pcap-snit.cpp	    - SunOS 4.x STREAMS-based Network Interface Tap support
+    pcap-snoop.cpp	    - IRIX Snoop network monitoring support
+    pcap-usb-linux.cpp    - USB capture support for Linux
+    pcap-usb-linux.h    - USB capture support for Linux
+    pcap.3pcap	    - manual entry for the library
+    pcap.cpp		    - pcap utility routines
+    pcap.h		    - header for backwards compatibility
+    pcap_*.3pcap	    - manual entries for library functions
+    pcap-filter.4	    - manual entry for filter syntax
+    pcap-linktype.4	    - manual entry for link-layer header types
+    ppp.h		    - Point to Point Protocol definitions
+    savefile.cpp	    - offline support
+    scanner.l	    - filter string scanner
+    sunatmpos.h	    - definitions for SunATM capturing
+    Win32		    - headers and routines for building on Win32 systems

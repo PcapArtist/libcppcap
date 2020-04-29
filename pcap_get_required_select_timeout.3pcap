@@ -42,10 +42,10 @@ containing a value that must be used as the minimum timeout in
 and
 .BR kevent (2)
 calls, or
-.B NULL
+.B nullptr
 if there is no such timeout.
 If a
-.RB non- NULL
+.RB non- nullptr
 value is returned, it must be used regardless of whether
 .BR pcap_get_selectable_fd (3PCAP)
 returns
@@ -100,12 +100,12 @@ when the call returns,
 should be called for all
 .BR pcap_t s
 for which a
-.RB non- NULL
+.RB non- nullptr
 timeout was returned, regardless of whether it's indicated as having
 anything to read from it or not.
 .PP
 All devices with a
-.RB non-NULL
+.RB non-nullptr
 timeout must be put in non-blocking mode with
 .BR pcap_setnonblock (3PCAP).
 .PP
@@ -123,7 +123,7 @@ is not available on Windows.
 A pointer to a
 .B struct timeval
 is returned if the timeout is required; otherwise
-.B NULL
+.B nullptr
 is returned.
 .SH BACKWARD COMPATIBILITY
 This function became available in libpcap release 1.9.0.  In previous

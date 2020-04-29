@@ -75,22 +75,22 @@ INSTALL_DATA = @INSTALL_DATA@
 # Explicitly define compilation rule since SunOS 4's make doesn't like gcc.
 # Also, gcc does not remove the .o before forking 'as', which can be a
 # problem if you don't own the file but can write to the directory.
-.c.o:
+.cpp.o:
 	@rm -f $@
-	$(CC) $(FULL_CFLAGS) -c $(srcdir)/$*.c
+	$(CC) $(FULL_CFLAGS) -c $(srcdir)/$*.cpp
 
 SRC = @VALGRINDTEST_SRC@ \
-	capturetest.c \
-	can_set_rfmon_test.c \
-	filtertest.c \
-	findalldevstest.c \
-	findalldevstest-perf.c \
-	opentest.c \
-	reactivatetest.c \
-	selpolltest.c \
-	threadsignaltest.c
+	capturetest.cpp \
+	can_set_rfmon_test.cpp \
+	filtertest.cpp \
+	findalldevstest.cpp \
+	findalldevstest-perf.cpp \
+	opentest.cpp \
+	reactivatetest.cpp \
+	selpolltest.cpp \
+	threadsignaltest.cpp
 
-TESTS = $(SRC:.c=)
+TESTS = $(SRC:.cpp=)
 
 TAGFILES = \
 	$(SRC) $(HDR)
@@ -99,35 +99,35 @@ CLEANFILES = $(OBJ) $(TESTS)
 
 all: $(TESTS)
 
-capturetest: $(srcdir)/capturetest.c ../libpcap.a
-	$(CC) $(FULL_CFLAGS) -I. -L. -o capturetest $(srcdir)/capturetest.c ../libpcap.a $(LIBS)
+capturetest: $(srcdir)/capturetest.cpp ../libpcap.a
+	$(CC) $(FULL_CFLAGS) -I. -L. -o capturetest $(srcdir)/capturetest.cpp ../libpcap.a $(LIBS)
 
-can_set_rfmon_test: $(srcdir)/can_set_rfmon_test.c ../libpcap.a
-	$(CC) $(FULL_CFLAGS) -I. -L. -o can_set_rfmon_test $(srcdir)/can_set_rfmon_test.c ../libpcap.a $(LIBS)
+can_set_rfmon_test: $(srcdir)/can_set_rfmon_test.cpp ../libpcap.a
+	$(CC) $(FULL_CFLAGS) -I. -L. -o can_set_rfmon_test $(srcdir)/can_set_rfmon_test.cpp ../libpcap.a $(LIBS)
 
-filtertest: $(srcdir)/filtertest.c ../libpcap.a
-	$(CC) $(FULL_CFLAGS) -I. -L. -o filtertest $(srcdir)/filtertest.c ../libpcap.a $(EXTRA_NETWORK_LIBS) $(LIBS)
+filtertest: $(srcdir)/filtertest.cpp ../libpcap.a
+	$(CC) $(FULL_CFLAGS) -I. -L. -o filtertest $(srcdir)/filtertest.cpp ../libpcap.a $(EXTRA_NETWORK_LIBS) $(LIBS)
 
-findalldevstest: $(srcdir)/findalldevstest.c ../libpcap.a
-	$(CC) $(FULL_CFLAGS) -I. -L. -o findalldevstest $(srcdir)/findalldevstest.c ../libpcap.a $(EXTRA_NETWORK_LIBS) $(LIBS)
+findalldevstest: $(srcdir)/findalldevstest.cpp ../libpcap.a
+	$(CC) $(FULL_CFLAGS) -I. -L. -o findalldevstest $(srcdir)/findalldevstest.cpp ../libpcap.a $(EXTRA_NETWORK_LIBS) $(LIBS)
 
-findalldevstest-perf: $(srcdir)/findalldevstest-perf.c ../libpcap.a
-	$(CC) $(FULL_CFLAGS) -I. -L. -o findalldevstest-perf $(srcdir)/findalldevstest-perf.c ../libpcap.a $(EXTRA_NETWORK_LIBS) $(LIBS)
+findalldevstest-perf: $(srcdir)/findalldevstest-perf.cpp ../libpcap.a
+	$(CC) $(FULL_CFLAGS) -I. -L. -o findalldevstest-perf $(srcdir)/findalldevstest-perf.cpp ../libpcap.a $(EXTRA_NETWORK_LIBS) $(LIBS)
 
-opentest: $(srcdir)/opentest.c ../libpcap.a
-	$(CC) $(FULL_CFLAGS) -I. -L. -o opentest $(srcdir)/opentest.c ../libpcap.a $(LIBS)
+opentest: $(srcdir)/opentest.cpp ../libpcap.a
+	$(CC) $(FULL_CFLAGS) -I. -L. -o opentest $(srcdir)/opentest.cpp ../libpcap.a $(LIBS)
 
-reactivatetest: $(srcdir)/reactivatetest.c ../libpcap.a
-	$(CC) $(FULL_CFLAGS) -I. -L. -o reactivatetest $(srcdir)/reactivatetest.c ../libpcap.a $(LIBS)
+reactivatetest: $(srcdir)/reactivatetest.cpp ../libpcap.a
+	$(CC) $(FULL_CFLAGS) -I. -L. -o reactivatetest $(srcdir)/reactivatetest.cpp ../libpcap.a $(LIBS)
 
-selpolltest: $(srcdir)/selpolltest.c ../libpcap.a
-	$(CC) $(FULL_CFLAGS) -I. -L. -o selpolltest $(srcdir)/selpolltest.c ../libpcap.a $(LIBS)
+selpolltest: $(srcdir)/selpolltest.cpp ../libpcap.a
+	$(CC) $(FULL_CFLAGS) -I. -L. -o selpolltest $(srcdir)/selpolltest.cpp ../libpcap.a $(LIBS)
 
-threadsignaltest: $(srcdir)/threadsignaltest.c ../libpcap.a
-	$(CC) $(FULL_CFLAGS) -I. -L. -o threadsignaltest $(srcdir)/threadsignaltest.c ../libpcap.a $(LIBS) $(PTHREAD_LIBS)
+threadsignaltest: $(srcdir)/threadsignaltest.cpp ../libpcap.a
+	$(CC) $(FULL_CFLAGS) -I. -L. -o threadsignaltest $(srcdir)/threadsignaltest.cpp ../libpcap.a $(LIBS) $(PTHREAD_LIBS)
 
-valgrindtest: $(srcdir)/valgrindtest.c ../libpcap.a
-	$(CC) $(FULL_CFLAGS) -I. -L. -o valgrindtest $(srcdir)/valgrindtest.c ../libpcap.a $(LIBS)
+valgrindtest: $(srcdir)/valgrindtest.cpp ../libpcap.a
+	$(CC) $(FULL_CFLAGS) -I. -L. -o valgrindtest $(srcdir)/valgrindtest.cpp ../libpcap.a $(LIBS)
 
 clean:
 	rm -f $(CLEANFILES)

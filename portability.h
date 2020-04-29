@@ -32,66 +32,62 @@
  */
 
 #ifndef portability_h
-#define	portability_h
+#define portability_h
 
 /*
  * Helpers for portability between Windows and UN*X and between different
  * flavors of UN*X.
  */
-#include <stdarg.h>	/* we declare varargs functions on some platforms */
+#include <stdarg.h> /* we declare varargs functions on some platforms */
 
 #include "pcap/funcattrs.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #ifdef HAVE_STRLCAT
-  #define pcap_strlcat	strlcat
+#define pcap_strlcat strlcat
 #else
-  #if defined(_MSC_VER) || defined(__MINGW32__)
-    /*
-     * strncat_s() is supported at least back to Visual
-     * Studio 2005; we require Visual Studio 2015 or later.
-     */
-    #define pcap_strlcat(x, y, z) \
-	strncat_s((x), (z), (y), _TRUNCATE)
-  #else
-    /*
-     * Define it ourselves.
-     */
-    extern size_t pcap_strlcat(char * restrict dst, const char * restrict src, size_t dstsize);
-  #endif
+#if defined(_MSC_VER) || defined(__MINGW32__)
+/*
+ * strncat_s() is supported at least back to Visual
+ * Studio 2005; we require Visual Studio 2015 or later.
+ */
+#define pcap_strlcat(x, y, z) strncat_s((x), (z), (y), _TRUNCATE)
+#else
+/*
+ * Define it ourselves.
+ */
+extern size_t pcap_strlcat(char *restrict dst, const char *restrict src,
+                           size_t dstsize);
+#endif
 #endif
 
 #ifdef HAVE_STRLCPY
-  #define pcap_strlcpy	strlcpy
+#define pcap_strlcpy strlcpy
 #else
-  #if defined(_MSC_VER) || defined(__MINGW32__)
-    /*
-     * strncpy_s() is supported at least back to Visual
-     * Studio 2005; we require Visual Studio 2015 or later.
-     */
-    #define pcap_strlcpy(x, y, z) \
-	strncpy_s((x), (z), (y), _TRUNCATE)
-  #else
-    /*
-     * Define it ourselves.
-     */
-    extern size_t pcap_strlcpy(char * restrict dst, const char * restrict src, size_t dstsize);
-  #endif
+#if defined(_MSC_VER) || defined(__MINGW32__)
+/*
+ * strncpy_s() is supported at least back to Visual
+ * Studio 2005; we require Visual Studio 2015 or later.
+ */
+#define pcap_strlcpy(x, y, z) strncpy_s((x), (z), (y), _TRUNCATE)
+#else
+/*
+ * Define it ourselves.
+ */
+extern size_t pcap_strlcpy(char *restrict dst, const char *restrict src,
+                           size_t dstsize);
+#endif
 #endif
 
 #ifdef _MSC_VER
-  /*
-   * If <crtdbg.h> has been included, and _DEBUG is defined, and
-   * __STDC__ is zero, <crtdbg.h> will define strdup() to call
-   * _strdup_dbg().  So if it's already defined, don't redefine
-   * it.
-   */
-  #ifndef strdup
-  #define strdup	_strdup
-  #endif
+/*
+ * If <crtdbg.h> has been included, and _DEBUG is defined, and
+ * __STDC__ is zero, <crtdbg.h> will define strdup() to call
+ * _strdup_dbg().  So if it's already defined, don't redefine
+ * it.
+ */
+#ifndef strdup
+#define strdup _strdup
+#endif
 #endif
 
 /*
@@ -113,29 +109,19 @@ extern int pcap_vasprintf(char **, const char *, va_list ap);
 #endif
 
 #ifdef HAVE_STRTOK_R
-  #define pcap_strtok_r	strtok_r
+#define pcap_strtok_r strtok_r
 #else
-  #ifdef _WIN32
-    /*
-     * Microsoft gives it a different name.
-     */
-    #define pcap_strtok_r	strtok_s
-  #else
-    /*
-     * Define it ourselves.
-     */
-    extern char *pcap_strtok_r(char *, const char *, char **);
-  #endif
-#endif /* HAVE_STRTOK_R */
-
 #ifdef _WIN32
-  #if !defined(__cplusplus)
-    #define inline __inline
-  #endif
-#endif /* _WIN32 */
-
-#ifdef __cplusplus
-}
+/*
+ * Microsoft gives it a different name.
+ */
+#define pcap_strtok_r strtok_s
+#else
+/*
+ * Define it ourselves.
+ */
+extern char *pcap_strtok_r(char *, const char *, char **);
 #endif
+#endif /* HAVE_STRTOK_R */
 
 #endif

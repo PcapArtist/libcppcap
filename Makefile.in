@@ -84,31 +84,31 @@ YACC = @YACC@
 # Explicitly define compilation rule since SunOS 4's make doesn't like gcc.
 # Also, gcc does not remove the .o before forking 'as', which can be a
 # problem if you don't own the file but can write to the directory.
-.c.o:
+.cpp.o:
 	@rm -f $@
-	$(CC) $(FULL_CFLAGS) -c $(srcdir)/$*.c
+	$(CC) $(FULL_CFLAGS) -c $(srcdir)/$*.cpp
 
 PLATFORM_C_SRC =	@PLATFORM_C_SRC@
 PLATFORM_CXX_SRC =	@PLATFORM_CXX_SRC@
 MODULE_C_SRC =		@MODULE_C_SRC@
 REMOTE_C_SRC =		@REMOTE_C_SRC@
-COMMON_C_SRC =	pcap.c gencode.c optimize.c nametoaddr.c etherent.c \
-		fmtutils.c \
-		savefile.c sf-pcap.c sf-pcapng.c pcap-common.c \
-		bpf_image.c bpf_filter.c bpf_dump.c
-GENERATED_C_SRC = scanner.c grammar.c
+COMMON_C_SRC =	pcap.cpp gencode.cpp optimize.cpp nametoaddr.cpp etherent.cpp \
+		fmtutils.cpp \
+		savefile.cpp sf-pcap.cpp sf-pcapng.cpp pcap-common.cpp \
+		bpf_image.cpp bpf_filter.cpp bpf_dump.cpp
+GENERATED_C_SRC = scanner.cpp grammar.cpp
 LIBOBJS = @LIBOBJS@
 
 SRC =	$(PLATFORM_C_SRC) $(PLATFORM_CXX_SRC) \
 	$(MODULE_C_SRC) $(REMOTE_C_SRC) $(COMMON_C_SRC) \
 	$(GENERATED_C_SRC)
 
-# We would like to say "OBJ = $(SRC:.c=.o)" but Ultrix's make cannot
+# We would like to say "OBJ = $(SRC:.cpp=.o)" but Ultrix's make cannot
 # hack the extra indirection, and we have to handle PLATFORM_CXX_SRC
 # differently from the defines for C source
-OBJ =	$(PLATFORM_C_SRC:.c=.o) $(PLATFORM_CXX_SRC:.cpp=.o) \
-	$(MODULE_C_SRC:.c=.o) $(REMOTE_C_SRC:.c=.o) $(COMMON_C_SRC:.c=.o) \
-	$(GENERATED_C_SRC:.c=.o) \
+OBJ =	$(PLATFORM_C_SRC:.cpp=.o) $(PLATFORM_CXX_SRC:.cpp=.o) \
+	$(MODULE_C_SRC:.cpp=.o) $(REMOTE_C_SRC:.cpp=.o) $(COMMON_C_SRC:.cpp=.o) \
+	$(GENERATED_C_SRC:.cpp=.o) \
 	$(LIBOBJS)
 
 PUBHDR = \
@@ -165,7 +165,7 @@ TAGFILES = \
 
 CLEANFILES = $(OBJ) libpcap.a libpcap.so.`cat $(srcdir)/VERSION` \
 	$(PROG)-`cat $(srcdir)/VERSION`.tar.gz $(GENERATED_C_SRC) $(GENHDR) \
-	lex.yy.c pcap-config libpcap.pc
+	lex.yy.cpp pcap-config libpcap.pc
 
 MAN1 = pcap-config.1
 
@@ -257,7 +257,7 @@ EXTRA_DIST = \
 	TODO \
 	VERSION \
 	aclocal.m4 \
-	charconv.c \
+	charconv.cpp \
 	charconv.h \
 	chmod_bpf \
 	cmake_uninstall.cmake.in \
@@ -269,17 +269,17 @@ EXTRA_DIST = \
 	cmake/Modules/FindPacket.cmake \
 	cmake/Modules/FindSNF.cmake \
 	cmake/Modules/FindTC.cmake \
-	cmake/have_siocglifconf.c \
+	cmake/have_siocglifconf.cpp \
 	config.guess \
 	config.h.in \
 	config.sub \
 	configure \
 	configure.ac \
-	dlpisubs.c \
+	dlpisubs.cpp \
 	dlpisubs.h \
-	fad-getad.c \
-	fad-gifc.c \
-	fad-glifc.c \
+	fad-getad.cpp \
+	fad-gifc.cpp \
+	fad-glifc.cpp \
 	grammar.y \
 	install-sh \
 	lbl/os-aix4.h \
@@ -291,85 +291,85 @@ EXTRA_DIST = \
 	lbl/os-sunos4.h \
 	lbl/os-ultrix4.h \
 	libpcap.pc.in \
-	missing/asprintf.c \
-	missing/getopt.c \
+	missing/asprintf.cpp \
+	missing/getopt.cpp \
 	missing/getopt.h \
-	missing/strlcat.c \
-	missing/strlcpy.c \
-	missing/strtok_r.c \
-	missing/win_asprintf.c \
+	missing/strlcat.cpp \
+	missing/strlcpy.cpp \
+	missing/strtok_r.cpp \
+	missing/win_asprintf.cpp \
 	mkdep \
-	msdos/bin2c.c \
+	msdos/bin2c.cpp \
 	msdos/makefile \
 	msdos/makefile.dj \
 	msdos/makefile.wc \
 	msdos/pkt_rx0.asm \
 	msdos/pkt_rx1.s \
-	msdos/pktdrvr.c \
+	msdos/pktdrvr.cpp \
 	msdos/pktdrvr.h \
 	msdos/readme.dos \
 	nomkdep \
 	org.tcpdump.chmod_bpf.plist \
-	pcap-bpf.c \
-	pcap-bt-linux.c \
+	pcap-bpf.cpp \
+	pcap-bt-linux.cpp \
 	pcap-bt-linux.h \
-	pcap-bt-monitor-linux.c \
+	pcap-bt-monitor-linux.cpp \
 	pcap-bt-monitor-linux.h \
 	pcap-config.in \
-	pcap-dag.c \
+	pcap-dag.cpp \
 	pcap-dag.h \
-	pcap-dbus.c \
+	pcap-dbus.cpp \
 	pcap-dbus.h \
 	pcap-dll.rc \
-	pcap-dlpi.c \
-	pcap-dos.c \
+	pcap-dlpi.cpp \
+	pcap-dos.cpp \
 	pcap-dos.h \
-	pcap-dpdk.c \
+	pcap-dpdk.cpp \
 	pcap-dpdk.h \
-	pcap-enet.c \
+	pcap-enet.cpp \
 	pcap-haiku.cpp \
 	pcap-int.h \
-	pcap-libdlpi.c \
-	pcap-linux.c \
+	pcap-libdlpi.cpp \
+	pcap-linux.cpp \
 	pcap-namedb.h \
-	pcap-new.c \
-	pcap-netfilter-linux.c \
+	pcap-new.cpp \
+	pcap-netfilter-linux.cpp \
 	pcap-netfilter-linux.h \
-	pcap-netmap.c \
+	pcap-netmap.cpp \
 	pcap-netmap.h \
-	pcap-nit.c \
-	pcap-npf.c \
-	pcap-null.c \
-	pcap-pf.c \
-	pcap-rdmasniff.c \
+	pcap-nit.cpp \
+	pcap-npf.cpp \
+	pcap-nullptr.cpp \
+	pcap-pf.cpp \
+	pcap-rdmasniff.cpp \
 	pcap-rdmasniff.h \
-	pcap-rpcap.c \
+	pcap-rpcap.cpp \
 	pcap-rpcap-int.h \
-	pcap-septel.c \
+	pcap-septel.cpp \
 	pcap-septel.h \
 	pcap-sita.h \
-	pcap-sita.c \
+	pcap-sita.cpp \
 	pcap-sita.html \
-	pcap-snf.c \
+	pcap-snf.cpp \
 	pcap-snf.h \
-	pcap-snit.c \
-	pcap-snoop.c \
-	pcap-tc.c \
+	pcap-snit.cpp \
+	pcap-snoop.cpp \
+	pcap-tc.cpp \
 	pcap-tc.h \
-	pcap-usb-linux.c \
+	pcap-usb-linux.cpp \
 	pcap-usb-linux.h \
-	rpcap-protocol.c \
+	rpcap-protocol.cpp \
 	rpcapd/CMakeLists.txt \
 	rpcapd/Makefile.in \
 	rpcapd/config_params.h \
 	rpcapd/daemon.h \
-	rpcapd/daemon.c \
-	rpcapd/fileconf.c \
+	rpcapd/daemon.cpp \
+	rpcapd/fileconf.cpp \
 	rpcapd/fileconf.h \
 	rpcapd/log.h \
-	rpcapd/log.c \
+	rpcapd/log.cpp \
 	rpcapd/org.tcpdump.rpcapd.plist \
-	rpcapd/rpcapd.c \
+	rpcapd/rpcapd.cpp \
 	rpcapd/rpcapd.h \
 	rpcapd/rpcapd.inetd.conf \
 	rpcapd/rpcapd.manadmin.in \
@@ -378,33 +378,33 @@ EXTRA_DIST = \
 	rpcapd/rpcapd.socket \
 	rpcapd/rpcapd.xinetd.conf \
 	rpcapd/rpcapd@.service \
-	rpcapd/win32-svc.c \
+	rpcapd/win32-svc.cpp \
 	rpcapd/win32-svc.h \
-	sockutils.c \
+	sockutils.cpp \
 	sockutils.h \
-	sslutils.c \
+	sslutils.cpp \
 	sslutils.h \
 	scanner.l \
 	testprogs/CMakeLists.txt \
 	testprogs/Makefile.in \
-	testprogs/can_set_rfmon_test.c \
-	testprogs/capturetest.c \
-	testprogs/filtertest.c \
-	testprogs/findalldevstest.c \
+	testprogs/can_set_rfmon_test.cpp \
+	testprogs/capturetest.cpp \
+	testprogs/filtertest.cpp \
+	testprogs/findalldevstest.cpp \
 	testprogs/fuzz/CMakeLists.txt \
-	testprogs/fuzz/fuzz_both.c \
+	testprogs/fuzz/fuzz_both.cpp \
 	testprogs/fuzz/fuzz_both.options \
-	testprogs/fuzz/fuzz_filter.c \
+	testprogs/fuzz/fuzz_filter.cpp \
 	testprogs/fuzz/fuzz_filter.options \
-	testprogs/fuzz/fuzz_pcap.c \
+	testprogs/fuzz/fuzz_pcap.cpp \
 	testprogs/fuzz/fuzz_pcap.options \
-	testprogs/fuzz/onefile.c \
-	testprogs/opentest.c \
-	testprogs/reactivatetest.c \
-	testprogs/selpolltest.c \
-	testprogs/threadsignaltest.c \
+	testprogs/fuzz/onefile.cpp \
+	testprogs/opentest.cpp \
+	testprogs/reactivatetest.cpp \
+	testprogs/selpolltest.cpp \
+	testprogs/threadsignaltest.cpp \
 	testprogs/unix.h \
-	testprogs/valgrindtest.c \
+	testprogs/valgrindtest.cpp \
 	tests/shb-option-too-long.pcapng \
 	Win32/Prj/wpcap.sln \
 	Win32/Prj/wpcap.vcxproj \
@@ -493,47 +493,47 @@ libpcap.shareda: $(OBJ)
 #
 libpcap.none:
 
-scanner.c: $(srcdir)/scanner.l
-	$(LEX) -P pcap_ --header-file=scanner.h --nounput -o scanner.c $<
-scanner.h: scanner.c
+scanner.cpp: $(srcdir)/scanner.l
+	$(LEX) -P pcap_ --header-file=scanner.h --nounput -o scanner.cpp $<
+scanner.h: scanner.cpp
 ## Recover from the removal of $@
 	@if test -f $@; then :; else \
-		rm -f scanner.c; \
-		$(MAKE) $(MAKEFLAGS) scanner.c; \
+		rm -f scanner.cpp; \
+		$(MAKE) $(MAKEFLAGS) scanner.cpp; \
 	fi
 
-scanner.o: scanner.c grammar.h
-	$(CC) $(FULL_CFLAGS) -c scanner.c
+scanner.o: scanner.cpp grammar.h
+	$(CC) $(FULL_CFLAGS) -c scanner.cpp
 
-grammar.c: $(srcdir)/grammar.y
-	$(YACC) -p pcap_ -o grammar.c -d $<
-grammar.h: grammar.c
+grammar.cpp: $(srcdir)/grammar.y
+	$(YACC) -p pcap_ -o grammar.cpp -d $<
+grammar.h: grammar.cpp
 ## Recover from the removal of $@
 	@if test -f $@; then :; else \
-		rm -f grammar.c; \
-		$(MAKE) $(MAKEFLAGS) grammar.c; \
+		rm -f grammar.cpp; \
+		$(MAKE) $(MAKEFLAGS) grammar.cpp; \
 	fi
 
-grammar.o: grammar.c scanner.h
-	$(CC) $(FULL_CFLAGS) -c grammar.c
+grammar.o: grammar.cpp scanner.h
+	$(CC) $(FULL_CFLAGS) -c grammar.cpp
 
-gencode.o: $(srcdir)/gencode.c grammar.h scanner.h
-	$(CC) $(FULL_CFLAGS) -c $(srcdir)/gencode.c
+gencode.o: $(srcdir)/gencode.cpp grammar.h scanner.h
+	$(CC) $(FULL_CFLAGS) -c $(srcdir)/gencode.cpp
 
-asprintf.o: $(srcdir)/missing/asprintf.c
-	$(CC) $(FULL_CFLAGS) -o $@ -c $(srcdir)/missing/asprintf.c
+asprintf.o: $(srcdir)/missing/asprintf.cpp
+	$(CC) $(FULL_CFLAGS) -o $@ -c $(srcdir)/missing/asprintf.cpp
 
-snprintf.o: $(srcdir)/missing/snprintf.c
-	$(CC) $(FULL_CFLAGS) -o $@ -c $(srcdir)/missing/snprintf.c
+snprintf.o: $(srcdir)/missing/snprintf.cpp
+	$(CC) $(FULL_CFLAGS) -o $@ -c $(srcdir)/missing/snprintf.cpp
 
-strlcat.o: $(srcdir)/missing/strlcat.c
-	$(CC) $(FULL_CFLAGS) -o $@ -c $(srcdir)/missing/strlcat.c
+strlcat.o: $(srcdir)/missing/strlcat.cpp
+	$(CC) $(FULL_CFLAGS) -o $@ -c $(srcdir)/missing/strlcat.cpp
 
-strlcpy.o: $(srcdir)/missing/strlcpy.c
-	$(CC) $(FULL_CFLAGS) -o $@ -c $(srcdir)/missing/strlcpy.c
+strlcpy.o: $(srcdir)/missing/strlcpy.cpp
+	$(CC) $(FULL_CFLAGS) -o $@ -c $(srcdir)/missing/strlcpy.cpp
 
-strtok_r.o: $(srcdir)/missing/strtok_r.c
-	$(CC) $(FULL_CFLAGS) -o $@ -c $(srcdir)/missing/strtok_r.c
+strtok_r.o: $(srcdir)/missing/strtok_r.cpp
+	$(CC) $(FULL_CFLAGS) -o $@ -c $(srcdir)/missing/strtok_r.cpp
 
 #
 # Generate the libpcap.pc file.

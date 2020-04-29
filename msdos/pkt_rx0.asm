@@ -121,7 +121,7 @@ ENDM
 ; A test for equality is done by putting CX in _pktRxBuf [n].firstCount
 ; and _pktRxBuf[n].secondCount, and CL on first call in
 ; _pktRxBuf[n].rxBuffer[CX]. These values are checked in "PktReceive"
-; (PKTDRVR.C)
+; (PKTDRVR.cpp)
 ;
 ;---------------------------------------------------------------------
 
@@ -170,7 +170,7 @@ endif
 
          align 4
 @post:   or si, si                   ; DS:SI->_pktRxBuf[n][n].destinAdr
-         jz @discard                 ; make sure we don't use NULL-pointer
+         jz @discard                 ; make sure we don't use nullptr-pointer
 
          sub si, 6                   ; DS:SI -> _pktRxBuf[n].destinAdr
        ;

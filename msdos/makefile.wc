@@ -48,28 +48,28 @@ wlib.arg: msdos\makefile.wc
           %create $^@
           for %f in ($(OBJS)) do %append $^@ +- %f
 
-$(OBJDIR)\pktdrvr.obj: msdos\pkt_stub.inc msdos\pktdrvr.c &
+$(OBJDIR)\pktdrvr.obj: msdos\pkt_stub.inc msdos\pktdrvr.cpp &
   pcap-dos.h pcap-int.h pcap.h msdos\pktdrvr.h
-          *$(CC) $(CFLAGS) msdos\pktdrvr.c -fo=$@
+          *$(CC) $(CFLAGS) msdos\pktdrvr.cpp -fo=$@
 
-$(OBJDIR)\bpf_filter.obj: bpf\net\bpf_filter.c
-          *$(CC) $(CFLAGS) bpf\net\bpf_filter.c -fo=$@
+$(OBJDIR)\bpf_filter.obj: bpf\net\bpf_filter.cpp
+          *$(CC) $(CFLAGS) bpf\net\bpf_filter.cpp -fo=$@
 
-$(OBJDIR)\ndis2.obj: msdos\ndis2.c
-          *$(CC) $(CFLAGS) msdos\ndis2.c -fo=$@
+$(OBJDIR)\ndis2.obj: msdos\ndis2.cpp
+          *$(CC) $(CFLAGS) msdos\ndis2.cpp -fo=$@
 
 .ERASE
-.c{$(OBJDIR)}.obj:
+.cpp{$(OBJDIR)}.obj:
           *$(CC) $(CFLAGS) $[@ -fo=$@
 
-grammar.c tokdefs.h: grammar.y
+grammar.cpp tokdefs.h: grammar.y
           bison --name-prefix=pcap_ --yacc --defines $[@
-          - @del grammar.c
+          - @del grammar.cpp
           - @del tokdefs.h
-          ren y_tab.c grammar.c
+          ren y_tab.cpp grammar.cpp
           ren y_tab.h tokdefs.h
 
-scanner.c: scanner.l
+scanner.cpp: scanner.l
           flex -Ppcap_ -7 -o$@ $[@
 
 msdos\pkt_stub.inc: bin2c.exe msdos\pkt_rx1.S
@@ -77,15 +77,15 @@ msdos\pkt_stub.inc: bin2c.exe msdos\pkt_rx1.S
           bin2c.exe  $(TEMPBIN) > $@
           @del $(TEMPBIN)
 
-bin2c.exe: msdos\bin2c.c
+bin2c.exe: msdos\bin2c.cpp
           wcl $[@
 
 clean realclean vclean: .SYMBOLIC
           for %f in (dos4g.w3r dos4g.w3s pharlap.w3r pharlap.w3s) do &
             @del %f\*.obj
-          @del grammar.c
+          @del grammar.cpp
           @del tokdefs.h
-          @del scanner.c
+          @del scanner.cpp
           @del bin2c.exe
           @del bin2c.obj
           @del msdos\pkt_stub.inc
@@ -94,39 +94,39 @@ clean realclean vclean: .SYMBOLIC
 #
 # dependencies
 #
-$(OBJDIR)\bpf_filter.obj: bpf\net\bpf_filter.c pcap-int.h pcap.h pcap-bpf.h
+$(OBJDIR)\bpf_filter.obj: bpf\net\bpf_filter.cpp pcap-int.h pcap.h pcap-bpf.h
 
-$(OBJDIR)\bpf_imag.obj: bpf_imag.c pcap-int.h pcap.h pcap-bpf.h
+$(OBJDIR)\bpf_imag.obj: bpf_imag.cpp pcap-int.h pcap.h pcap-bpf.h
 
-$(OBJDIR)\bpf_dump.obj: bpf_dump.c pcap.h pcap-bpf.h
+$(OBJDIR)\bpf_dump.obj: bpf_dump.cpp pcap.h pcap-bpf.h
 
-$(OBJDIR)\etherent.obj: etherent.c pcap-int.h pcap.h pcap-bpf.h pcap-namedb.h
+$(OBJDIR)\etherent.obj: etherent.cpp pcap-int.h pcap.h pcap-bpf.h pcap-namedb.h
 
-$(OBJDIR)\optimize.obj: optimize.c pcap-int.h pcap.h pcap-bpf.h gencode.h
+$(OBJDIR)\optimize.obj: optimize.cpp pcap-int.h pcap.h pcap-bpf.h gencode.h
 
-$(OBJDIR)\savefile.obj: savefile.c pcap-int.h pcap.h pcap-bpf.h
+$(OBJDIR)\savefile.obj: savefile.cpp pcap-int.h pcap.h pcap-bpf.h
 
-$(OBJDIR)\pcap.obj: pcap.c pcap-dos.h pcap-int.h pcap.h pcap-bpf.h
+$(OBJDIR)\pcap.obj: pcap.cpp pcap-dos.h pcap-int.h pcap.h pcap-bpf.h
 
-$(OBJDIR)\grammar.obj: grammar.c pcap-int.h pcap.h pcap-bpf.h gencode.h &
+$(OBJDIR)\grammar.obj: grammar.cpp pcap-int.h pcap.h pcap-bpf.h gencode.h &
   pcap-namedb.h
 
-$(OBJDIR)\scanner.obj: scanner.c pcap-int.h pcap.h pcap-bpf.h gencode.h &
+$(OBJDIR)\scanner.obj: scanner.cpp pcap-int.h pcap.h pcap-bpf.h gencode.h &
   pcap-namedb.h tokdefs.h
 
-$(OBJDIR)\gencode.obj: gencode.c pcap-dos.h pcap-int.h pcap.h pcap-bpf.h &
+$(OBJDIR)\gencode.obj: gencode.cpp pcap-dos.h pcap-int.h pcap.h pcap-bpf.h &
   ethertyp.h nlpid.h llc.h gencode.h atmuni31.h sunatmpo.h ppp.h sll.h &
   arcnet.h pcap-namedb.h
 
-$(OBJDIR)\nametoad.obj: nametoad.c pcap-int.h pcap.h pcap-bpf.h gencode.h &
+$(OBJDIR)\nametoad.obj: nametoad.cpp pcap-int.h pcap.h pcap-bpf.h gencode.h &
   pcap-namedb.h ethertyp.h
 
-$(OBJDIR)\pcap-dos.obj: pcap-dos.c pcap.h pcap-bpf.h pcap-dos.h pcap-int.h &
+$(OBJDIR)\pcap-dos.obj: pcap-dos.cpp pcap.h pcap-bpf.h pcap-dos.h pcap-int.h &
   msdos\pktdrvr.h
 
-$(OBJDIR)\pktdrvr.obj: msdos\pktdrvr.c pcap-dos.h pcap-int.h &
+$(OBJDIR)\pktdrvr.obj: msdos\pktdrvr.cpp pcap-dos.h pcap-int.h &
   pcap.h pcap-bpf.h msdos\pktdrvr.h msdos\pkt_stub.inc
 
-$(OBJDIR)\ndis2.obj: msdos\ndis2.c pcap-dos.h pcap-int.h pcap.h pcap-bpf.h &
+$(OBJDIR)\ndis2.obj: msdos\ndis2.cpp pcap-dos.h pcap-int.h pcap.h pcap-bpf.h &
   msdos\ndis2.h
 

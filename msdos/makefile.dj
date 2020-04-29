@@ -11,7 +11,7 @@
 
 VPATH = missing msdos bpf/net
 
-PREREQUISITES = scanner.c grammar.c tokdefs.h version.h msdos/pkt_stub.inc
+PREREQUISITES = scanner.cpp grammar.cpp tokdefs.h version.h msdos/pkt_stub.inc
 
 include ./msdos/common.dj
 
@@ -22,12 +22,12 @@ CFLAGS += -DDEBUG -DNDIS_DEBUG -DHAVE_LIMITS_H -DHAVE_STRERROR -DHAVE_SNPRINTF -
 
 CFLAGS += -Dyylval=pcap_lval # -DBDEBUG -DNDEBUG
 
-SOURCES = grammar.c scanner.c bpf/net/bpf_filter.c bpf_image.c bpf_dump.c \
-          etherent.c gencode.c nametoaddr.c pcap-common.c pcap-dos.c optimize.c \
-          savefile.c pcap.c sf-pcap.c sf-pcapng.c \
-          msdos/pktdrvr.c msdos/ndis2.c # missing/snprintf.c
+SOURCES = grammar.cpp scanner.cpp bpf/net/bpf_filter.cpp bpf_image.cpp bpf_dump.cpp \
+          etherent.cpp gencode.cpp nametoaddr.cpp pcap-common.cpp pcap-dos.cpp optimize.cpp \
+          savefile.cpp pcap.cpp sf-pcap.cpp sf-pcapng.cpp \
+          msdos/pktdrvr.cpp msdos/ndis2.cpp # missing/snprintf.cpp
 
-OBJECTS = $(addprefix $(OBJ_DIR)/, $(notdir $(SOURCES:.c=.o)))
+OBJECTS = $(addprefix $(OBJ_DIR)/, $(notdir $(SOURCES:.cpp=.o)))
 TEMPBIN = tmp.bin
 
 ifeq ($(USE_32BIT_DRIVERS),1)
@@ -59,19 +59,19 @@ libpcap.a: version.h $(OBJECTS) $(PM_OBJECTS)
 	rm -f $@
 	ar rs $@ $^
 
-filtertest.exe: tests/filtertest.c libpcap.a
+filtertest.exe: tests/filtertest.cpp libpcap.a
 	$(CC) $(CFLAGS) -Din_addr_t=u_long -o $@ $^ $(WATT32_ROOT)/lib/libwatt.a
 	@echo
 
-findalldevstest.exe: tests/findalldevstest.c libpcap.a
+findalldevstest.exe: tests/findalldevstest.cpp libpcap.a
 	$(CC) $(CFLAGS) -o $@ $^ $(WATT32_ROOT)/lib/libwatt.a
 	@echo
 
-nonblocktest.exe: tests/nonblocktest.c libpcap.a
+nonblocktest.exe: tests/nonblocktest.cpp libpcap.a
 	$(CC) $(CFLAGS) -o $@ $^ $(WATT32_ROOT)/lib/libwatt.a
 	@echo
 
-opentest.exe: tests/opentest.c libpcap.a
+opentest.exe: tests/opentest.cpp libpcap.a
 	$(CC) $(CFLAGS) -o $@ $^ $(WATT32_ROOT)/lib/libwatt.a
 	@echo
 
@@ -80,22 +80,22 @@ msdos/pkt_stub.inc: msdos/bin2c.exe msdos/pkt_rx1.S
 	./msdos/bin2c $(TEMPBIN) > $@
 	rm -f $(TEMPBIN)
 
-grammar.c tokdefs.h: grammar.y
-	rm -f grammar.c tokdefs.h
+grammar.cpp tokdefs.h: grammar.y
+	rm -f grammar.cpp tokdefs.h
 	$(YACC) --name-prefix=pcap_ --yacc --defines grammar.y
-	mv -f y.tab.c grammar.c
+	mv -f y.tab.cpp grammar.cpp
 	mv -f y.tab.h tokdefs.h
 
 version.h: ./VERSION
 	@echo '/* Generated from VERSION. Do not edit */' > $@
 	sed -e 's/.*/static char pcap_version_string[] = "libpcap (&)";/' ./VERSION >> $@
 
-scanner.c: scanner.l
+scanner.cpp: scanner.l
 	$(LEX) -Ppcap_ -7 -t $^ > $@
 	@echo
 
-msdos/bin2c.exe: msdos/bin2c.c
-	$(CC) $*.c -o $*.exe
+msdos/bin2c.exe: msdos/bin2c.cpp
+	$(CC) $*.cpp -o $*.exe
 
 clean:
 	rm -f $(OBJECTS) msdos/pkt_rx1.lst Makefile.bak .depend.dj $(PREREQUISITES)
@@ -108,9 +108,9 @@ vclean: clean
 #
 # Manually generated dependencies
 #
-msdos/pktdrvr.c: msdos/pkt_stub.inc
-scanner.c: scanner.l
-grammar.c tokdefs.h: grammar.y
+msdos/pktdrvr.cpp: msdos/pkt_stub.inc
+scanner.cpp: scanner.l
+grammar.cpp tokdefs.h: grammar.y
 grammar.h: grammar.y
 scanner.l: pcap-int.h pcap-namedb.h gencode.h grammar.h
 grammar.y: pcap-int.h gencode.h pcap-namedb.h

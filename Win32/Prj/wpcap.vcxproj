@@ -111,8 +111,8 @@
     </Link>
     <PreBuildEvent>
       <Command>call ..\..\GenVersion.bat ..\..\VERSION ..\..\pcap_version.h.in ..\..\pcap_version.h
-win_flex -Ppcap_ -7 --outfile=..\..\scanner.c --header-file=..\..\scanner.h ..\..\scanner.l
-win_bison -ppcap_ --yacc --output=..\..\grammar.c --defines ..\..\grammar.y</Command>
+win_flex -Ppcap_ -7 --outfile=..\..\scanner.cpp --header-file=..\..\scanner.h ..\..\scanner.l
+win_bison -ppcap_ --yacc --output=..\..\grammar.cpp --defines ..\..\grammar.y</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -136,8 +136,8 @@ win_bison -ppcap_ --yacc --output=..\..\grammar.c --defines ..\..\grammar.y</Com
     </Link>
     <PreBuildEvent>
       <Command>call ..\..\GenVersion.bat ..\..\VERSION ..\..\pcap_version.h.in ..\..\pcap_version.h
-win_flex -Ppcap_ -7 --outfile=..\..\scanner.c --header-file=..\..\scanner.h ..\..\scanner.l
-win_bison -ppcap_ --yacc --output=..\..\grammar.c --defines ..\..\grammar.y</Command>
+win_flex -Ppcap_ -7 --outfile=..\..\scanner.cpp --header-file=..\..\scanner.h ..\..\scanner.l
+win_bison -ppcap_ --yacc --output=..\..\grammar.cpp --defines ..\..\grammar.y</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -163,8 +163,8 @@ win_bison -ppcap_ --yacc --output=..\..\grammar.c --defines ..\..\grammar.y</Com
     </Link>
     <PreBuildEvent>
       <Command>call ..\..\GenVersion.bat ..\..\VERSION ..\..\pcap_version.h.in ..\..\pcap_version.h
-win_flex -Ppcap_ -7 --outfile=..\..\scanner.c --header-file=..\..\scanner.h ..\..\scanner.l
-win_bison -ppcap_ --yacc --output=..\..\grammar.c --defines ..\..\grammar.y</Command>
+win_flex -Ppcap_ -7 --outfile=..\..\scanner.cpp --header-file=..\..\scanner.h ..\..\scanner.l
+win_bison -ppcap_ --yacc --output=..\..\grammar.cpp --defines ..\..\grammar.y</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -189,31 +189,31 @@ win_bison -ppcap_ --yacc --output=..\..\grammar.c --defines ..\..\grammar.y</Com
     </Link>
     <PreBuildEvent>
       <Command>call ..\..\GenVersion.bat ..\..\VERSION ..\..\pcap_version.h.in ..\..\pcap_version.h
-win_flex -Ppcap_ -7 --outfile=..\..\scanner.c --header-file=..\..\scanner.h ..\..\scanner.l
-win_bison -ppcap_ --yacc --output=..\..\grammar.c --defines ..\..\grammar.y</Command>
+win_flex -Ppcap_ -7 --outfile=..\..\scanner.cpp --header-file=..\..\scanner.h ..\..\scanner.l
+win_bison -ppcap_ --yacc --output=..\..\grammar.cpp --defines ..\..\grammar.y</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\bpf\net\bpf_filter.c" />
-    <ClCompile Include="..\..\bpf_dump.c" />
-    <ClCompile Include="..\..\bpf_image.c" />
-    <ClCompile Include="..\..\etherent.c" />
-    <ClCompile Include="..\..\gencode.c" />
-    <ClCompile Include="..\..\grammar.c" />
-    <ClCompile Include="..\..\inet.c" />
-    <ClCompile Include="..\..\missing\win_snprintf.c" />
-    <ClCompile Include="..\..\nametoaddr.c" />
-    <ClCompile Include="..\..\optimize.c" />
-    <ClCompile Include="..\..\pcap-common.c" />
-    <ClCompile Include="..\..\pcap-new.c" />
-    <ClCompile Include="..\..\pcap-rpcap.c" />
-    <ClCompile Include="..\..\pcap-win32.c" />
-    <ClCompile Include="..\..\pcap.c" />
-    <ClCompile Include="..\..\savefile.c" />
-    <ClCompile Include="..\..\scanner.c" />
-    <ClCompile Include="..\..\sf-pcapng.c" />
-    <ClCompile Include="..\..\sf-pcap.c" />
-    <ClCompile Include="..\..\sockutils.c" />
+    <ClCompile Include="..\..\bpf\net\bpf_filter.cpp" />
+    <ClCompile Include="..\..\bpf_dump.cpp" />
+    <ClCompile Include="..\..\bpf_image.cpp" />
+    <ClCompile Include="..\..\etherent.cpp" />
+    <ClCompile Include="..\..\gencode.cpp" />
+    <ClCompile Include="..\..\grammar.cpp" />
+    <ClCompile Include="..\..\inet.cpp" />
+    <ClCompile Include="..\..\missing\win_snprintf.cpp" />
+    <ClCompile Include="..\..\nametoaddr.cpp" />
+    <ClCompile Include="..\..\optimize.cpp" />
+    <ClCompile Include="..\..\pcap-common.cpp" />
+    <ClCompile Include="..\..\pcap-new.cpp" />
+    <ClCompile Include="..\..\pcap-rpcap.cpp" />
+    <ClCompile Include="..\..\pcap-win32.cpp" />
+    <ClCompile Include="..\..\pcap.cpp" />
+    <ClCompile Include="..\..\savefile.cpp" />
+    <ClCompile Include="..\..\scanner.cpp" />
+    <ClCompile Include="..\..\sf-pcapng.cpp" />
+    <ClCompile Include="..\..\sf-pcap.cpp" />
+    <ClCompile Include="..\..\sockutils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\pcap-common.h" />

@@ -93,7 +93,7 @@ struct rtentry;
 #include "pcap-int.h"
 
 #include "gencode.h"
-#include "grammar.h"
+#include "grammar.hpp"
 #include "scanner.h"
 
 #ifdef HAVE_NET_PFVAR_H
@@ -145,7 +145,7 @@ static const struct tok ieee80211_types[] = {
 	{ IEEE80211_FC0_TYPE_MGT, "management" },
 	{ IEEE80211_FC0_TYPE_CTL, "ctl" },
 	{ IEEE80211_FC0_TYPE_CTL, "control" },
-	{ 0, NULL }
+	{ 0, nullptr }
 };
 static const struct tok ieee80211_mgt_subtypes[] = {
 	{ IEEE80211_FC0_SUBTYPE_ASSOC_REQ, "assocreq" },
@@ -168,7 +168,7 @@ static const struct tok ieee80211_mgt_subtypes[] = {
 	{ IEEE80211_FC0_SUBTYPE_AUTH, "authentication" },
 	{ IEEE80211_FC0_SUBTYPE_DEAUTH, "deauth" },
 	{ IEEE80211_FC0_SUBTYPE_DEAUTH, "deauthentication" },
-	{ 0, NULL }
+	{ 0, nullptr }
 };
 static const struct tok ieee80211_ctl_subtypes[] = {
 	{ IEEE80211_FC0_SUBTYPE_PS_POLL, "ps-poll" },
@@ -177,14 +177,14 @@ static const struct tok ieee80211_ctl_subtypes[] = {
 	{ IEEE80211_FC0_SUBTYPE_ACK, "ack" },
 	{ IEEE80211_FC0_SUBTYPE_CF_END, "cf-end" },
 	{ IEEE80211_FC0_SUBTYPE_CF_END_ACK, "cf-end-ack" },
-	{ 0, NULL }
+	{ 0, nullptr }
 };
 static const struct tok ieee80211_data_subtypes[] = {
 	{ IEEE80211_FC0_SUBTYPE_DATA, "data" },
 	{ IEEE80211_FC0_SUBTYPE_CF_ACK, "data-cf-ack" },
 	{ IEEE80211_FC0_SUBTYPE_CF_POLL, "data-cf-poll" },
 	{ IEEE80211_FC0_SUBTYPE_CF_ACPL, "data-cf-ack-poll" },
-	{ IEEE80211_FC0_SUBTYPE_NODATA, "null" },
+	{ IEEE80211_FC0_SUBTYPE_NODATA, "nullptr" },
 	{ IEEE80211_FC0_SUBTYPE_NODATA_CF_ACK, "cf-ack" },
 	{ IEEE80211_FC0_SUBTYPE_NODATA_CF_POLL, "cf-poll"  },
 	{ IEEE80211_FC0_SUBTYPE_NODATA_CF_ACPL, "cf-ack-poll" },
@@ -195,13 +195,13 @@ static const struct tok ieee80211_data_subtypes[] = {
 	{ IEEE80211_FC0_SUBTYPE_QOS|IEEE80211_FC0_SUBTYPE_NODATA, "qos" },
 	{ IEEE80211_FC0_SUBTYPE_QOS|IEEE80211_FC0_SUBTYPE_NODATA_CF_POLL, "qos-cf-poll" },
 	{ IEEE80211_FC0_SUBTYPE_QOS|IEEE80211_FC0_SUBTYPE_NODATA_CF_ACPL, "qos-cf-ack-poll" },
-	{ 0, NULL }
+	{ 0, nullptr }
 };
 static const struct tok llc_s_subtypes[] = {
 	{ LLC_RR, "rr" },
 	{ LLC_RNR, "rnr" },
 	{ LLC_REJ, "rej" },
-	{ 0, NULL }
+	{ 0, nullptr }
 };
 static const struct tok llc_u_subtypes[] = {
 	{ LLC_UI, "ui" },
@@ -212,7 +212,7 @@ static const struct tok llc_u_subtypes[] = {
 	{ LLC_TEST, "test" },
 	{ LLC_XID, "xid" },
 	{ LLC_FRMR, "frmr" },
-	{ 0, NULL }
+	{ 0, nullptr }
 };
 struct type2tok {
 	int type;
@@ -222,7 +222,7 @@ static const struct type2tok ieee80211_type_subtypes[] = {
 	{ IEEE80211_FC0_TYPE_MGT, ieee80211_mgt_subtypes },
 	{ IEEE80211_FC0_TYPE_CTL, ieee80211_ctl_subtypes },
 	{ IEEE80211_FC0_TYPE_DATA, ieee80211_data_subtypes },
-	{ 0, NULL }
+	{ 0, nullptr }
 };
 
 static int
@@ -230,7 +230,7 @@ str2tok(const char *str, const struct tok *toks)
 {
 	int i;
 
-	for (i = 0; toks[i].s != NULL; i++) {
+	for (i = 0; toks[i].s != nullptr; i++) {
 		if (pcap_strcasecmp(toks[i].s, str) == 0) {
 			/*
 			 * Just in case somebody is using this to
@@ -313,7 +313,7 @@ pfaction_to_num(compiler_state_t *cstate, const char *action _U_)
  * For calls that might return an "an error occurred" value.
  */
 #define CHECK_INT_VAL(val)	if (val == -1) YYABORT
-#define CHECK_PTR_VAL(val)	if (val == NULL) YYABORT
+#define CHECK_PTR_VAL(val)	if (val == nullptr) YYABORT
 
 DIAG_OFF_BISON_BYACC
 %}
@@ -339,7 +339,7 @@ DIAG_OFF_BISON_BYACC
 %type	<a>	arth narth
 %type	<i>	byteop pname relop irelop
 %type	<h>	pnum
-%type	<blk>	and or paren not null prog
+%type	<blk>	and or paren not nullptr prog
 %type	<rblk>	other pfvar p80211 pllc
 %type	<i>	atmtype atmmultitype
 %type	<blk>	atmfield
@@ -391,13 +391,13 @@ DIAG_OFF_BISON_BYACC
 %left '*' '/'
 %nonassoc UMINUS
 %%
-prog:	  null expr
+prog:	  nullptr expr
 {
 	CHECK_INT_VAL(finish_parse(cstate, $2.b));
 }
-	| null
+	| nullptr
 	;
-null:	  /* null */		{ $$.q = qerr; }
+nullptr:	  /* nullptr */		{ $$.q = qerr; }
 	;
 expr:	  term
 	| expr and term		{ gen_and($1.b, $3.b); $$ = $3; }
@@ -410,12 +410,12 @@ and:	  AND			{ $$ = $<blk>0; }
 or:	  OR			{ $$ = $<blk>0; }
 	;
 id:	  nid
-	| pnum			{ CHECK_PTR_VAL(($$.b = gen_ncode(cstate, NULL, $1,
+	| pnum			{ CHECK_PTR_VAL(($$.b = gen_ncode(cstate, nullptr, $1,
 						   $$.q = $<blk>0.q))); }
 	| paren pid ')'		{ $$ = $2; }
 	;
 nid:	  ID			{ CHECK_PTR_VAL($1); CHECK_PTR_VAL(($$.b = gen_scode(cstate, $1, $$.q = $<blk>0.q))); }
-	| HID '/' NUM		{ CHECK_PTR_VAL($1); CHECK_PTR_VAL(($$.b = gen_mcode(cstate, $1, NULL, $3,
+	| HID '/' NUM		{ CHECK_PTR_VAL($1); CHECK_PTR_VAL(($$.b = gen_mcode(cstate, $1, nullptr, $3,
 				    $$.q = $<blk>0.q))); }
 	| HID NETMASK HID	{ CHECK_PTR_VAL($1); CHECK_PTR_VAL(($$.b = gen_mcode(cstate, $1, $3, 0,
 				    $$.q = $<blk>0.q))); }
@@ -441,7 +441,7 @@ nid:	  ID			{ CHECK_PTR_VAL($1); CHECK_PTR_VAL(($$.b = gen_scode(cstate, $1, $$.
 	| HID6 '/' NUM		{
 				  CHECK_PTR_VAL($1);
 #ifdef INET6
-				  CHECK_PTR_VAL(($$.b = gen_mcode6(cstate, $1, NULL, $3,
+				  CHECK_PTR_VAL(($$.b = gen_mcode6(cstate, $1, nullptr, $3,
 				    $$.q = $<blk>0.q)));
 #else
 				  bpf_set_error(cstate, "'ip6addr/prefixlen' not supported "
@@ -472,7 +472,7 @@ pid:	  nid
 	| qid and id		{ gen_and($1.b, $3.b); $$ = $3; }
 	| qid or id		{ gen_or($1.b, $3.b); $$ = $3; }
 	;
-qid:	  pnum			{ CHECK_PTR_VAL(($$.b = gen_ncode(cstate, NULL, $1,
+qid:	  pnum			{ CHECK_PTR_VAL(($$.b = gen_ncode(cstate, nullptr, $1,
 						   $$.q = $<blk>0.q))); }
 	| pid
 	;
@@ -639,11 +639,11 @@ subtype:  NUM			{ if (($1 & (~IEEE80211_FC0_SUBTYPE_MASK)) != 0) {
 				  }
 				  $$ = (int)$1;
 				}
-	| ID			{ const struct tok *types = NULL;
+	| ID			{ const struct tok *types = nullptr;
 				  int i;
 				  CHECK_PTR_VAL($1);
 				  for (i = 0;; i++) {
-					if (ieee80211_type_subtypes[i].tok == NULL) {
+					if (ieee80211_type_subtypes[i].tok == nullptr) {
 						/* Ran out of types */
 						bpf_set_error(cstate, "unknown 802.11 type");
 						YYABORT;
@@ -665,7 +665,7 @@ subtype:  NUM			{ if (($1 & (~IEEE80211_FC0_SUBTYPE_MASK)) != 0) {
 type_subtype:	ID		{ int i;
 				  CHECK_PTR_VAL($1);
 				  for (i = 0;; i++) {
-					if (ieee80211_type_subtypes[i].tok == NULL) {
+					if (ieee80211_type_subtypes[i].tok == nullptr) {
 						/* Ran out of types */
 						bpf_set_error(cstate, "unknown 802.11 type name");
 						YYABORT;

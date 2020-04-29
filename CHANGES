@@ -1,7 +1,7 @@
 Sunday, July 22, 2018
   Summary for 1.9.1 libpcap release
     Mention pcap_get_required_select_timeout() in the main pcap man page
-    Fix pcap-usb-linux.c build on systems with musl
+    Fix pcap-usb-linux.cpp build on systems with musl
     Fix assorted man page and other documentation issues
     Plug assorted memory leaks
     Documentation changes to use https:
@@ -104,7 +104,7 @@ Sunday, June 24, 2018, by mcr@sandelman.ca
     Solaris fixes to work with 2.8.6
     configuration test now looks for header files, not capture devices present
     Fix to work with Berkeley YACC.
-    fixes for DragonBSD compilation of pcap-netmap.c
+    fixes for DragonBSD compilation of pcap-netmap.cpp
     Clean up the ether_hostton() stuff.
     Add an option to disable Linux memory-mapped capture support.
     Add DAG API support checks.
@@ -163,7 +163,7 @@ Tuesday, Oct. 25, 2016 mcr@sandelman.ca
     Fix the handling of loopback filters for IPv6 packets.
     Add a link-layer header type for RDS (IEC 62106) groups.
     Use different intermediate folders for x86 and x64 builds on Windows.
-    On Linux, handle all CAN captures with pcap-linux.c, in cooked mode.
+    On Linux, handle all CAN captures with pcap-linux.cpp, in cooked mode.
     Removes the need for the "host-endian" link-layer header type.
     Compile with '-Wused-but-marked-unused' in devel mode if supported
     Have separate DLTs for big-endian and host-endian SocketCAN headers.
@@ -207,7 +207,7 @@ Thursday Feb. 12, 2015 guy@alum.mit.edu/mcr@sandelman.ca
   Summary for 1.7.2 libpcap release
 	Support for filtering Geneve encapsulated packets.
 	Generalize encapsulation handling, fixing some bugs.
-	Don't add null addresses to address lists.
+	Don't add nullptr addresses to address lists.
 	Add pcap_dump_open_append() to open for appending.
 	Fix the swapping of isochronous descriptors in Linux USB.
 	Attempt to handle TPACKET_V1 with 32-bit userland and 64-bit kernel.
@@ -294,7 +294,7 @@ Summary for 1.4.0 libpcap release
 	Fix some issues with the pcap_loop man page.
 	Fix pcap_getnonblock() and pcap_setnonblock() to fill in the
 	    supplied error message buffer
-	Fix typo that, it appeared, would cause pcap-libdlpi.c not to
+	Fix typo that, it appeared, would cause pcap-libdlpi.cpp not to
 	    compile (perhaps systems with libdlpi also have BPF and use
 	    that instead)
 	Catch attempts to call pcap_compile() on a non-activated pcap_t
@@ -604,7 +604,7 @@ Tue. 	July 5, 2005.  ken@xelerance.com. Summary for 0.9.3 libpcap release
 
 Tue.   March 30, 2004. mcr@sandelman.ottawa.on.ca. Summary for 3.8.3 release
 
-	Fixed minor problem in gencode.c that would appear on 64-bit
+	Fixed minor problem in gencode.cpp that would appear on 64-bit
 	platforms.
 	Version number is now sane.
 
@@ -890,7 +890,7 @@ v0.1 Fri Apr 28 18:11:03 PDT 1995
 - Removed FDDI ifdef's, they aren't really needed. Resulted from report
   by Gary Veum (veum@boa.gsfc.nasa.gov).
 
-- Add pcap-null.c which allows offline use of libpcap on systems that
+- Add pcap-nullptr.cpp which allows offline use of libpcap on systems that
   don't support live package capture. This feature resulting from a
   request from Jan van Oorschot (j.p.m.voorschot@et.tudelft.nl).
 
@@ -899,13 +899,13 @@ v0.1 Fri Apr 28 18:11:03 PDT 1995
 
 - Port to GNU autoconf.
 
-- Fix pcap-dlpi.c to work with isdn. Resulted from report by Flemming
+- Fix pcap-dlpi.cpp to work with isdn. Resulted from report by Flemming
   Johansen (fsj@csd.cri.dk).
 
 - Handle multi-digit interface unit numbers (aka ppa's) under dlpi.
   Resulted from report by Daniel Ehrlich (ehrlich@cse.psu.edu).
 
-- Fix pcap-dlpi.c to work in non-promiscuous mode. Resulted from report
+- Fix pcap-dlpi.cpp to work in non-promiscuous mode. Resulted from report
   by Jeff Murphy (jcmurphy@acsu.buffalo.edu).
 
 - Add support for "long jumps". Thanks to Jeffrey Mogul
@@ -960,7 +960,7 @@ v0.0.2 Wed Oct 12 20:56:37 PDT 1994
 
 v0.0.1 Fri Jun 24 14:50:57 PDT 1994
 
-- Fixed bug in nit_setflags() in pcap-snit.c. The streams ioctl timeout
+- Fixed bug in nit_setflags() in pcap-snit.cpp. The streams ioctl timeout
   wasn't being initialized sometimes resulting in an "NIOCSFLAGS:
   Invalid argument" error under OSF/1. Reported by Matt Day
   (mday@artisoft.com) and Danny Mitzel (dmitzel@whitney.hitc.com).

@@ -197,7 +197,7 @@ We suggest that you use host names rather than literal IP addresses
 in order to avoid problems with different address families.
 .TP
 .B \-n
-Permit NULL authentication (usually used with
+Permit nullptr authentication (usually used with
 .BR \-l ).
 .TP
 .BI \-a " host" , "port"

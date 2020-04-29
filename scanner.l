@@ -15,10 +15,10 @@
  *
  * We, however, will include it if we know we have an MSVC version that has
  * it; this means that we may define the INTn_MAX and UINTn_MAX values in
- * scanner.c, and then include <stdint.h>, which may define them differently
+ * scanner.cpp, and then include <stdint.h>, which may define them differently
  * (same value, but different string of characters), causing compiler warnings.
  *
- * If we include it here, and they're defined, that'll prevent scanner.c
+ * If we include it here, and they're defined, that'll prevent scanner.cpp
  * from defining them.  So we include <pcap/pcap-inttypes.h>, to get
  * <inttypes.h> if we have it.
  */
@@ -91,7 +91,7 @@
 
 #include "gencode.h"
 
-#include "grammar.h"
+#include "grammar.hpp"
 
 /*
  * Earlier versions of Flex don't declare these, so we declare them
@@ -140,7 +140,7 @@ void pcap_set_column(int, yyscan_t);
 #endif /*INET6*/
 
 #include <pcap/namedb.h>
-#include "grammar.h"
+#include "grammar.hpp"
 
 #ifdef HAVE_OS_PROTO_H
 #include "os-proto.h"
@@ -400,20 +400,20 @@ ${B}			{ yylval->s = sdup(yyextra, yytext); return AID; }
 			  memset(&hints, 0, sizeof(hints));
 			  hints.ai_family = AF_INET6;
 			  hints.ai_flags = AI_NUMERICHOST;
-			  if (getaddrinfo(yytext, NULL, &hints, &res)) {
+			  if (getaddrinfo(yytext, nullptr, &hints, &res)) {
 				bpf_set_error(yyextra, "bogus IPv6 address %s", yytext);
-				yylval->s = NULL;
+				yylval->s = nullptr;
 			  } else {
 				freeaddrinfo(res);
 				yylval->s = sdup(yyextra, (char *)yytext);
 			  }
 #else
 			  bpf_set_error(yyextra, "IPv6 address %s not supported", yytext);
-			  yylval->s = NULL;
+			  yylval->s = nullptr;
 #endif /*INET6*/
 			  return HID6;
 			}
-{B}:+({B}:+)+		{ bpf_set_error(yyextra, "bogus ethernet address %s", yytext); yylval->s = NULL; return EID; }
+{B}:+({B}:+)+		{ bpf_set_error(yyextra, "bogus ethernet address %s", yytext); yylval->s = nullptr; return EID; }
 icmptype		{ yylval->h = 0; return NUM; }
 icmpcode		{ yylval->h = 1; return NUM; }
 icmp-echoreply		{ yylval->h = 0; return NUM; }

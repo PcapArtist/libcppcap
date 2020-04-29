@@ -1,5 +1,5 @@
 /*
- * pcap-septel.c: Packet capture interface for Intel Septel card
+ * pcap-septel.cpp: Packet capture interface for Intel Septel card
  *
  * The functionality of this code attempts to mimic that of pcap-linux as much
  * as possible.  This code is only needed when compiling in the Intel/Septel

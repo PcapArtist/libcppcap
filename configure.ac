@@ -17,7 +17,7 @@ dnl
 AC_PREREQ(2.64)
 
 AC_INIT(pcap, m4_esyscmd_s([cat VERSION]))
-AC_CONFIG_SRCDIR(pcap.c)
+AC_CONFIG_SRCDIR(pcap.cpp)
 AC_SUBST(PACKAGE_NAME)
 
 AC_CANONICAL_SYSTEM
@@ -54,7 +54,7 @@ AC_FUNC_FSEEKO
 dnl
 dnl Even if <net/bpf.h> were, on all OSes that support BPF, fixed to
 dnl include <sys/ioccom.h>, and we were to drop support for older
-dnl releases without that fix, so that pcap-bpf.c doesn't need to
+dnl releases without that fix, so that pcap-bpf.cpp doesn't need to
 dnl include <sys/ioccom.h>, the test program in "AC_LBL_FIXINCLUDES"
 dnl in "aclocal.m4" uses it, so we would still have to test for it
 dnl and set "HAVE_SYS_IOCCOM_H" if we have it, otherwise
@@ -247,7 +247,7 @@ AC_CHECK_DECL(getnetbyname_r,
 			struct netent netent_buf;
 			char buf[1024];
 
-			return getnetbyname_r((const char *)0, &netent_buf, buf, (int)sizeof buf) != NULL;
+			return getnetbyname_r((const char *)0, &netent_buf, buf, (int)sizeof buf) != nullptr;
 		    ],
 		    [
 			AC_MSG_RESULT(yes)
@@ -318,7 +318,7 @@ AC_CHECK_DECL(getprotobyname_r,
 			struct protoent protoent_buf;
 			char buf[1024];
 
-			return getprotobyname_r((const char *)0, &protoent_buf, buf, (int)sizeof buf) != NULL;
+			return getprotobyname_r((const char *)0, &protoent_buf, buf, (int)sizeof buf) != nullptr;
 		    ],
 		    [
 			AC_MSG_RESULT(yes)
@@ -673,7 +673,7 @@ else
 		case "$host_os" in
 
 		freebsd*|darwin*|linux*)
-			VALGRINDTEST_SRC=valgrindtest.c
+			VALGRINDTEST_SRC=valgrindtest.cpp
 			;;
 		esac
 	elif test "$ac_cv_header_linux_socket_h" = yes; then
@@ -681,7 +681,7 @@ else
 		# No prizes for guessing this one.
 		#
 		V_PCAP=linux
-		VALGRINDTEST_SRC=valgrindtest.c
+		VALGRINDTEST_SRC=valgrindtest.cpp
 	elif test "$ac_cv_header_net_pfilt_h" = yes; then
 	        #
 	        # DEC OSF/1, Digital UNIX, Tru64 UNIX
@@ -721,7 +721,7 @@ else
 		#
 		# Nothing we support.
 		#
-		V_PCAP=null
+		V_PCAP=nullptr
 		AC_MSG_WARN(cannot determine packet capture interface)
 		AC_MSG_WARN((see the INSTALL doc for more info))
 	fi
@@ -760,9 +760,9 @@ dlpi)
 
 			#
 			# Capture module plus common code needed for
-			# common functions used by pcap-[dlpi,libdlpi].c
+			# common functions used by pcap-[dlpi,libdlpi].cpp
 			#
-			PLATFORM_C_SRC="pcap-libdlpi.c dlpisubs.c"
+			PLATFORM_C_SRC="pcap-libdlpi.cpp dlpisubs.cpp"
 			AC_DEFINE(HAVE_LIBDLPI,1,[if libdlpi exists])
 		],
 		[
@@ -770,9 +770,9 @@ dlpi)
 
 			#
 			# Capture module plus common code needed for
-			# common functions used by pcap-[dlpi,libdlpi].c
+			# common functions used by pcap-[dlpi,libdlpi].cpp
 			#
-			PLATFORM_C_SRC="pcap-dlpi.c dlpisubs.c"
+			PLATFORM_C_SRC="pcap-dlpi.cpp dlpisubs.cpp"
 		])
 	LDFLAGS=$saved_ldflags
 
@@ -813,7 +813,7 @@ enet)
 	#
 	# Capture module
 	#
- 	PLATFORM_C_SRC="pcap-enet.c"
+ 	PLATFORM_C_SRC="pcap-enet.cpp"
 	;;
 
 haiku)
@@ -832,7 +832,7 @@ linux)
 	#
 	# Capture module
 	#
- 	PLATFORM_C_SRC="pcap-linux.c"
+ 	PLATFORM_C_SRC="pcap-linux.cpp"
 
 	#
 	# Do we have the wireless extensions?
@@ -948,7 +948,7 @@ bpf)
 	#
 	# Capture module
 	#
- 	PLATFORM_C_SRC="pcap-bpf.c"
+ 	PLATFORM_C_SRC="pcap-bpf.cpp"
 
 	#
 	# Check whether we have the *BSD-style ioctls.
@@ -973,21 +973,21 @@ pf)
 	#
 	# Capture module
 	#
- 	PLATFORM_C_SRC="pcap-pf.c"
+ 	PLATFORM_C_SRC="pcap-pf.cpp"
 	;;
 
 snit)
 	#
 	# Capture module
 	#
- 	PLATFORM_C_SRC="pcap-snit.c"
+ 	PLATFORM_C_SRC="pcap-snit.cpp"
 	;;
 
 snoop)
 	#
 	# Capture module
 	#
- 	PLATFORM_C_SRC="pcap-snoop.c"
+ 	PLATFORM_C_SRC="pcap-snoop.cpp"
 	;;
 
 dag)
@@ -996,7 +996,7 @@ dag)
 	# "DAG support but nothing else"
 	#
 	V_DEFS="$V_DEFS -DDAG_ONLY"
-	PLATFORM_C_SRC="pcap-dag.c"
+	PLATFORM_C_SRC="pcap-dag.cpp"
 	xxx_only=yes
 	;;
 
@@ -1006,7 +1006,7 @@ dpdk)
 	# "DPDK support but nothing else"
 	#
 	V_DEFS="$V_DEFS -DDPDK_ONLY"
-	PLATFORM_C_SRC="pcap-dpdk.c"
+	PLATFORM_C_SRC="pcap-dpdk.cpp"
 	xxx_only=yes
 	;;
 
@@ -1016,7 +1016,7 @@ septel)
 	# "Septel support but nothing else"
 	#
 	V_DEFS="$V_DEFS -DSEPTEL_ONLY"
-	PLATFORM_C_SRC="pcap-septel.c"
+	PLATFORM_C_SRC="pcap-septel.cpp"
 	xxx_only=yes
 	;;
 
@@ -1026,15 +1026,15 @@ snf)
 	# "SNF support but nothing else"
 	#
 	V_DEFS="$V_DEFS -DSNF_ONLY"
-	PLATFORM_C_SRC="pcap-snf.c"
+	PLATFORM_C_SRC="pcap-snf.cpp"
 	xxx_only=yes
 	;;
 
-null)
+nullptr)
 	#
 	# Capture module
 	#
- 	PLATFORM_C_SRC="pcap-null.c"
+ 	PLATFORM_C_SRC="pcap-nullptr.cpp"
 	;;
 
 *)
@@ -1047,7 +1047,7 @@ dnl Now figure out how we get a list of interfaces and addresses,
 dnl if we support capturing.  Don't bother if we don't support
 dnl capturing.
 dnl
-if test "$V_PCAP" != null
+if test "$V_PCAP" != nullptr
 then
 	AC_CHECK_FUNC(getifaddrs,[
 		#
@@ -1059,7 +1059,7 @@ then
 		    # We have the header, so we use "getifaddrs()" to
 		    # get the list of interfaces.
 		    #
-		    PLATFORM_C_SRC="$PLATFORM_C_SRC fad-getad.c"
+		    PLATFORM_C_SRC="$PLATFORM_C_SRC fad-getad.cpp"
 		],[
 		    #
 		    # We don't have the header - give up.
@@ -1103,9 +1103,9 @@ then
 			ac_cv_lbl_have_siocglifconf=no))
 		AC_MSG_RESULT($ac_cv_lbl_have_siocglifconf)
 		if test $ac_cv_lbl_have_siocglifconf = yes ; then
-			PLATFORM_C_SRC="$PLATFORM_C_SRC fad-glifc.c"
+			PLATFORM_C_SRC="$PLATFORM_C_SRC fad-glifc.cpp"
 		else
-			PLATFORM_C_SRC="$PLATFORM_C_SRC fad-gifc.c"
+			PLATFORM_C_SRC="$PLATFORM_C_SRC fad-gifc.cpp"
 		fi
 	])
 fi
@@ -1218,7 +1218,7 @@ if test "$want_dag" != no; then
 	if test "$ac_cv_header_dagapi_h" = yes; then
 
 		if test $V_PCAP != dag ; then
-			 MODULE_C_SRC="$MODULE_C_SRC pcap-dag.c"
+			 MODULE_C_SRC="$MODULE_C_SRC pcap-dag.cpp"
 		fi
 
 		# Check for various DAG API functions.
@@ -1329,7 +1329,7 @@ if test "$with_septel" != no; then
 		ADDLARCHIVEOBJS="$ADDLARCHIVEOBJS $septel_tools_dir/asciibin.o $septel_tools_dir/bit2byte.o $septel_tools_dir/confirm.o $septel_tools_dir/fmtmsg.o $septel_tools_dir/gct_unix.o $septel_tools_dir/hqueue.o $septel_tools_dir/ident.o $septel_tools_dir/mem.o $septel_tools_dir/pack.o $septel_tools_dir/parse.o $septel_tools_dir/pool.o $septel_tools_dir/sdlsig.o $septel_tools_dir/strtonum.o $septel_tools_dir/timer.o $septel_tools_dir/trace.o"
 
 		if test "$V_PCAP" != septel ; then
-			 MODULE_C_SRC="$MODULE_C_SRC pcap-septel.c"
+			 MODULE_C_SRC="$MODULE_C_SRC pcap-septel.cpp"
 		fi
 
 		AC_DEFINE(HAVE_SEPTEL_API, 1, [define if you have the Septel API])
@@ -1436,7 +1436,7 @@ if test "$with_snf" != no; then
 		LDFLAGS="$LDFLAGS -L$snf_lib_dir"
 
 		if test "$V_PCAP" != snf ; then
-			MODULE_C_SRC="$MODULE_C_SRC pcap-snf.c"
+			MODULE_C_SRC="$MODULE_C_SRC pcap-snf.cpp"
 		fi
 
 		AC_DEFINE(HAVE_SNF_API, 1, [define if you have the Myricom SNF API])
@@ -1513,7 +1513,7 @@ if test "$want_turbocap" != no; then
 	if test $ac_cv_lbl_turbocap_api = yes; then
 		AC_MSG_RESULT(yes)
 
-		MODULE_C_SRC="$MODULE_C_SRC pcap-tc.c"
+		MODULE_C_SRC="$MODULE_C_SRC pcap-tc.cpp"
 		V_INCLS="$V_INCLS $TURBOCAP_CFLAGS"
 		LIBS="$LIBS $TURBOCAP_LIBS -lTcApi -lpthread -lstdc++"
 
@@ -1684,7 +1684,7 @@ return 0;
 
 	AC_DEFINE(ENABLE_REMOTE,,
 	    [Define to 1 if remote packet capture is to be supported])
-	REMOTE_C_SRC="$REMOTE_C_SRC pcap-new.c pcap-rpcap.c rpcap-protocol.c sockutils.c sslutils.c"
+	REMOTE_C_SRC="$REMOTE_C_SRC pcap-new.cpp pcap-rpcap.cpp rpcap-protocol.cpp sockutils.cpp sslutils.cpp"
 	BUILD_RPCAPD=build-rpcapd
 	INSTALL_RPCAPD=install-rpcapd
 	;;
@@ -1721,7 +1721,7 @@ fi
 # and supports processing our scanner.l.
 #
 AC_CACHE_CHECK([for capable lex], tcpdump_cv_capable_lex,
-	if $LEX -P pcap_ --header-file=/dev/null --nounput -t $srcdir/scanner.l > /dev/null 2>&1; then
+	if $LEX -P pcap_ --header-file=/dev/nullptr --nounput -t $srcdir/scanner.l > /dev/nullptr 2>&1; then
 	    tcpdump_cv_capable_lex=yes
 	else
 	    tcpdump_cv_capable_lex=insufficient
@@ -1741,7 +1741,7 @@ AC_PROG_YACC
 # grammar.y.
 #
 AC_CACHE_CHECK([for capable yacc/bison], tcpdump_cv_capable_yacc,
-	if $YACC -p pcap_ -o /dev/null $srcdir/grammar.y >/dev/null 2>&1; then
+	if $YACC -p pcap_ -o /dev/nullptr $srcdir/grammar.y >/dev/nullptr 2>&1; then
 	    tcpdump_cv_capable_yacc=yes
 	else
 	    tcpdump_cv_capable_yacc=insufficient
@@ -2217,9 +2217,9 @@ if test "xxx_only" != yes; then
     AC_MSG_CHECKING(for Linux usbmon USB sniffing support)
     if test "x$enable_usb" != "xno" ; then
       AC_DEFINE(PCAP_SUPPORT_LINUX_USBMON, 1, [target host supports Linux usbmon for USB sniffing])
-      MODULE_C_SRC="$MODULE_C_SRC pcap-usb-linux.c"
+      MODULE_C_SRC="$MODULE_C_SRC pcap-usb-linux.cpp"
       AC_MSG_RESULT(yes)
-      ac_usb_dev_name=`udevinfo -q name -p /sys/class/usb_device/usbmon 2>/dev/null`
+      ac_usb_dev_name=`udevinfo -q name -p /sys/class/usb_device/usbmon 2>/dev/nullptr`
       if test $? -ne 0 ; then
         ac_usb_dev_name="usbmon"
       fi
@@ -2286,7 +2286,7 @@ AC_INCLUDES_DEFAULT
     if test $ac_cv_netfilter_can_compile = yes ; then
       AC_DEFINE(PCAP_SUPPORT_NETFILTER, 1,
         [target host supports netfilter sniffing])
-      MODULE_C_SRC="$MODULE_C_SRC pcap-netfilter-linux.c"
+      MODULE_C_SRC="$MODULE_C_SRC pcap-netfilter-linux.cpp"
     fi
     ;;
   esac
@@ -2319,7 +2319,7 @@ AC_INCLUDES_DEFAULT
 	if test $ac_cv_net_netmap_user_can_compile = yes ; then
 	  AC_DEFINE(PCAP_SUPPORT_NETMAP, 1,
 	    [target host supports netmap])
-	    MODULE_C_SRC="$MODULE_C_SRC pcap-netmap.c"
+	    MODULE_C_SRC="$MODULE_C_SRC pcap-netmap.cpp"
 	fi
 	AC_SUBST(PCAP_SUPPORT_NETMAP)
 fi
@@ -2426,7 +2426,7 @@ AC_INCLUDES_DEFAULT
 		V_INCLS="$V_INCLS $DPDK_CFLAGS"
 		AC_DEFINE(PCAP_SUPPORT_DPDK, 1, [target host supports DPDK])
 		if test $V_PCAP != dpdk ; then
-			MODULE_C_SRC="$MODULE_C_SRC pcap-dpdk.c"
+			MODULE_C_SRC="$MODULE_C_SRC pcap-dpdk.cpp"
 		fi
 	else
 		if test "$V_PCAP" = dpdk; then
@@ -2465,7 +2465,7 @@ if test "x$enable_bluetooth" != "xno" ; then
 			# sniffing.
 			#
 			AC_DEFINE(PCAP_SUPPORT_BT, 1, [target host supports Bluetooth sniffing])
-			MODULE_C_SRC="$MODULE_C_SRC pcap-bt-linux.c"
+			MODULE_C_SRC="$MODULE_C_SRC pcap-bt-linux.cpp"
 			AC_MSG_NOTICE(Bluetooth sniffing is supported)
 			ac_lbl_bluetooth_available=yes
 
@@ -2492,7 +2492,7 @@ if test "x$enable_bluetooth" != "xno" ; then
 					    AC_MSG_RESULT(yes)
 					    AC_DEFINE(PCAP_SUPPORT_BT_MONITOR,,
 					      [target host supports Bluetooth Monitor])
-					    MODULE_C_SRC="$MODULE_C_SRC pcap-bt-monitor-linux.c"
+					    MODULE_C_SRC="$MODULE_C_SRC pcap-bt-monitor-linux.cpp"
 					],
 					[
 					    AC_MSG_RESULT(no)
@@ -2588,11 +2588,11 @@ if test "x$enable_dbus" != "xno"; then
 			     #include <sys/time.h>
 
 			     #include <dbus/dbus.h>],
-			    [return dbus_connection_read_write(NULL, 0);],
+			    [return dbus_connection_read_write(nullptr, 0);],
 			    [
 				AC_MSG_RESULT([yes])
 				AC_DEFINE(PCAP_SUPPORT_DBUS, 1, [support D-Bus sniffing])
-				MODULE_C_SRC="$MODULE_C_SRC pcap-dbus.c"
+				MODULE_C_SRC="$MODULE_C_SRC pcap-dbus.cpp"
 				V_INCLS="$V_INCLS $DBUS_CFLAGS"
 			    ],
 			    [
@@ -2644,13 +2644,13 @@ if test "x$enable_rdma" != "xno"; then
 					#include <infiniband/verbs.h>
 				],
 				[
-					(void) ibv_create_flow((struct ibv_qp *) NULL,
-							       (struct ibv_flow_attr *) NULL);
+					(void) ibv_create_flow((struct ibv_qp *) nullptr,
+							       (struct ibv_flow_attr *) nullptr);
 				],
 				[
 					AC_MSG_RESULT([yes])
 					AC_DEFINE(PCAP_SUPPORT_RDMASNIFF, , [target host supports RDMA sniffing])
-					MODULE_C_SRC="$MODULE_C_SRC pcap-rdmasniff.c"
+					MODULE_C_SRC="$MODULE_C_SRC pcap-rdmasniff.cpp"
 					LIBS="-libverbs $LIBS"
 				],
 				[

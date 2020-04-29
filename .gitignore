@@ -1,7 +1,7 @@
 Makefile
 *~
 *.o
-/bpf_filter.c
+/bpf_filter.cpp
 capturetest
 can_set_rfmon_test
 CMakeCache.txt
@@ -20,7 +20,7 @@ findalldevstest
 opentest
 valgrindtest
 reactivatetest
-grammar.c
+grammar.cpp
 grammar.h
 libpcap.a
 libpcap.*.dylib
@@ -49,11 +49,11 @@ pcap_set_immediate_mode.3pcap
 pcap_set_tstamp_precision.3pcap
 pcap_set_tstamp_type.3pcap
 pcap_version.h
-scanner.c
-scanner.c.bottom
+scanner.cpp
+scanner.cpp.bottom
 scanner.h
 selpolltest
-version.c
+version.cpp
 *.log
 *.tlog
 *.obj
@@ -71,3 +71,4 @@ msdos/.depend.dj
 msdos/bin2c.exe
 msdos/pkt_rx1.lst
 msdos/pkt_stub.inc
+build/*

@@ -143,10 +143,10 @@ I've included some extra functions to DOS-libpcap:
 
     Allows an application to set values of internal libpcap variables.
     `keyword' and an associated `value' should be present in the `debug_tab[]'
-    array in pcap-dos.c (currently only used to set debug-levels and parameters
+    array in pcap-dos.cpp (currently only used to set debug-levels and parameters
     for the 32-bit network drivers.) Thus an application using DOS-libpcap can
     override the default value during it's configure process (see tcpdump's
-    msdos/config.c file for an extended example).
+    msdos/config.cpp file for an extended example).
 
   `pcap_set_wait (pcap_t *, void (*)(void), int)' :
 

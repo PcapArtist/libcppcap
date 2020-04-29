@@ -56,7 +56,7 @@ If
 succeeds, the pointer pointed to by
 .I alldevsp
 is set to point to the first element of the list, or to
-.B NULL
+.B nullptr
 if no devices were found (this is considered success).
 Each element of the list is of type
 .BR pcap_if_t ,
@@ -65,9 +65,9 @@ and has the following members:
 .TP
 .B next
 if not
-.BR NULL ,
+.BR nullptr ,
 a pointer to the next element in the list;
-.B NULL
+.B nullptr
 for the last element of the list
 .TP
 .B name
@@ -76,14 +76,14 @@ a pointer to a string giving a name for the device to pass to
 .TP
 .B description
 if not
-.BR NULL ,
+.BR nullptr ,
 a pointer to a string giving a human-readable description of the device
 .TP
 .B addresses
 a pointer to the first element of a list of network addresses for the
 device,
 or
-.B NULL
+.B nullptr
 if the device has no addresses
 .TP
 .B flags
@@ -132,9 +132,9 @@ and has the following members:
 .TP
 .B next
 if not
-.BR NULL ,
+.BR nullptr ,
 a pointer to the next element in the list;
-.B NULL
+.B nullptr
 for the last element of the list
 .TP
 .B addr
@@ -144,7 +144,7 @@ containing an address
 .TP
 .B netmask
 if not
-.BR NULL ,
+.BR nullptr ,
 a pointer to a
 .B "struct sockaddr"
 that contains the netmask corresponding to the address pointed to by
@@ -152,23 +152,23 @@ that contains the netmask corresponding to the address pointed to by
 .TP
 .B broadaddr
 if not
-.BR NULL ,
+.BR nullptr ,
 a pointer to a
 .B "struct sockaddr"
 that contains the broadcast address corresponding to the address pointed
 to by
 .BR addr ;
-may be null if the device doesn't support broadcasts
+may be nullptr if the device doesn't support broadcasts
 .TP
 .B dstaddr
 if not
-.BR NULL ,
+.BR nullptr ,
 a pointer to a
 .B "struct sockaddr"
 that contains the destination address corresponding to the address pointed
 to by
 .BR addr ;
-may be null if the device isn't a point-to-point interface
+may be nullptr if the device isn't a point-to-point interface
 .RE
 .PP
 Note that the addresses in the list of addresses might be IPv4

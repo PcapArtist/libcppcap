@@ -44,7 +44,7 @@ is a string that specifies the network device to open; on Linux systems
 with 2.2 or later kernels, a
 .I source
 argument of "any" or
-.B NULL
+.B nullptr
 can be used to capture packets from all interfaces.
 .PP
 The returned handle must be activated with
@@ -57,10 +57,10 @@ on the handle before activating it.
 returns a
 .I pcap_t *
 on success and
-.B NULL
+.B nullptr
 on failure.
 If
-.B NULL
+.B nullptr
 is returned,
 .I errbuf
 is filled in with an appropriate error message.

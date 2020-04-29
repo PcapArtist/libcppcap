@@ -85,10 +85,10 @@ structure to use in subsequent
 and
 .BR pcap_dump_close (3PCAP)
 calls is returned on success.
-.B NULL
+.B nullptr
 is returned on failure.
 If
-.B NULL
+.B nullptr
 is returned,
 .BR pcap_geterr (3PCAP)
 can be used to get the error text.

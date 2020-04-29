@@ -39,18 +39,18 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
 project(pcap)
 
-include(CheckCCompilerFlag)
+include(CheckCXXCompilerFlag)
 
 #
 # For checking if a compiler flag works and adding it if it does.
 #
 macro(check_and_add_compiler_option _option)
-    message(STATUS "Checking C compiler flag ${_option}")
+    message(STATUS "Checking C++ compiler flag ${_option}")
     string(REPLACE "=" "-" _temp_option_variable ${_option})
     string(REGEX REPLACE "^-" "" _option_variable ${_temp_option_variable})
-    check_c_compiler_flag("${_option}" ${_option_variable})
+    check_cxx_compiler_flag("${_option}" ${_option_variable})
     if(${${_option_variable}})
-        set(C_ADDITIONAL_FLAGS "${C_ADDITIONAL_FLAGS} ${_option}")
+        set(CXX_ADDITIONAL_FLAGS "${CXX_ADDITIONAL_FLAGS} ${_option}")
     endif()
 endmacro()
 
@@ -61,7 +61,7 @@ endmacro()
 # If not, try the appropriate flag for the compiler to enable C99
 # features.
 #
-set(C_ADDITIONAL_FLAGS "")
+set(CXX_ADDITIONAL_FLAGS "")
 if(MSVC)
     if(MSVC_VERSION LESS 1900)
         message(FATAL_ERROR "Visual Studio 2015 or later is required")
@@ -73,23 +73,23 @@ if(MSVC)
     # We assume that UTF-8 source is OK with other compilers and with
     # MSVC if it's using the Clang front end.
     #
-    if(NOT ${CMAKE_C_COMPILER} MATCHES "clang*")
-        set(C_ADDITIONAL_FLAGS "${C_ADDITIONAL_FLAGS} /utf-8")
-    endif(NOT ${CMAKE_C_COMPILER} MATCHES "clang*")
+    if(NOT ${CMAKE_CXX_COMPILER} MATCHES "clang*")
+        set(CXX_ADDITIONAL_FLAGS "${CXX_ADDITIONAL_FLAGS} /utf-8")
+    endif(NOT ${CMAKE_CXX_COMPILER} MATCHES "clang*")
 else(MSVC)
     #
     # For checking if a compiler flag works, failing if it doesn't,
     # and adding it otherwise.
     #
     macro(require_and_add_compiler_option _option)
-        message(STATUS "Checking C compiler flag ${_option}")
+        message(STATUS "Checking C++ compiler flag ${_option}")
         string(REPLACE "=" "-" _temp_option_variable ${_option})
         string(REGEX REPLACE "^-" "" _option_variable ${_temp_option_variable})
-        check_c_compiler_flag("${_option}" ${_option_variable})
+        check_cxx_compiler_flag("${_option}" ${_option_variable})
         if(${${_option_variable}})
-            set(C_ADDITIONAL_FLAGS "${C_ADDITIONAL_FLAGS} ${_option}")
+            set(CXX_ADDITIONAL_FLAGS "${CXX_ADDITIONAL_FLAGS} ${_option}")
         else()
-            message(FATAL_ERROR "C99 support is required, but the compiler doesn't support a compiler flag to enable it")
+            message(FATAL_ERROR "CPP20 support is required, but the compiler doesn't support a compiler flag to enable it")
         endif()
     endmacro()
 
@@ -100,16 +100,16 @@ else(MSVC)
     # Newer versions of compilers might default to supporting C99, but
     # older versions may require a special flag.
     #
-    # Prior to CMake 3.1, setting CMAKE_C_STANDARD will not have any effect,
+    # Prior to CMake 3.1, setting CMAKE_CXX_STANDARD will not have any effect,
     # so, unless and until we require CMake 3.1 or later, we have to do it
     # ourselves on pre-3.1 CMake, so we just do it ourselves on all versions
     # of CMake.
     #
     # Note: with CMake 3.1 through 3.5, the only compilers for which CMake
-    # handles CMAKE_C_STANDARD are GCC and Clang.  3.6 adds support only
+    # handles CMAKE_CXX_STANDARD are GCC and Clang.  3.6 adds support only
     # for Intel C; 3.9 adds support for PGI C, Sun C, and IBM XL C, and
     # 3.10 adds support for Cray C and IAR C, but no version of CMake has
-    # support for HP C.  Therefore, even if we use CMAKE_C_STANDARD with
+    # support for HP C.  Therefore, even if we use CMAKE_CXX_STANDARD with
     # compilers for which CMake supports it, we may still have to do it
     # ourselves on other compilers.
     #
@@ -121,20 +121,20 @@ else(MSVC)
     # to get the C99 features that we use, or whether, if it's used, it
     # enables all the features that we require.
     #
-    if(CMAKE_C_COMPILER_ID MATCHES "GNU" OR
-       CMAKE_C_COMPILER_ID MATCHES "Clang")
-        require_and_add_compiler_option("-std=gnu99")
-    elseif(CMAKE_C_COMPILER_ID MATCHES "XL")
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR
+       CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        require_and_add_compiler_option("-std=c++2a")
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "XL")
         #
         # We want support for extensions picked up for GNU C compatibility,
         # so we use -qlanglvl=extc99.
         #
         require_and_add_compiler_option("-qlanglvl=extc99")
-    elseif(CMAKE_C_COMPILER_ID MATCHES "HP")
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "HP")
         require_and_add_compiler_option("-AC99")
-    elseif(CMAKE_C_COMPILER_ID MATCHES "Sun")
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Sun")
         require_and_add_compiler_option("-xc99")
-    elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
         require_and_add_compiler_option("-c99")
     endif()
 endif(MSVC)
@@ -226,7 +226,7 @@ option(DISABLE_DPDK "Disable DPDK support" OFF)
 #
 # We don't support D-Bus sniffing on macOS; see
 #
-# https://bugs.freedesktop.org/show_bug.cgi?id=74029
+# https://bugs.freedesktop.org/show_bug.cppgi?id=74029
 #
 if(APPLE)
     option(DISABLE_DBUS "Disable D-Bus sniffing support" ON)
@@ -335,8 +335,8 @@ if(USE_STATIC_RT)
     message(STATUS "Use STATIC runtime")
         if(MSVC)
             foreach(RT_FLAG
-                CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
-                CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
+                CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+                CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO
                 CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
                 CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
                 string(REGEX REPLACE "/MD" "/MT" ${RT_FLAG} "${${RT_FLAG}}")
@@ -383,7 +383,7 @@ if(NOT WIN32)
         #
         # Check for various PF actions.
         #
-        check_c_source_compiles(
+        check_cxx_source_compiles(
 "#include <sys/types.h>
 #include <sys/socket.h>
 #include <net/if.h>
@@ -410,7 +410,7 @@ if(HAVE_STRERROR_R)
     # We have strerror_r; if we define _GNU_SOURCE, is it a
     # POSIX-compliant strerror_r() or a GNU strerror_r()?
     #
-    check_c_source_compiles(
+    check_cxx_source_compiles(
 "#define _GNU_SOURCE
 #include <string.h>
 
@@ -577,7 +577,7 @@ cmake_push_check_state()
 set(CMAKE_REQUIRED_LIBRARIES ${PCAP_LINK_LIBRARIES})
 check_symbol_exists(getnetbyname_r netdb.h NETDB_H_DECLARES_GETNETBYNAME_R)
 if(NETDB_H_DECLARES_GETNETBYNAME_R)
-    check_c_source_compiles(
+    check_cxx_source_compiles(
 "#include <netdb.h>
 
 int
@@ -593,7 +593,7 @@ main(void)
 "
         HAVE_LINUX_GETNETBYNAME_R)
     if(NOT HAVE_LINUX_GETNETBYNAME_R)
-        check_c_source_compiles(
+        check_cxx_source_compiles(
 "#include <netdb.h>
 
 int
@@ -602,12 +602,12 @@ main(void)
     struct netent netent_buf;
     char buf[1024];
 
-    return getnetbyname_r((const char *)0, &netent_buf, buf, (int)sizeof buf) != NULL;
+    return getnetbyname_r((const char *)0, &netent_buf, buf, (int)sizeof buf) != nullptr;
 }
 "
             HAVE_SOLARIS_IRIX_GETNETBYNAME_R)
         if(NOT HAVE_SOLARIS_IRIX_GETNETBYNAME_R)
-            check_c_source_compiles(
+            check_cxx_source_compiles(
 "#include <netdb.h>
 
 int
@@ -642,7 +642,7 @@ cmake_push_check_state()
 set(CMAKE_REQUIRED_LIBRARIES ${PCAP_LINK_LIBRARIES})
 check_symbol_exists(getprotobyname_r netdb.h NETDB_H_DECLARES_GETPROTOBYNAME_R)
 if(NETDB_H_DECLARES_GETPROTOBYNAME_R)
-    check_c_source_compiles(
+    check_cxx_source_compiles(
 "#include <netdb.h>
 
 int
@@ -657,7 +657,7 @@ main(void)
 "
         HAVE_LINUX_GETPROTOBYNAME_R)
     if(NOT HAVE_LINUX_GETPROTOBYNAME_R)
-        check_c_source_compiles(
+        check_cxx_source_compiles(
 "#include <netdb.h>
 
 int
@@ -666,12 +666,12 @@ main(void)
     struct protoent protoent_buf;
     char buf[1024];
 
-    return getprotobyname_r((const char *)0, &protoent_buf, buf, (int)sizeof buf) != NULL;
+    return getprotobyname_r((const char *)0, &protoent_buf, buf, (int)sizeof buf) != nullptr;
 }
 "
             HAVE_SOLARIS_IRIX_GETPROTOBYNAME_R)
         if(NOT HAVE_SOLARIS_IRIX_GETPROTOBYNAME_R)
-            check_c_source_compiles(
+            check_cxx_source_compiles(
 "#include <netdb.h>
 
 int
@@ -909,7 +909,7 @@ endif(NOT WIN32)
 
 if(ENABLE_PROFILING)
     if(NOT MSVC)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
     endif()
 endif()
@@ -917,7 +917,7 @@ endif()
 #
 # Based on
 #
-#    https://github.com/commonmark/cmark/blob/master/FindAsan.cmake
+#    https://github.cppom/commonmark/cmark/blob/master/FindAsan.cmake
 #
 # The MIT License (MIT)
 #
@@ -943,7 +943,7 @@ endif()
 #
 # Test if the each of the sanitizers in the ENABLE_SANITIZERS list are
 # supported by the compiler, and, if so, adds the appropriate flags to
-# CMAKE_C_FLAGS, CMAKE_CXX_FLAGS, and SANITIZER_FLAGS.  If not, it fails.
+# CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS, and SANITIZER_FLAGS.  If not, it fails.
 #
 # Do this last, in the hope that it will prevent configuration on Linux
 # from somehow deciding it doesn't need -lpthread when building rpcapd
@@ -958,7 +958,7 @@ foreach(sanitizer IN LISTS ENABLE_SANITIZERS)
     message(STATUS "Checking sanitizer ${sanitizer}")
     set(sanitizer_variable "sanitize_${sanitizer}")
     set(CMAKE_REQUIRED_FLAGS "-Werror -fsanitize=${sanitizer}")
-    check_c_compiler_flag("-fsanitize=${sanitizer}" ${sanitizer_variable})
+    check_cxx_compiler_flag("-fsanitize=${sanitizer}" ${sanitizer_variable})
     if(${${sanitizer_variable}})
         set(SANITIZER_FLAGS "${SANITIZER_FLAGS} -fsanitize=${sanitizer}")
         message(STATUS "${sanitizer} sanitizer supported using -fsanitizer=${sanitizer}")
@@ -972,7 +972,7 @@ foreach(sanitizer IN LISTS ENABLE_SANITIZERS)
         set(sanitizer_variable "OLD_${sanitizer_variable}")
         if ("${sanitizer}" STREQUAL "address")
             set(CMAKE_REQUIRED_FLAGS "-Werror -fsanitize-address")
-            check_c_compiler_flag("-fsanitize-address" ${sanitizer_variable})
+            check_cxx_compiler_flag("-fsanitize-address" ${sanitizer_variable})
             if(${${sanitizer_variable}})
                 set(SANITIZER_FLAGS "${SANITIZER_FLAGS} -fsanitize-address")
                 message(STATUS "${sanitizer} sanitizer supported using -fsanitize-address")
@@ -981,7 +981,7 @@ foreach(sanitizer IN LISTS ENABLE_SANITIZERS)
             endif()
         elseif("${sanitizer}" STREQUAL "undefined")
             set(CMAKE_REQUIRED_FLAGS "-Werror -fcatch-undefined-behavior")
-            check_c_compiler_flag("-fcatch-undefined-behavior" ${sanitizer_variable})
+            check_cxx_compiler_flag("-fcatch-undefined-behavior" ${sanitizer_variable})
             if(${${sanitizer_variable}})
                 set(SANITIZER_FLAGS "${SANITIZER_FLAGS} -fcatch-undefined-behavior")
                 message(STATUS "${sanitizer} sanitizer supported using catch-undefined-behavior")
@@ -997,7 +997,7 @@ foreach(sanitizer IN LISTS ENABLE_SANITIZERS)
 endforeach()
 
 if(NOT "${SANITIZER_FLAGS}" STREQUAL "")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O1 -g ${SANITIZER_FLAGS} -fno-omit-frame-pointer -fno-optimize-sibling-calls")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g ${SANITIZER_FLAGS} -fno-omit-frame-pointer -fno-optimize-sibling-calls")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g ${SANITIZER_FLAGS} -fno-omit-frame-pointer -fno-optimize-sibling-calls")
 endif()
 
@@ -1030,20 +1030,20 @@ endif()
 # Input files
 ######################################
 
-set(PROJECT_SOURCE_LIST_C
-    bpf_dump.c
-    bpf_filter.c
-    bpf_image.c
-    etherent.c
-    fmtutils.c
-    gencode.c
-    nametoaddr.c
-    optimize.c
-    pcap-common.c
-    pcap.c
-    savefile.c
-    sf-pcapng.c
-    sf-pcap.c
+set(PROJECT_SOURCE_LIST_CXX
+    bpf_dump.cpp
+    bpf_filter.cpp
+    bpf_image.cpp
+    etherent.cpp
+    fmtutils.cpp
+    gencode.cpp
+    nametoaddr.cpp
+    optimize.cpp
+    pcap-common.cpp
+    pcap.cpp
+    savefile.cpp
+    sf-pcapng.cpp
+    sf-pcap.cpp
 )
 
 if(WIN32)
@@ -1054,25 +1054,25 @@ if(WIN32)
     # We assume we don't have asprintf(), and provide an implementation
     # that uses _vscprintf() to determine how big the string needs to be.
     #
-    set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C}
-        charconv.c missing/win_asprintf.c)
+    set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX}
+        charconv.cpp missing/win_asprintf.cpp)
 else()
     if(NOT HAVE_ASPRINTF)
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} missing/asprintf.c)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} missing/asprintf.cpp)
     endif()
     if(NOT HAVE_STRLCAT)
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} missing/strlcat.c)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} missing/strlcat.cpp)
     endif(NOT HAVE_STRLCAT)
     if(NOT HAVE_STRLCPY)
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} missing/strlcpy.c)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} missing/strlcpy.cpp)
     endif(NOT HAVE_STRLCPY)
     if(NOT HAVE_STRTOK_R)
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} missing/strtok_r.c)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} missing/strtok_r.cpp)
     endif(NOT HAVE_STRTOK_R)
 endif(WIN32)
 
 #
-# Determine the main pcap-XXX.c file to use, and the libraries with
+# Determine the main pcap-XXX.cpp file to use, and the libraries with
 # which we need to link libpcap, if any.
 #
 if(WIN32)
@@ -1095,10 +1095,10 @@ if(WIN32)
         else()
             #
             # We don't have any capture type we know about, so just use
-            # the null capture type, and only support reading (and writing)
+            # the nullptr capture type, and only support reading (and writing)
             # capture files.
             #
-            set(PCAP_TYPE null)
+            set(PCAP_TYPE nullptr)
         endif()
     endif()
 else()
@@ -1216,7 +1216,7 @@ else()
             #
             # Nothing we support.
             #
-            set(PCAP_TYPE null)
+            set(PCAP_TYPE nullptr)
         endif()
     endif()
 endif(WIN32)
@@ -1231,16 +1231,16 @@ if(WIN32)
         # Link with packet.dll before Winsock2.
         #
         set(PCAP_LINK_LIBRARIES ${PACKET_LIBRARIES} ${PCAP_LINK_LIBRARIES})
-    elseif(PCAP_TYPE STREQUAL "null")
+    elseif(PCAP_TYPE STREQUAL "nullptr")
     else()
         message(FATAL_ERROR "${PCAP_TYPE} is not a valid pcap type")
     endif()
 else(WIN32)
     if(PCAP_TYPE STREQUAL "dlpi")
         #
-        # Needed for common functions used by pcap-[dlpi,libdlpi].c
+        # Needed for common functions used by pcap-[dlpi,libdlpi].cpp
         #
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} dlpisubs.c)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} dlpisubs.cpp)
 
         #
         # Checks for some header files.
@@ -1372,18 +1372,18 @@ else(WIN32)
         # Check for some headers just in case.
         #
         check_include_files("net/if.h;net/if_dl.h;net/if_types.h" HAVE_NET_IF_TYPES_H)
-        set(PCAP_SRC pcap-${PCAP_TYPE}.cpp)
-    elseif(PCAP_TYPE STREQUAL "null")
+        set(PCAP_SRC pcap-${PCAP_TYPE}.cpppp)
+    elseif(PCAP_TYPE STREQUAL "nullptr")
     else()
         message(FATAL_ERROR "${PCAP_TYPE} is not a valid pcap type")
     endif()
 endif(WIN32)
 
 if(NOT DEFINED PCAP_SRC)
-set(PCAP_SRC pcap-${PCAP_TYPE}.c)
+set(PCAP_SRC pcap-${PCAP_TYPE}.cpp)
 endif()
 
-set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} ${PCAP_SRC})
+set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} ${PCAP_SRC})
 
 #
 # Now figure out how we get a list of interfaces and addresses,
@@ -1395,11 +1395,11 @@ if(NOT WIN32)
     # UN*X - figure out what type of interface list mechanism we
     # have.
     #
-    # If the capture type is null, that means we can't capture,
+    # If the capture type is nullptr, that means we can't capture,
     # so we can't open any capture devices, so we won't return
     # any interfaces.
     #
-    if(NOT PCAP_TYPE STREQUAL "null")
+    if(NOT PCAP_TYPE STREQUAL "nullptr")
         cmake_push_check_state()
         set(CMAKE_REQUIRED_LIBRARIES ${PCAP_LINK_LIBRARIES})
         check_function_exists(getifaddrs HAVE_GETIFADDRS)
@@ -1468,7 +1468,7 @@ if(NOT WIN32)
             # be built atop SIOCGLIFCONF; using it directly
             # avoids a not-all-that-useful middleman.)
             #
-            try_compile(HAVE_SIOCGLIFCONF ${CMAKE_CURRENT_BINARY_DIR} "${pcap_SOURCE_DIR}/cmake/have_siocglifconf.c" )
+            try_compile(HAVE_SIOCGLIFCONF ${CMAKE_CURRENT_BINARY_DIR} "${pcap_SOURCE_DIR}/cmake/have_siocglifconf.cpp" )
             if(HAVE_SIOCGLIFCONF)
                 set(FINDALLDEVS_TYPE glifc)
             else()
@@ -1476,7 +1476,7 @@ if(NOT WIN32)
             endif()
         endif()
         message(STATUS "Find-interfaces mechanism type: ${FINDALLDEVS_TYPE}")
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} fad-${FINDALLDEVS_TYPE}.c)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} fad-${FINDALLDEVS_TYPE}.cpp)
     endif()
 endif()
 
@@ -1496,7 +1496,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     # Check for usbmon USB sniffing support.
     if(NOT DISABLE_LINUX_USBMON)
         set(PCAP_SUPPORT_LINUX_USBMON TRUE)
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-usb-linux.c)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-usb-linux.cpp)
         set(LINUX_USB_MON_DEV /dev/usbmon)
         #
         # Do we have a version of <linux/compiler.h> available?
@@ -1536,7 +1536,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     # Check whether the includes Just Work.  If not, don't turn on
     # netfilter support.
     #
-    check_c_source_compiles(
+    check_cxx_source_compiles(
 "#include <sys/socket.h>
 #include <netinet/in.h>
 #include <linux/types.h>
@@ -1555,7 +1555,7 @@ main(void)
 "
         PCAP_SUPPORT_NETFILTER)
     if(PCAP_SUPPORT_NETFILTER)
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-netfilter-linux.c)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-netfilter-linux.cpp)
     endif(PCAP_SUPPORT_NETFILTER)
 endif()
 
@@ -1567,7 +1567,7 @@ if(NOT DISABLE_NETMAP)
     # is defined, for example, as it includes a non-existent malloc.h
     # header.
     #
-    check_c_source_compiles(
+    check_cxx_source_compiles(
 "#define NETMAP_WITH_LIBS
 #include <net/netmap_user.h>
 
@@ -1579,7 +1579,7 @@ main(void)
 "
         PCAP_SUPPORT_NETMAP)
     if(PCAP_SUPPORT_NETMAP)
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-netmap.c)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-netmap.cpp)
     endif(PCAP_SUPPORT_NETMAP)
 endif()
 
@@ -1596,13 +1596,13 @@ if(NOT DISABLE_DPDK)
         check_include_file(rte_bus.h HAVE_RTE_BUS_H)
         cmake_pop_check_state()
         if(HAVE_RTE_BUS_H)
-            set(DPDK_C_FLAGS "-march=native")
+            set(DPDK_CXX_FLAGS "-march=native")
             set(DPDK_LIB dpdk rt m numa dl)
-            set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} ${DPDK_C_FLAGS})
+            set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${DPDK_CXX_FLAGS})
             include_directories(AFTER ${dpdk_INCLUDE_DIRS})
             link_directories(AFTER ${dpdk_LIBRARIES})
             set(PCAP_LINK_LIBRARIES ${PCAP_LINK_LIBRARIES} ${dpdk_LIBRARIES})
-            set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-dpdk.c)
+            set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-dpdk.cpp)
             set(PCAP_SUPPORT_DPDK TRUE)
         endif()
     endif()
@@ -1614,7 +1614,7 @@ if(NOT DISABLE_BLUETOOTH)
         check_include_file(bluetooth/bluetooth.h HAVE_BLUETOOTH_BLUETOOTH_H)
         if(HAVE_BLUETOOTH_BLUETOOTH_H)
             set(PCAP_SUPPORT_BT TRUE)
-            set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-bt-linux.c)
+            set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-bt-linux.cpp)
             #
             # OK, does struct sockaddr_hci have an hci_channel
             # member?
@@ -1624,7 +1624,7 @@ if(NOT DISABLE_BLUETOOTH)
                 #
                 # OK, is HCI_CHANNEL_MONITOR defined?
                 #
-               check_c_source_compiles(
+               check_cxx_source_compiles(
 "#include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
 
@@ -1641,7 +1641,7 @@ main(void)
                    # Yes, so we can also support Bluetooth monitor
                    # sniffing.
                    #
-                   set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-bt-monitor-linux.c)
+                   set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-bt-monitor-linux.cpp)
                endif(PCAP_SUPPORT_BT_MONITOR)
             endif(HAVE_STRUCT_SOCKADDR_HCI_HCI_CHANNEL)
         endif(HAVE_BLUETOOTH_BLUETOOTH_H)
@@ -1655,7 +1655,7 @@ if(NOT DISABLE_DBUS)
     #
     # We don't support D-Bus sniffing on macOS; see
     #
-    # https://bugs.freedesktop.org/show_bug.cgi?id=74029
+    # https://bugs.freedesktop.org/show_bug.cppgi?id=74029
     #
     if(APPLE)
         message(FATAL_ERROR "Due to freedesktop.org bug 74029, D-Bus capture support is not available on macOS")
@@ -1663,7 +1663,7 @@ if(NOT DISABLE_DBUS)
     pkg_check_modules(DBUS dbus-1)
     if(DBUS_FOUND)
         set(PCAP_SUPPORT_DBUS TRUE)
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-dbus.c)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-dbus.cpp)
         include_directories(${DBUS_INCLUDE_DIRS})
 
         #
@@ -1698,7 +1698,7 @@ if(NOT DISABLE_RDMA)
         if(HAVE_INFINIBAND_VERBS_H)
             check_symbol_exists(ibv_create_flow infiniband/verbs.h PCAP_SUPPORT_RDMASNIFF)
             if(PCAP_SUPPORT_RDMASNIFF)
-                set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-rdmasniff.c)
+                set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-rdmasniff.cpp)
                 set(PCAP_LINK_LIBRARIES ibverbs ${PCAP_LINK_LIBRARIES})
             endif(PCAP_SUPPORT_RDMASNIFF)
         endif(HAVE_INFINIBAND_VERBS_H)
@@ -1737,7 +1737,7 @@ if(NOT DISABLE_DAG)
         cmake_pop_check_state()
 
         include_directories(AFTER ${DAG_INCLUDE_DIRS})
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-dag.c)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-dag.cpp)
         set(HAVE_DAG_API TRUE)
         set(PCAP_LINK_LIBRARIES ${PCAP_LINK_LIBRARIES} ${DAG_LIBRARIES})
 
@@ -1767,7 +1767,7 @@ if(NOT DISABLE_SEPTEL)
         # Yes.
         #
         include_directories(AFTER ${SEPTEL_INCLUDE_DIRS})
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-septel.c)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-septel.cpp)
         set(PROJECT_EXTERNAL_OBJECT_LIST ${PROJECT_EXTERNAL_OBJECT_LIST} "${SEPTEL_ROOT}/asciibin.o ${SEPTEL_ROOT}/bit2byte.o ${SEPTEL_ROOT}/confirm.o ${SEPTEL_ROOT}/fmtmsg.o ${SEPTEL_ROOT}/gct_unix.o ${SEPTEL_ROOT}/hqueue.o ${SEPTEL_ROOT}/ident.o ${SEPTEL_ROOT}/mem.o ${SEPTEL_ROOT}/pack.o ${SEPTEL_ROOT}/parse.o ${SEPTEL_ROOT}/pool.o ${SEPTEL_ROOT}/sdlsig.o ${SEPTEL_ROOT}/strtonum.o ${SEPTEL_ROOT}/timer.o ${SEPTEL_ROOT}/trace.o")
         set(HAVE_SEPTEL_API TRUE)
     endif()
@@ -1788,7 +1788,7 @@ if(NOT DISABLE_SNF)
         # Yes.
         #
         include_directories(AFTER ${SNF_INCLUDE_DIRS})
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-snf.c)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-snf.cpp)
         set(HAVE_SNF_API TRUE)
         set(PCAP_LINK_LIBRARIES ${PCAP_LINK_LIBRARIES} ${SNF_LIBRARIES})
     endif()
@@ -1809,7 +1809,7 @@ if(NOT DISABLE_TC)
         # Yes.
         #
         include_directories(AFTER ${TC_INCLUDE_DIRS})
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-tc.c)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-tc.cpp)
         set(HAVE_TC_API TRUE)
         set(PCAP_LINK_LIBRARIES "${PCAP_LINK_LIBRARIES} ${TC_LIBRARIES} ${CMAKE_USE_PTHREADS_INIT} stdc++")
     endif()
@@ -1836,8 +1836,8 @@ if(ENABLE_REMOTE)
     check_struct_has_member("struct msghdr" msg_control "ftmacros.h;sys/socket.h" HAVE_STRUCT_MSGHDR_MSG_CONTROL)
     check_struct_has_member("struct msghdr" msg_flags "ftmacros.h;sys/socket.h" HAVE_STRUCT_MSGHDR_MSG_FLAGS)
     cmake_pop_check_state()
-    set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C}
-        pcap-new.c pcap-rpcap.c rpcap-protocol.c sockutils.c sslutils.c)
+    set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX}
+        pcap-new.cpp pcap-rpcap.cpp rpcap-protocol.cpp sockutils.cpp sslutils.cpp)
 endif(ENABLE_REMOTE)
 
 ###################################################################
@@ -1851,7 +1851,7 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.devel OR EXISTS ${CMAKE_BINARY_DIR}/.deve
     #
     # Warning options.
     #
-    if(MSVC AND NOT ${CMAKE_C_COMPILER} MATCHES "clang*")
+    if(MSVC AND NOT ${CMAKE_CXX_COMPILER} MATCHES "clang*")
         #
         # MSVC, with Microsoft's front end and code generator.
         # "MSVC" is also set for Microsoft's compiler with a Clang
@@ -1945,7 +1945,7 @@ endif()
 #
 # Suppress some warnings we get with MSVC even without /Wall.
 #
-if(MSVC AND NOT ${CMAKE_C_COMPILER} MATCHES "clang*")
+if(MSVC AND NOT ${CMAKE_CXX_COMPILER} MATCHES "clang*")
     #
     # Yes, we have some functions that never return but that
     # have a non-void return type.  That's because, on some
@@ -1975,7 +1975,7 @@ file(GLOB PROJECT_SOURCE_LIST_H
 # not explicitly exported" flag.
 #
 if(NOT MSVC)
-    if(CMAKE_C_COMPILER_ID MATCHES "SunPro")
+    if(CMAKE_CXX_COMPILER_ID MATCHES "SunPro")
         #
         # Sun C/Oracle Studio.
         #
@@ -2006,27 +2006,27 @@ endif()
 message(STATUS "Lexical analyzer generator: ${LEX_EXECUTABLE}")
 
 add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/scanner.c ${CMAKE_CURRENT_BINARY_DIR}/scanner.h
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp ${CMAKE_CURRENT_BINARY_DIR}/scanner.h
     SOURCE ${pcap_SOURCE_DIR}/scanner.l
-    COMMAND ${LEX_EXECUTABLE} -P pcap_ --header-file=scanner.h --nounput -o${CMAKE_CURRENT_BINARY_DIR}/scanner.c ${pcap_SOURCE_DIR}/scanner.l
+    COMMAND ${LEX_EXECUTABLE} -P pcap_ --header-file=scanner.h --nounput -o${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp ${pcap_SOURCE_DIR}/scanner.l
     DEPENDS ${pcap_SOURCE_DIR}/scanner.l
 )
 
 #
-# Since scanner.c does not exist yet when cmake is run, mark
+# Since scanner.cpp does not exist yet when cmake is run, mark
 # it as generated.
 #
-# Since scanner.c includes grammar.h, mark that as a dependency.
+# Since scanner.cpp includes grammar.h, mark that as a dependency.
 #
-set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/scanner.c PROPERTIES
+set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp PROPERTIES
     GENERATED TRUE
     OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/grammar.h
 )
 
 #
-# Add scanner.c to the list of sources.
+# Add scanner.cpp to the list of sources.
 #
-#set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} ${CMAKE_CURRENT_BINARY_DIR}/scanner.c)
+#set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} ${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp)
 
 #
 # Try to find YACC or Bison.
@@ -2047,25 +2047,25 @@ if("${YACC_NAME}" STREQUAL "bison" OR "${YACC_NAME}" STREQUAL "win_bison")
     set(YACC_COMPATIBILITY_FLAG "-y")
 endif()
 add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/grammar.c ${CMAKE_CURRENT_BINARY_DIR}/grammar.h
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/grammar.cpp ${CMAKE_CURRENT_BINARY_DIR}/grammar.h
     SOURCE ${pcap_SOURCE_DIR}/grammar.y
-    COMMAND ${YACC_EXECUTABLE} ${YACC_COMPATIBILITY_FLAG} -p pcap_ -o ${CMAKE_CURRENT_BINARY_DIR}/grammar.c -d ${pcap_SOURCE_DIR}/grammar.y
+    COMMAND ${YACC_EXECUTABLE} ${YACC_COMPATIBILITY_FLAG} -p pcap_ -o ${CMAKE_CURRENT_BINARY_DIR}/grammar.cpp -d ${pcap_SOURCE_DIR}/grammar.y
     DEPENDS ${pcap_SOURCE_DIR}/grammar.y
 )
 
 #
-# Since grammar.c does not exists yet when cmake is run, mark
+# Since grammar.cpp does not exists yet when cmake is run, mark
 # it as generated.
 #
-set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/grammar.c PROPERTIES
+set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/grammar.cpp PROPERTIES
     GENERATED TRUE
     OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/scanner.h
 )
 
 #
-# Add grammar.c to the list of sources.
+# Add grammar.cpp to the list of sources.
 #
-#set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} ${CMAKE_CURRENT_BINARY_DIR}/grammar.c)
+#set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} ${CMAKE_CURRENT_BINARY_DIR}/grammar.cpp)
 
 #
 # Assume, by default, no support for shared libraries and V7/BSD
@@ -2165,14 +2165,14 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Haiku")
     add_definitions(-D_BSD_SOURCE)
 endif()
 
-source_group("Source Files" FILES ${PROJECT_SOURCE_LIST_C})
+source_group("Source Files" FILES ${PROJECT_SOURCE_LIST_CXX})
 source_group("Header Files" FILES ${PROJECT_SOURCE_LIST_H})
 
 if(WIN32)
     #
     # Add pcap-dll.rc to the list of sources.
     #
-    set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} ${pcap_SOURCE_DIR}/pcap-dll.rc)
+    set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} ${pcap_SOURCE_DIR}/pcap-dll.rc)
 endif(WIN32)
 
 #
@@ -2193,12 +2193,12 @@ add_subdirectory(testprogs)
 #
 # See
 #
-#  https://public.kitware.com/pipermail/cmake/2013-August/055510.html
+#  https://public.kitware.cppom/pipermail/cmake/2013-August/055510.html
 #
 add_custom_target(SerializeTarget
     DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/grammar.c
-    ${CMAKE_CURRENT_BINARY_DIR}/scanner.c
+    ${CMAKE_CURRENT_BINARY_DIR}/grammar.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp
 )
 
 set_source_files_properties(${PROJECT_EXTERNAL_OBJECT_LIST} PROPERTIES
@@ -2206,9 +2206,9 @@ set_source_files_properties(${PROJECT_EXTERNAL_OBJECT_LIST} PROPERTIES
 
 if(BUILD_SHARED_LIBS)
     add_library(${LIBRARY_NAME} SHARED
-        ${PROJECT_SOURCE_LIST_C}
-        ${CMAKE_CURRENT_BINARY_DIR}/grammar.c
-        ${CMAKE_CURRENT_BINARY_DIR}/scanner.c
+        ${PROJECT_SOURCE_LIST_CXX}
+        ${CMAKE_CURRENT_BINARY_DIR}/grammar.cpp
+        ${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp
         ${PROJECT_EXTERNAL_OBJECT_LIST}
     )
     add_dependencies(${LIBRARY_NAME} SerializeTarget)
@@ -2231,9 +2231,9 @@ if(BUILD_SHARED_LIBS)
 endif(BUILD_SHARED_LIBS)
 
 add_library(${LIBRARY_NAME}_static STATIC
-    ${PROJECT_SOURCE_LIST_C}
-    ${CMAKE_CURRENT_BINARY_DIR}/grammar.c
-    ${CMAKE_CURRENT_BINARY_DIR}/scanner.c
+    ${PROJECT_SOURCE_LIST_CXX}
+    ${CMAKE_CURRENT_BINARY_DIR}/grammar.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp
     ${PROJECT_EXTERNAL_OBJECT_LIST}
 )
 add_dependencies(${LIBRARY_NAME}_static SerializeTarget)
@@ -2294,14 +2294,14 @@ else(WIN32) # UN*X
 endif(WIN32)
 
 if(BUILD_SHARED_LIBS)
-    if(NOT C_ADDITIONAL_FLAGS STREQUAL "")
-        set_target_properties(${LIBRARY_NAME} PROPERTIES COMPILE_FLAGS ${C_ADDITIONAL_FLAGS})
+    if(NOT CXX_ADDITIONAL_FLAGS STREQUAL "")
+        set_target_properties(${LIBRARY_NAME} PROPERTIES COMPILE_FLAGS ${CXX_ADDITIONAL_FLAGS})
     endif()
     target_link_libraries(${LIBRARY_NAME} ${PCAP_LINK_LIBRARIES})
 endif(BUILD_SHARED_LIBS)
 
-if(NOT C_ADDITIONAL_FLAGS STREQUAL "")
-    set_target_properties(${LIBRARY_NAME}_static PROPERTIES COMPILE_FLAGS ${C_ADDITIONAL_FLAGS})
+if(NOT CXX_ADDITIONAL_FLAGS STREQUAL "")
+    set_target_properties(${LIBRARY_NAME}_static PROPERTIES COMPILE_FLAGS ${CXX_ADDITIONAL_FLAGS})
 endif()
 
 #
@@ -2391,7 +2391,7 @@ if(APPLE AND "${CMAKE_OSX_ARCHITECTURES}" STREQUAL "")
           #
           cmake_push_check_state()
           set(CMAKE_REQUIRED_FLAGS "-arch i386")
-          check_c_source_compiles(
+          check_cxx_source_compiles(
 "int
 main(void)
 {

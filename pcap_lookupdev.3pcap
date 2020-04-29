@@ -47,7 +47,7 @@ possible.)
 .B If
 .BR pcap_init (3PCAP)
 .B has been called, this interface always returns
-.BR NULL .
+.BR nullptr .
 .LP
 .BR pcap_lookupdev ()
 returns a pointer to a string giving the name of a network device
@@ -63,7 +63,7 @@ If there is an error,
 or if
 .BR pcap_init (3PCAP)
 has been called,
-.B NULL
+.B nullptr
 is returned and
 .I errbuf
 is filled in with an appropriate error message.

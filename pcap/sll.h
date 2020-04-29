@@ -3,7 +3,7 @@
  *	The Regents of the University of California.  All rights reserved.
  *
  * This code is derived from the Stanford/CMU enet packet filter,
- * (net/enet.c) distributed as part of 4.3BSD, and code contributed
+ * (net/enet.cpp) distributed as part of 4.3BSD, and code contributed
  * to Berkeley by Steven McCanne and Van Jacobson both of Lawrence
  * Berkeley Laboratory.
  *
@@ -79,30 +79,30 @@
 /*
  * A DLT_LINUX_SLL fake link-layer header.
  */
-#define SLL_HDR_LEN	16		/* total header length */
-#define SLL_ADDRLEN	8		/* length of address field */
+#define SLL_HDR_LEN 16 /* total header length */
+#define SLL_ADDRLEN 8  /* length of address field */
 
 struct sll_header {
-	uint16_t sll_pkttype;		/* packet type */
-	uint16_t sll_hatype;		/* link-layer address type */
-	uint16_t sll_halen;		/* link-layer address length */
-	uint8_t  sll_addr[SLL_ADDRLEN];	/* link-layer address */
-	uint16_t sll_protocol;		/* protocol */
+  uint16_t sll_pkttype;          /* packet type */
+  uint16_t sll_hatype;           /* link-layer address type */
+  uint16_t sll_halen;            /* link-layer address length */
+  uint8_t sll_addr[SLL_ADDRLEN]; /* link-layer address */
+  uint16_t sll_protocol;         /* protocol */
 };
 
 /*
  * A DLT_LINUX_SLL2 fake link-layer header.
  */
-#define SLL2_HDR_LEN	20		/* total header length */
+#define SLL2_HDR_LEN 20 /* total header length */
 
 struct sll2_header {
-	uint16_t sll2_protocol;			/* protocol */
-	uint16_t sll2_reserved_mbz;		/* reserved - must be zero */
-	uint32_t sll2_if_index;			/* 1-based interface index */
-	uint16_t sll2_hatype;			/* link-layer address type */
-	uint8_t  sll2_pkttype;			/* packet type */
-	uint8_t  sll2_halen;			/* link-layer address length */
-	uint8_t  sll2_addr[SLL_ADDRLEN];	/* link-layer address */
+  uint16_t sll2_protocol;         /* protocol */
+  uint16_t sll2_reserved_mbz;     /* reserved - must be zero */
+  uint32_t sll2_if_index;         /* 1-based interface index */
+  uint16_t sll2_hatype;           /* link-layer address type */
+  uint8_t sll2_pkttype;           /* packet type */
+  uint8_t sll2_halen;             /* link-layer address length */
+  uint8_t sll2_addr[SLL_ADDRLEN]; /* link-layer address */
 };
 
 /*
@@ -113,11 +113,11 @@ struct sll2_header {
  * define them here so that they're available even on systems other
  * than Linux.
  */
-#define LINUX_SLL_HOST		0
-#define LINUX_SLL_BROADCAST	1
-#define LINUX_SLL_MULTICAST	2
-#define LINUX_SLL_OTHERHOST	3
-#define LINUX_SLL_OUTGOING	4
+#define LINUX_SLL_HOST 0
+#define LINUX_SLL_BROADCAST 1
+#define LINUX_SLL_MULTICAST 2
+#define LINUX_SLL_OTHERHOST 3
+#define LINUX_SLL_OUTGOING 4
 
 /*
  * The LINUX_SLL_ values for "sll_protocol" and LINUX_SLL2_ values for
@@ -126,11 +126,11 @@ struct sll2_header {
  * Linux.  We assume, for now, that the ETH_P_ values won't change in
  * Linux; if they do, then:
  *
- *	if we don't translate them in "pcap-linux.c", capture files
+ *	if we don't translate them in "pcap-linux.cpp", capture files
  *	won't necessarily be readable if captured on a system that
  *	defines ETH_P_ values that don't match these values;
  *
- *	if we do translate them in "pcap-linux.c", that makes life
+ *	if we do translate them in "pcap-linux.cpp", that makes life
  *	unpleasant for the BPF code generator, as the values you test
  *	for in the kernel aren't the values that you test for when
  *	reading a capture file, so the fixup code run on BPF programs
@@ -141,9 +141,11 @@ struct sll2_header {
  * in the Linux "if_ether.h" will, I suspect, actually show up in
  * captures.)
  */
-#define LINUX_SLL_P_802_3	0x0001	/* Novell 802.3 frames without 802.2 LLC header */
-#define LINUX_SLL_P_802_2	0x0004	/* 802.2 frames (not D/I/X Ethernet) */
-#define LINUX_SLL_P_CAN		0x000C	/* CAN frames, with SocketCAN pseudo-headers */
-#define LINUX_SLL_P_CANFD	0x000D	/* CAN FD frames, with SocketCAN pseudo-headers */
+#define LINUX_SLL_P_802_3                                                      \
+  0x0001 /* Novell 802.3 frames without 802.2 LLC header */
+#define LINUX_SLL_P_802_2 0x0004 /* 802.2 frames (not D/I/X Ethernet) */
+#define LINUX_SLL_P_CAN 0x000C   /* CAN frames, with SocketCAN pseudo-headers */
+#define LINUX_SLL_P_CANFD                                                      \
+  0x000D /* CAN FD frames, with SocketCAN pseudo-headers */
 
 #endif
