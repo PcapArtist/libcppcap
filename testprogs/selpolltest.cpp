@@ -64,7 +64,7 @@ static char *copy_argv(char **);
 static pcap_t *pd;
 
 int main(int argc, char **argv) {
-  register int op;
+  int op;
   bpf_u_int32 localnet, netmask;
   register char *cp, *cmdbuf, *device;
   int doselect, dopoll, dotimeout, dononblock, quiet;

@@ -1529,7 +1529,7 @@ echo 'lanc_outbound_promisc_flag/W1' | /usr/bin/adb -w /stand/vmunix /dev/kmem
  *
  * Setting the variable is not necessary on HP-UX 11.x.
  */
-static int get_dlpi_ppa(register int fd, register const char *device,
+static int get_dlpi_ppa(int fd, register const char *device,
                         register u_int unit, u_int *ppa, register char *ebuf) {
   register dl_hp_ppa_ack_t *ap;
   register dl_hp_ppa_info_t *ipstart, *ip;
@@ -1720,10 +1720,10 @@ static struct nlist nl[] = {
 static char path_vmunix[] = "/hp-ux";
 
 /* Determine ppa number that specifies ifname */
-static int get_dlpi_ppa(register int fd, register const char *ifname,
+static int get_dlpi_ppa(int fd, register const char *ifname,
                         register u_int unit, u_int *ppa, register char *ebuf) {
   register const char *cp;
-  register int kd;
+  int kd;
   void *addr;
   struct ifnet ifnet;
   char if_name[sizeof(ifnet.if_name) + 1];
@@ -1767,9 +1767,9 @@ static int get_dlpi_ppa(register int fd, register const char *ifname,
   return (PCAP_ERROR_NO_SUCH_DEVICE);
 }
 
-static int dlpi_kread(register int fd, register off_t addr, register void *buf,
+static int dlpi_kread(int fd, register off_t addr, register void *buf,
                       register u_int len, register char *ebuf) {
-  register int cc;
+  int cc;
 
   if (lseek(fd, addr, SEEK_SET) < 0) {
     pcap_fmt_errmsg_for_errno(ebuf, PCAP_ERRBUF_SIZE, errno, "lseek");

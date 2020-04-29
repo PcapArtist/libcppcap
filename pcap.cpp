@@ -1456,7 +1456,7 @@ char *pcap_lookupdev(char *errbuf) {
  */
 int pcap_lookupnet(const char *device, bpf_u_int32 *netp, bpf_u_int32 *maskp,
                    char *errbuf) {
-  register int fd;
+  int fd;
   register struct sockaddr_in *sin4;
   struct ifreq ifr;
 
@@ -2712,7 +2712,7 @@ int pcap_dispatch(pcap_t *p, int cnt, pcap_handler callback, u_char *user) {
 }
 
 int pcap_loop(pcap_t *p, int cnt, pcap_handler callback, u_char *user) {
-  register int n;
+  int n;
 
   for (;;) {
     if (p->rfile != nullptr) {

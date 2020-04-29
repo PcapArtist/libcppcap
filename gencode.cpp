@@ -5888,7 +5888,7 @@ static struct block *gen_portrange6(compiler_state_t *cstate, u_int port1,
 }
 
 static int lookup_proto(compiler_state_t *cstate, const char *name, int proto) {
-  register int v;
+  int v;
 
   switch (proto) {
 
@@ -6824,7 +6824,7 @@ struct block *gen_scode(compiler_state_t *cstate, const char *name,
 
 struct block *gen_mcode(compiler_state_t *cstate, const char *s1,
                         const char *s2, bpf_u_int32 masklen, struct qual q) {
-  register int nlen, mlen;
+  int nlen, mlen;
   bpf_u_int32 n, m;
 
   /*
@@ -6881,7 +6881,7 @@ struct block *gen_ncode(compiler_state_t *cstate, const char *s, bpf_u_int32 v,
   bpf_u_int32 mask;
   int proto;
   int dir;
-  register int vlen;
+  int vlen;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr

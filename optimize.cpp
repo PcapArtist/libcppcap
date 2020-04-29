@@ -278,7 +278,7 @@ typedef struct {
 #define SET_INTERSECT(a, b, n)                                                 \
   {                                                                            \
     register bpf_u_int32 *_x = a, *_y = b;                                     \
-    register int _n = n;                                                       \
+    int _n = n;                                                                \
     while (--_n >= 0)                                                          \
       *_x++ &= *_y++;                                                          \
   }
@@ -289,7 +289,7 @@ typedef struct {
 #define SET_SUBTRACT(a, b, n)                                                  \
   {                                                                            \
     register bpf_u_int32 *_x = a, *_y = b;                                     \
-    register int _n = n;                                                       \
+    int _n = n;                                                                \
     while (--_n >= 0)                                                          \
       *_x++ &= ~*_y++;                                                         \
   }
@@ -300,7 +300,7 @@ typedef struct {
 #define SET_UNION(a, b, n)                                                     \
   {                                                                            \
     register bpf_u_int32 *_x = a, *_y = b;                                     \
-    register int _n = n;                                                       \
+    int _n = n;                                                                \
     while (--_n >= 0)                                                          \
       *_x++ |= *_y++;                                                          \
   }
@@ -494,7 +494,7 @@ static void find_closure(opt_state_t *opt_state, struct block *root) {
  * The implementation should probably change to an array access.
  */
 static int atomuse(struct stmt *s) {
-  register int c = s->code;
+  int c = s->code;
 
   if (c == NOP)
     return -1;
@@ -1294,7 +1294,7 @@ static void opt_stmt(opt_state_t *opt_state, struct stmt *s, bpf_u_int32 val[],
 
 static void deadstmt(opt_state_t *opt_state, register struct stmt *s,
                      register struct stmt *last[]) {
-  register int atom;
+  int atom;
 
   atom = atomuse(s);
   if (atom >= 0) {
@@ -1316,7 +1316,7 @@ static void deadstmt(opt_state_t *opt_state, register struct stmt *s,
 
 static void opt_deadstores(opt_state_t *opt_state, register struct block *b) {
   register struct slist *s;
-  register int atom;
+  int atom;
   struct stmt *last[N_ATOMS];
 
   memset((char *)last, 0, sizeof last);
@@ -1499,7 +1499,7 @@ static struct block *fold_edge(struct block *child, struct edge *ep) {
 }
 
 static void opt_j(opt_state_t *opt_state, struct edge *ep) {
-  register int i, k;
+  int i, k;
   register struct block *target;
 
   if (JT(ep->succ) == 0)

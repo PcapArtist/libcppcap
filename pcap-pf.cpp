@@ -100,7 +100,7 @@ static int pcap_read_pf(pcap_t *pc, int cnt, pcap_handler callback,
                         u_char *user) {
   struct pcap_pf *pf = pc->priv;
   register u_char *p, *bp;
-  register int cc, n, buflen, inc;
+  int cc, n, buflen, inc;
   register struct enstamp *sp;
   struct enstamp stamp;
   register u_int pad;

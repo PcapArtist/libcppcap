@@ -5644,7 +5644,7 @@ static int iface_get_arptype(int fd, const char *device, char *ebuf) {
 static int fix_program(pcap_t *handle, struct sock_fprog *fcode) {
   struct pcap_linux *handlep = handle->priv;
   size_t prog_size;
-  register int i;
+  int i;
   register struct bpf_insn *p;
   struct bpf_insn *f;
   int len;

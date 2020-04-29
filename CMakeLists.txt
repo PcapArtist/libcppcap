@@ -45,7 +45,7 @@ include(CheckCXXCompilerFlag)
 # For checking if a compiler flag works and adding it if it does.
 #
 macro(check_and_add_compiler_option _option)
-    message(STATUS "Checking C compiler flag ${_option}")
+    message(STATUS "Checking C++ compiler flag ${_option}")
     string(REPLACE "=" "-" _temp_option_variable ${_option})
     string(REGEX REPLACE "^-" "" _option_variable ${_temp_option_variable})
     check_cxx_compiler_flag("${_option}" ${_option_variable})
@@ -89,7 +89,7 @@ else(MSVC)
         if(${${_option_variable}})
             set(CXX_ADDITIONAL_FLAGS "${CXX_ADDITIONAL_FLAGS} ${_option}")
         else()
-            message(FATAL_ERROR "C99 support is required, but the compiler doesn't support a compiler flag to enable it")
+            message(FATAL_ERROR "CPP20 support is required, but the compiler doesn't support a compiler flag to enable it")
         endif()
     endmacro()
 
@@ -100,16 +100,16 @@ else(MSVC)
     # Newer versions of compilers might default to supporting C99, but
     # older versions may require a special flag.
     #
-    # Prior to CMake 3.1, setting CMAKE_C_STANDARD will not have any effect,
+    # Prior to CMake 3.1, setting CMAKE_CXX_STANDARD will not have any effect,
     # so, unless and until we require CMake 3.1 or later, we have to do it
     # ourselves on pre-3.1 CMake, so we just do it ourselves on all versions
     # of CMake.
     #
     # Note: with CMake 3.1 through 3.5, the only compilers for which CMake
-    # handles CMAKE_C_STANDARD are GCC and Clang.  3.6 adds support only
+    # handles CMAKE_CXX_STANDARD are GCC and Clang.  3.6 adds support only
     # for Intel C; 3.9 adds support for PGI C, Sun C, and IBM XL C, and
     # 3.10 adds support for Cray C and IAR C, but no version of CMake has
-    # support for HP C.  Therefore, even if we use CMAKE_C_STANDARD with
+    # support for HP C.  Therefore, even if we use CMAKE_CXX_STANDARD with
     # compilers for which CMake supports it, we may still have to do it
     # ourselves on other compilers.
     #
@@ -123,7 +123,7 @@ else(MSVC)
     #
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR
        CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        require_and_add_compiler_option("-std=stdc++20")
+        require_and_add_compiler_option("-std=c++2a")
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "XL")
         #
         # We want support for extensions picked up for GNU C compatibility,
@@ -335,8 +335,8 @@ if(USE_STATIC_RT)
     message(STATUS "Use STATIC runtime")
         if(MSVC)
             foreach(RT_FLAG
-                CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
-                CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
+                CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+                CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO
                 CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
                 CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
                 string(REGEX REPLACE "/MD" "/MT" ${RT_FLAG} "${${RT_FLAG}}")
@@ -383,7 +383,7 @@ if(NOT WIN32)
         #
         # Check for various PF actions.
         #
-        check_c_source_compiles(
+        check_cxx_source_compiles(
 "#include <sys/types.h>
 #include <sys/socket.h>
 #include <net/if.h>
@@ -410,7 +410,7 @@ if(HAVE_STRERROR_R)
     # We have strerror_r; if we define _GNU_SOURCE, is it a
     # POSIX-compliant strerror_r() or a GNU strerror_r()?
     #
-    check_c_source_compiles(
+    check_cxx_source_compiles(
 "#define _GNU_SOURCE
 #include <string.h>
 
@@ -577,7 +577,7 @@ cmake_push_check_state()
 set(CMAKE_REQUIRED_LIBRARIES ${PCAP_LINK_LIBRARIES})
 check_symbol_exists(getnetbyname_r netdb.h NETDB_H_DECLARES_GETNETBYNAME_R)
 if(NETDB_H_DECLARES_GETNETBYNAME_R)
-    check_c_source_compiles(
+    check_cxx_source_compiles(
 "#include <netdb.h>
 
 int
@@ -593,7 +593,7 @@ main(void)
 "
         HAVE_LINUX_GETNETBYNAME_R)
     if(NOT HAVE_LINUX_GETNETBYNAME_R)
-        check_c_source_compiles(
+        check_cxx_source_compiles(
 "#include <netdb.h>
 
 int
@@ -607,7 +607,7 @@ main(void)
 "
             HAVE_SOLARIS_IRIX_GETNETBYNAME_R)
         if(NOT HAVE_SOLARIS_IRIX_GETNETBYNAME_R)
-            check_c_source_compiles(
+            check_cxx_source_compiles(
 "#include <netdb.h>
 
 int
@@ -642,7 +642,7 @@ cmake_push_check_state()
 set(CMAKE_REQUIRED_LIBRARIES ${PCAP_LINK_LIBRARIES})
 check_symbol_exists(getprotobyname_r netdb.h NETDB_H_DECLARES_GETPROTOBYNAME_R)
 if(NETDB_H_DECLARES_GETPROTOBYNAME_R)
-    check_c_source_compiles(
+    check_cxx_source_compiles(
 "#include <netdb.h>
 
 int
@@ -657,7 +657,7 @@ main(void)
 "
         HAVE_LINUX_GETPROTOBYNAME_R)
     if(NOT HAVE_LINUX_GETPROTOBYNAME_R)
-        check_c_source_compiles(
+        check_cxx_source_compiles(
 "#include <netdb.h>
 
 int
@@ -671,7 +671,7 @@ main(void)
 "
             HAVE_SOLARIS_IRIX_GETPROTOBYNAME_R)
         if(NOT HAVE_SOLARIS_IRIX_GETPROTOBYNAME_R)
-            check_c_source_compiles(
+            check_cxx_source_compiles(
 "#include <netdb.h>
 
 int
@@ -909,7 +909,7 @@ endif(NOT WIN32)
 
 if(ENABLE_PROFILING)
     if(NOT MSVC)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
     endif()
 endif()
@@ -943,7 +943,7 @@ endif()
 #
 # Test if the each of the sanitizers in the ENABLE_SANITIZERS list are
 # supported by the compiler, and, if so, adds the appropriate flags to
-# CMAKE_C_FLAGS, CMAKE_CXX_FLAGS, and SANITIZER_FLAGS.  If not, it fails.
+# CMAKE_CXX_FLAGS, CMAKE_CXX_FLAGS, and SANITIZER_FLAGS.  If not, it fails.
 #
 # Do this last, in the hope that it will prevent configuration on Linux
 # from somehow deciding it doesn't need -lpthread when building rpcapd
@@ -997,7 +997,7 @@ foreach(sanitizer IN LISTS ENABLE_SANITIZERS)
 endforeach()
 
 if(NOT "${SANITIZER_FLAGS}" STREQUAL "")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O1 -g ${SANITIZER_FLAGS} -fno-omit-frame-pointer -fno-optimize-sibling-calls")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g ${SANITIZER_FLAGS} -fno-omit-frame-pointer -fno-optimize-sibling-calls")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g ${SANITIZER_FLAGS} -fno-omit-frame-pointer -fno-optimize-sibling-calls")
 endif()
 
@@ -1536,7 +1536,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     # Check whether the includes Just Work.  If not, don't turn on
     # netfilter support.
     #
-    check_c_source_compiles(
+    check_cxx_source_compiles(
 "#include <sys/socket.h>
 #include <netinet/in.h>
 #include <linux/types.h>
@@ -1567,7 +1567,7 @@ if(NOT DISABLE_NETMAP)
     # is defined, for example, as it includes a non-existent malloc.h
     # header.
     #
-    check_c_source_compiles(
+    check_cxx_source_compiles(
 "#define NETMAP_WITH_LIBS
 #include <net/netmap_user.h>
 
@@ -1596,9 +1596,9 @@ if(NOT DISABLE_DPDK)
         check_include_file(rte_bus.h HAVE_RTE_BUS_H)
         cmake_pop_check_state()
         if(HAVE_RTE_BUS_H)
-            set(DPDK_C_FLAGS "-march=native")
+            set(DPDK_CXX_FLAGS "-march=native")
             set(DPDK_LIB dpdk rt m numa dl)
-            set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} ${DPDK_C_FLAGS})
+            set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${DPDK_CXX_FLAGS})
             include_directories(AFTER ${dpdk_INCLUDE_DIRS})
             link_directories(AFTER ${dpdk_LIBRARIES})
             set(PCAP_LINK_LIBRARIES ${PCAP_LINK_LIBRARIES} ${dpdk_LIBRARIES})
@@ -1624,7 +1624,7 @@ if(NOT DISABLE_BLUETOOTH)
                 #
                 # OK, is HCI_CHANNEL_MONITOR defined?
                 #
-               check_c_source_compiles(
+               check_cxx_source_compiles(
 "#include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
 
@@ -2391,7 +2391,7 @@ if(APPLE AND "${CMAKE_OSX_ARCHITECTURES}" STREQUAL "")
           #
           cmake_push_check_state()
           set(CMAKE_REQUIRED_FLAGS "-arch i386")
-          check_c_source_compiles(
+          check_cxx_source_compiles(
 "int
 main(void)
 {

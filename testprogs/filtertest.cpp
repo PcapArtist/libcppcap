@@ -89,7 +89,7 @@ static void warn(const char *, ...) PCAP_PRINTFLIKE(1, 2);
 #endif
 
 static char *read_infile(char *fname) {
-  register int i, fd, cc;
+  int i, fd, cc;
   register char *cp;
   struct stat buf;
 

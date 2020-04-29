@@ -48,11 +48,11 @@ void readloop(int cnt, int if_fd, struct bpf_program *fp, printfunc printit) {
 #ifdef IBMRTPC
   register struct packet_header *ph;
   register u_char *bp;
-  register int inc;
+  int inc;
 #else  /* !IBMRTPC */
   static struct timeval tv = {0};
 #endif /* IBMRTPC */
-  register int cc, caplen;
+  int cc, caplen;
   register struct bpf_insn *fcode = fp->bf_insns;
   union {
     struct packet_header hdr;

@@ -168,7 +168,7 @@ static THREAD_FUNC_RETURN_TYPE capture_thread_func(THREAD_FUNC_ARG_TYPE arg) {
 }
 
 int main(int argc, char **argv) {
-  register int op;
+  int op;
   register char *cp, *cmdbuf, *device;
   int immediate = 0;
   pcap_if_t *devlist;

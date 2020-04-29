@@ -76,7 +76,7 @@ struct rtentry; /* declarations in <net/if.h> */
 int pcap_findalldevs_interfaces(pcap_if_list_t *devlistp, char *errbuf,
                                 int (*check_usable)(const char *),
                                 get_if_flags_func get_flags_func) {
-  register int fd4, fd6, fd;
+  int fd4, fd6, fd;
   register struct lifreq *ifrp, *ifend;
   struct lifnum ifn;
   struct lifconf ifc;

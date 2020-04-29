@@ -92,7 +92,7 @@ static void sigint_handler(int signum _U_) {
 #define USAGE_OPTIONS "-" B_OPTION "mn" R_OPTION S_OPTION
 
 int main(int argc, char **argv) {
-  register int op;
+  int op;
   register char *cp, *cmdbuf, *device;
   long longarg;
   char *p;
