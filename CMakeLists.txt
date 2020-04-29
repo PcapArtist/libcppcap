@@ -82,7 +82,7 @@ else(MSVC)
     # and adding it otherwise.
     #
     macro(require_and_add_compiler_option _option)
-        message(STATUS "Checking C compiler flag ${_option}")
+        message(STATUS "Checking C++ compiler flag ${_option}")
         string(REPLACE "=" "-" _temp_option_variable ${_option})
         string(REGEX REPLACE "^-" "" _option_variable ${_temp_option_variable})
         check_cxx_compiler_flag("${_option}" ${_option_variable})
@@ -1030,7 +1030,7 @@ endif()
 # Input files
 ######################################
 
-set(PROJECT_SOURCE_LIST_C
+set(PROJECT_SOURCE_LIST_CXX
     bpf_dump.cpp
     bpf_filter.cpp
     bpf_image.cpp
@@ -1054,20 +1054,20 @@ if(WIN32)
     # We assume we don't have asprintf(), and provide an implementation
     # that uses _vscprintf() to determine how big the string needs to be.
     #
-    set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C}
+    set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX}
         charconv.cpp missing/win_asprintf.cpp)
 else()
     if(NOT HAVE_ASPRINTF)
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} missing/asprintf.cpp)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} missing/asprintf.cpp)
     endif()
     if(NOT HAVE_STRLCAT)
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} missing/strlcat.cpp)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} missing/strlcat.cpp)
     endif(NOT HAVE_STRLCAT)
     if(NOT HAVE_STRLCPY)
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} missing/strlcpy.cpp)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} missing/strlcpy.cpp)
     endif(NOT HAVE_STRLCPY)
     if(NOT HAVE_STRTOK_R)
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} missing/strtok_r.cpp)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} missing/strtok_r.cpp)
     endif(NOT HAVE_STRTOK_R)
 endif(WIN32)
 
@@ -1240,7 +1240,7 @@ else(WIN32)
         #
         # Needed for common functions used by pcap-[dlpi,libdlpi].cpp
         #
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} dlpisubs.cpp)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} dlpisubs.cpp)
 
         #
         # Checks for some header files.
@@ -1383,7 +1383,7 @@ if(NOT DEFINED PCAP_SRC)
 set(PCAP_SRC pcap-${PCAP_TYPE}.cpp)
 endif()
 
-set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} ${PCAP_SRC})
+set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} ${PCAP_SRC})
 
 #
 # Now figure out how we get a list of interfaces and addresses,
@@ -1476,7 +1476,7 @@ if(NOT WIN32)
             endif()
         endif()
         message(STATUS "Find-interfaces mechanism type: ${FINDALLDEVS_TYPE}")
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} fad-${FINDALLDEVS_TYPE}.cpp)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} fad-${FINDALLDEVS_TYPE}.cpp)
     endif()
 endif()
 
@@ -1496,7 +1496,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     # Check for usbmon USB sniffing support.
     if(NOT DISABLE_LINUX_USBMON)
         set(PCAP_SUPPORT_LINUX_USBMON TRUE)
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-usb-linux.cpp)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-usb-linux.cpp)
         set(LINUX_USB_MON_DEV /dev/usbmon)
         #
         # Do we have a version of <linux/compiler.h> available?
@@ -1555,7 +1555,7 @@ main(void)
 "
         PCAP_SUPPORT_NETFILTER)
     if(PCAP_SUPPORT_NETFILTER)
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-netfilter-linux.cpp)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-netfilter-linux.cpp)
     endif(PCAP_SUPPORT_NETFILTER)
 endif()
 
@@ -1579,7 +1579,7 @@ main(void)
 "
         PCAP_SUPPORT_NETMAP)
     if(PCAP_SUPPORT_NETMAP)
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-netmap.cpp)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-netmap.cpp)
     endif(PCAP_SUPPORT_NETMAP)
 endif()
 
@@ -1602,7 +1602,7 @@ if(NOT DISABLE_DPDK)
             include_directories(AFTER ${dpdk_INCLUDE_DIRS})
             link_directories(AFTER ${dpdk_LIBRARIES})
             set(PCAP_LINK_LIBRARIES ${PCAP_LINK_LIBRARIES} ${dpdk_LIBRARIES})
-            set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-dpdk.cpp)
+            set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-dpdk.cpp)
             set(PCAP_SUPPORT_DPDK TRUE)
         endif()
     endif()
@@ -1614,7 +1614,7 @@ if(NOT DISABLE_BLUETOOTH)
         check_include_file(bluetooth/bluetooth.h HAVE_BLUETOOTH_BLUETOOTH_H)
         if(HAVE_BLUETOOTH_BLUETOOTH_H)
             set(PCAP_SUPPORT_BT TRUE)
-            set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-bt-linux.cpp)
+            set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-bt-linux.cpp)
             #
             # OK, does struct sockaddr_hci have an hci_channel
             # member?
@@ -1641,7 +1641,7 @@ main(void)
                    # Yes, so we can also support Bluetooth monitor
                    # sniffing.
                    #
-                   set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-bt-monitor-linux.cpp)
+                   set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-bt-monitor-linux.cpp)
                endif(PCAP_SUPPORT_BT_MONITOR)
             endif(HAVE_STRUCT_SOCKADDR_HCI_HCI_CHANNEL)
         endif(HAVE_BLUETOOTH_BLUETOOTH_H)
@@ -1663,7 +1663,7 @@ if(NOT DISABLE_DBUS)
     pkg_check_modules(DBUS dbus-1)
     if(DBUS_FOUND)
         set(PCAP_SUPPORT_DBUS TRUE)
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-dbus.cpp)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-dbus.cpp)
         include_directories(${DBUS_INCLUDE_DIRS})
 
         #
@@ -1698,7 +1698,7 @@ if(NOT DISABLE_RDMA)
         if(HAVE_INFINIBAND_VERBS_H)
             check_symbol_exists(ibv_create_flow infiniband/verbs.h PCAP_SUPPORT_RDMASNIFF)
             if(PCAP_SUPPORT_RDMASNIFF)
-                set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-rdmasniff.cpp)
+                set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-rdmasniff.cpp)
                 set(PCAP_LINK_LIBRARIES ibverbs ${PCAP_LINK_LIBRARIES})
             endif(PCAP_SUPPORT_RDMASNIFF)
         endif(HAVE_INFINIBAND_VERBS_H)
@@ -1737,7 +1737,7 @@ if(NOT DISABLE_DAG)
         cmake_pop_check_state()
 
         include_directories(AFTER ${DAG_INCLUDE_DIRS})
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-dag.cpp)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-dag.cpp)
         set(HAVE_DAG_API TRUE)
         set(PCAP_LINK_LIBRARIES ${PCAP_LINK_LIBRARIES} ${DAG_LIBRARIES})
 
@@ -1767,7 +1767,7 @@ if(NOT DISABLE_SEPTEL)
         # Yes.
         #
         include_directories(AFTER ${SEPTEL_INCLUDE_DIRS})
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-septel.cpp)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-septel.cpp)
         set(PROJECT_EXTERNAL_OBJECT_LIST ${PROJECT_EXTERNAL_OBJECT_LIST} "${SEPTEL_ROOT}/asciibin.o ${SEPTEL_ROOT}/bit2byte.o ${SEPTEL_ROOT}/confirm.o ${SEPTEL_ROOT}/fmtmsg.o ${SEPTEL_ROOT}/gct_unix.o ${SEPTEL_ROOT}/hqueue.o ${SEPTEL_ROOT}/ident.o ${SEPTEL_ROOT}/mem.o ${SEPTEL_ROOT}/pack.o ${SEPTEL_ROOT}/parse.o ${SEPTEL_ROOT}/pool.o ${SEPTEL_ROOT}/sdlsig.o ${SEPTEL_ROOT}/strtonum.o ${SEPTEL_ROOT}/timer.o ${SEPTEL_ROOT}/trace.o")
         set(HAVE_SEPTEL_API TRUE)
     endif()
@@ -1788,7 +1788,7 @@ if(NOT DISABLE_SNF)
         # Yes.
         #
         include_directories(AFTER ${SNF_INCLUDE_DIRS})
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-snf.cpp)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-snf.cpp)
         set(HAVE_SNF_API TRUE)
         set(PCAP_LINK_LIBRARIES ${PCAP_LINK_LIBRARIES} ${SNF_LIBRARIES})
     endif()
@@ -1809,7 +1809,7 @@ if(NOT DISABLE_TC)
         # Yes.
         #
         include_directories(AFTER ${TC_INCLUDE_DIRS})
-        set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} pcap-tc.cpp)
+        set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} pcap-tc.cpp)
         set(HAVE_TC_API TRUE)
         set(PCAP_LINK_LIBRARIES "${PCAP_LINK_LIBRARIES} ${TC_LIBRARIES} ${CMAKE_USE_PTHREADS_INIT} stdc++")
     endif()
@@ -1836,7 +1836,7 @@ if(ENABLE_REMOTE)
     check_struct_has_member("struct msghdr" msg_control "ftmacros.h;sys/socket.h" HAVE_STRUCT_MSGHDR_MSG_CONTROL)
     check_struct_has_member("struct msghdr" msg_flags "ftmacros.h;sys/socket.h" HAVE_STRUCT_MSGHDR_MSG_FLAGS)
     cmake_pop_check_state()
-    set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C}
+    set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX}
         pcap-new.cpp pcap-rpcap.cpp rpcap-protocol.cpp sockutils.cpp sslutils.cpp)
 endif(ENABLE_REMOTE)
 
@@ -2026,7 +2026,7 @@ set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp PROPERTIES
 #
 # Add scanner.cpp to the list of sources.
 #
-#set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} ${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp)
+#set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} ${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp)
 
 #
 # Try to find YACC or Bison.
@@ -2065,7 +2065,7 @@ set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/grammar.cpp PROPERTIES
 #
 # Add grammar.cpp to the list of sources.
 #
-#set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} ${CMAKE_CURRENT_BINARY_DIR}/grammar.cpp)
+#set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} ${CMAKE_CURRENT_BINARY_DIR}/grammar.cpp)
 
 #
 # Assume, by default, no support for shared libraries and V7/BSD
@@ -2165,14 +2165,14 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Haiku")
     add_definitions(-D_BSD_SOURCE)
 endif()
 
-source_group("Source Files" FILES ${PROJECT_SOURCE_LIST_C})
+source_group("Source Files" FILES ${PROJECT_SOURCE_LIST_CXX})
 source_group("Header Files" FILES ${PROJECT_SOURCE_LIST_H})
 
 if(WIN32)
     #
     # Add pcap-dll.rc to the list of sources.
     #
-    set(PROJECT_SOURCE_LIST_C ${PROJECT_SOURCE_LIST_C} ${pcap_SOURCE_DIR}/pcap-dll.rc)
+    set(PROJECT_SOURCE_LIST_CXX ${PROJECT_SOURCE_LIST_CXX} ${pcap_SOURCE_DIR}/pcap-dll.rc)
 endif(WIN32)
 
 #
@@ -2206,7 +2206,7 @@ set_source_files_properties(${PROJECT_EXTERNAL_OBJECT_LIST} PROPERTIES
 
 if(BUILD_SHARED_LIBS)
     add_library(${LIBRARY_NAME} SHARED
-        ${PROJECT_SOURCE_LIST_C}
+        ${PROJECT_SOURCE_LIST_CXX}
         ${CMAKE_CURRENT_BINARY_DIR}/grammar.cpp
         ${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp
         ${PROJECT_EXTERNAL_OBJECT_LIST}
@@ -2231,7 +2231,7 @@ if(BUILD_SHARED_LIBS)
 endif(BUILD_SHARED_LIBS)
 
 add_library(${LIBRARY_NAME}_static STATIC
-    ${PROJECT_SOURCE_LIST_C}
+    ${PROJECT_SOURCE_LIST_CXX}
     ${CMAKE_CURRENT_BINARY_DIR}/grammar.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp
     ${PROJECT_EXTERNAL_OBJECT_LIST}

@@ -91,7 +91,7 @@
 
 #include "gencode.h"
 
-#include "grammar.h"
+#include "grammar.hpp"
 
 /*
  * Earlier versions of Flex don't declare these, so we declare them
@@ -140,7 +140,7 @@ void pcap_set_column(int, yyscan_t);
 #endif /*INET6*/
 
 #include <pcap/namedb.h>
-#include "grammar.h"
+#include "grammar.hpp"
 
 #ifdef HAVE_OS_PROTO_H
 #include "os-proto.h"

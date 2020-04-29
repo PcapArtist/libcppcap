@@ -64,7 +64,7 @@
 #include "ppp.h"
 #include "sunatmpos.h"
 
-#include "grammar.h"
+#include "grammar.hpp"
 #include "scanner.h"
 
 #if defined(linux)
