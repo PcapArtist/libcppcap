@@ -719,7 +719,7 @@ u_char *pcap_ether_aton(const char *s) {
  * safe!  Needs a mutex or a thread-safe pcap_next_etherent().
  */
 u_char *pcap_ether_hostton(const char *name) {
-  register struct pcap_etherent *ep;
+  struct pcap_etherent *ep;
   register u_char *ap;
   static FILE *fp = nullptr;
   static int init = 0;

@@ -101,7 +101,7 @@ static int pcap_read_pf(pcap_t *pc, int cnt, pcap_handler callback,
   struct pcap_pf *pf = pc->priv;
   register u_char *p, *bp;
   int cc, n, buflen, inc;
-  register struct enstamp *sp;
+  struct enstamp *sp;
   struct enstamp stamp;
   register u_int pad;
 

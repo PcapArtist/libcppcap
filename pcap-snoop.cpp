@@ -65,7 +65,7 @@ static int pcap_read_snoop(pcap_t *p, int cnt, pcap_handler callback,
                            u_char *user) {
   struct pcap_snoop *psn = p->priv;
   int cc;
-  register struct snoopheader *sh;
+  struct snoopheader *sh;
   register u_int datalen;
   register u_int caplen;
   register u_char *cp;
@@ -154,7 +154,7 @@ static int pcap_inject_snoop(pcap_t *p, const void *buf, int size) {
 
 static int pcap_stats_snoop(pcap_t *p, struct pcap_stat *ps) {
   struct pcap_snoop *psn = p->priv;
-  register struct rawstats *rs;
+  struct rawstats *rs;
   struct rawstats rawstats;
 
   rs = &rawstats;

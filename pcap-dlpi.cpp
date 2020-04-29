@@ -1529,8 +1529,8 @@ echo 'lanc_outbound_promisc_flag/W1' | /usr/bin/adb -w /stand/vmunix /dev/kmem
  *
  * Setting the variable is not necessary on HP-UX 11.x.
  */
-static int get_dlpi_ppa(int fd, register const char *device,
-                        register u_int unit, u_int *ppa, register char *ebuf) {
+static int get_dlpi_ppa(int fd, const char *device, register u_int unit,
+                        u_int *ppa, register char *ebuf) {
   register dl_hp_ppa_ack_t *ap;
   register dl_hp_ppa_info_t *ipstart, *ip;
   register u_int i;
@@ -1720,9 +1720,9 @@ static struct nlist nl[] = {
 static char path_vmunix[] = "/hp-ux";
 
 /* Determine ppa number that specifies ifname */
-static int get_dlpi_ppa(int fd, register const char *ifname,
-                        register u_int unit, u_int *ppa, register char *ebuf) {
-  register const char *cp;
+static int get_dlpi_ppa(int fd, const char *ifname, register u_int unit,
+                        u_int *ppa, register char *ebuf) {
+  const char *cp;
   int kd;
   void *addr;
   struct ifnet ifnet;

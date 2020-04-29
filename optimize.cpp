@@ -1292,8 +1292,8 @@ static void opt_stmt(opt_state_t *opt_state, struct stmt *s, bpf_u_int32 val[],
   }
 }
 
-static void deadstmt(opt_state_t *opt_state, register struct stmt *s,
-                     register struct stmt *last[]) {
+static void deadstmt(opt_state_t *opt_state, struct stmt *s,
+                     struct stmt *last[]) {
   int atom;
 
   atom = atomuse(s);
@@ -1314,8 +1314,8 @@ static void deadstmt(opt_state_t *opt_state, register struct stmt *s,
   }
 }
 
-static void opt_deadstores(opt_state_t *opt_state, register struct block *b) {
-  register struct slist *s;
+static void opt_deadstores(opt_state_t *opt_state, struct block *b) {
+  struct slist *s;
   int atom;
   struct stmt *last[N_ATOMS];
 
@@ -1500,7 +1500,7 @@ static struct block *fold_edge(struct block *child, struct edge *ep) {
 
 static void opt_j(opt_state_t *opt_state, struct edge *ep) {
   int i, k;
-  register struct block *target;
+  struct block *target;
 
   if (JT(ep->succ) == 0)
     return;
@@ -2116,7 +2116,7 @@ static void opt_init(opt_state_t *opt_state, struct icode *ic) {
   }
   opt_state->all_edge_sets = p;
   for (i = 0; i < n; ++i) {
-    register struct block *b = opt_state->blocks[i];
+    struct block *b = opt_state->blocks[i];
 
     b->et.edom = p;
     p += opt_state->edgewords;

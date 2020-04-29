@@ -895,7 +895,7 @@ static void backpatch(struct block *list, struct block *target) {
  * which of jt and jf is the link.
  */
 static void merge(struct block *b0, struct block *b1) {
-  register struct block **p = &b0;
+  struct block **p = &b0;
 
   /* Find end of list. */
   while (*p)
@@ -1012,11 +1012,11 @@ static struct block *gen_mcmp(compiler_state_t *cstate, enum e_offrel offrel,
 
 static struct block *gen_bcmp(compiler_state_t *cstate, enum e_offrel offrel,
                               u_int offset, u_int size, const u_char *v) {
-  register struct block *b, *tmp;
+  struct block *b, *tmp;
 
   b = nullptr;
   while (size >= 4) {
-    register const u_char *p = &v[size - 4];
+    const u_char *p = &v[size - 4];
 
     tmp = gen_cmp(cstate, offrel, offset + size - 4, BPF_W, EXTRACT_BE_U_4(p));
     if (b != nullptr)
@@ -1025,7 +1025,7 @@ static struct block *gen_bcmp(compiler_state_t *cstate, enum e_offrel offrel,
     size -= 4;
   }
   while (size >= 2) {
-    register const u_char *p = &v[size - 2];
+    const u_char *p = &v[size - 2];
 
     tmp = gen_cmp(cstate, offrel, offset + size - 2, BPF_H, EXTRACT_BE_U_2(p));
     if (b != nullptr)
@@ -4018,7 +4018,7 @@ static struct block *gen_hostop6(compiler_state_t *cstate,
 
 static struct block *gen_ehostop(compiler_state_t *cstate, const u_char *eaddr,
                                  int dir) {
-  register struct block *b0, *b1;
+  struct block *b0, *b1;
 
   switch (dir) {
   case Q_SRC:
@@ -4132,7 +4132,7 @@ static struct block *gen_fhostop(compiler_state_t *cstate, const u_char *eaddr,
  */
 static struct block *gen_thostop(compiler_state_t *cstate, const u_char *eaddr,
                                  int dir) {
-  register struct block *b0, *b1;
+  struct block *b0, *b1;
 
   switch (dir) {
   case Q_SRC:
@@ -4188,8 +4188,8 @@ static struct block *gen_thostop(compiler_state_t *cstate, const u_char *eaddr,
  */
 static struct block *gen_wlanhostop(compiler_state_t *cstate,
                                     const u_char *eaddr, int dir) {
-  register struct block *b0, *b1, *b2;
-  register struct slist *s;
+  struct block *b0, *b1, *b2;
+  struct slist *s;
 
 #ifdef ENABLE_WLAN_FILTERING_PATCH
   /*
@@ -4611,7 +4611,7 @@ static struct block *gen_wlanhostop(compiler_state_t *cstate,
  */
 static struct block *gen_ipfchostop(compiler_state_t *cstate,
                                     const u_char *eaddr, int dir) {
-  register struct block *b0, *b1;
+  struct block *b0, *b1;
 
   switch (dir) {
   case Q_SRC:
@@ -7820,8 +7820,8 @@ struct block *gen_broadcast(compiler_state_t *cstate, int proto) {
  * the bottom bit of the *first* byte).
  */
 static struct block *gen_mac_multicast(compiler_state_t *cstate, int offset) {
-  register struct block *b0;
-  register struct slist *s;
+  struct block *b0;
+  struct slist *s;
 
   /* link[offset] & 1 != 0 */
   s = gen_load_a(cstate, OR_LINKHDR, offset, BPF_B);
@@ -7832,8 +7832,8 @@ static struct block *gen_mac_multicast(compiler_state_t *cstate, int offset) {
 }
 
 struct block *gen_multicast(compiler_state_t *cstate, int proto) {
-  register struct block *b0, *b1, *b2;
-  register struct slist *s;
+  struct block *b0, *b1, *b2;
+  struct slist *s;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -8025,7 +8025,7 @@ struct block *gen_multicast(compiler_state_t *cstate, int proto) {
  * better accomplished using a higher-layer filter.
  */
 struct block *gen_inbound(compiler_state_t *cstate, int dir) {
-  register struct block *b0;
+  struct block *b0;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -8475,7 +8475,7 @@ struct block *gen_acode(compiler_state_t *cstate, const char *s,
 
 static struct block *gen_ahostop(compiler_state_t *cstate, const u_char *eaddr,
                                  int dir) {
-  register struct block *b0, *b1;
+  struct block *b0, *b1;
 
   switch (dir) {
   /* src comes first, different from Ethernet */

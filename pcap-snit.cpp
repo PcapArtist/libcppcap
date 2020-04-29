@@ -114,10 +114,10 @@ static int pcap_read_snit(pcap_t *p, int cnt, pcap_handler callback,
   struct pcap_snit *psn = p->priv;
   int cc, n;
   register u_char *bp, *cp, *ep;
-  register struct nit_bufhdr *hdrp;
-  register struct nit_iftime *ntp;
-  register struct nit_iflen *nlp;
-  register struct nit_ifdrops *ndp;
+  struct nit_bufhdr *hdrp;
+  struct nit_iftime *ntp;
+  struct nit_iflen *nlp;
+  struct nit_ifdrops *ndp;
   int caplen;
 
   cc = p->cc;
