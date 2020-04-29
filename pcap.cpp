@@ -676,9 +676,10 @@ int pcap_findalldevs(pcap_if_t **alldevsp, char *errbuf) {
 static struct sockaddr *dup_sockaddr(struct sockaddr *sa, size_t sa_length) {
   struct sockaddr *newsa;
 
-  if ((newsa = malloc(sa_length)) == nullptr)
+  if ((newsa = c_malloc<struct sockaddr>(sa_length)) == nullptr)
     return (nullptr);
-  return (memcpy(newsa, sa, sa_length));
+  memcpy(newsa, sa, sa_length);
+  return newsa;
 }
 
 /*
@@ -1207,7 +1208,7 @@ pcap_if_t *add_dev(pcap_if_list_t *devlistp, const char *name,
   pcap_if_t *curdev, *prevdev, *nextdev;
   u_int this_figure_of_merit, nextdev_figure_of_merit;
 
-  curdev = malloc(sizeof(pcap_if_t));
+  curdev = c_malloc<pcap_if_t>(sizeof(pcap_if_t));
   if (curdev == nullptr) {
     pcap_fmt_errmsg_for_errno(errbuf, PCAP_ERRBUF_SIZE, errno, "malloc");
     return (nullptr);
@@ -2305,7 +2306,7 @@ static pcap_t *pcap_alloc_pcap_t(char *ebuf, size_t size) {
    * integers.
    */
 #define PCAP_T_ALIGNED_SIZE ((sizeof(pcap_t) + 7U) & ~0x7U)
-  chunk = calloc(PCAP_T_ALIGNED_SIZE + size, 1);
+  chunk = static_cast<char *>(calloc(PCAP_T_ALIGNED_SIZE + size, 1));
   if (chunk == nullptr) {
     pcap_fmt_errmsg_for_errno(ebuf, PCAP_ERRBUF_SIZE, errno, "malloc");
     return (nullptr);
@@ -2955,7 +2956,7 @@ struct dlt_choice {
   { nullptr, nullptr, 0 }
 
 static struct dlt_choice dlt_choices[] = {
-    DLT_CHOICE(nullptr, "BSD loopback"),
+    DLT_CHOICE(NULL, "BSD loopback"),
     DLT_CHOICE(EN10MB, "Ethernet"),
     DLT_CHOICE(IEEE802, "Token ring"),
     DLT_CHOICE(ARCNET, "BSD ARCNET"),
@@ -3930,7 +3931,7 @@ pcap_t *pcap_open_dead_with_tstamp_precision(int linktype, int snaplen,
     precision = PCAP_TSTAMP_PRECISION_MICRO;
     break;
   }
-  p = malloc(sizeof(*p));
+  p = c_malloc<pcap_t>();
   if (p == nullptr)
     return nullptr;
   memset(p, 0, sizeof(*p));

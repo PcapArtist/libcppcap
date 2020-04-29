@@ -93,7 +93,7 @@ struct rtentry;
 #include "pcap-int.h"
 
 #include "gencode.h"
-#include "grammar.h"
+#include "grammar.hpp"
 #include "scanner.h"
 
 #ifdef HAVE_NET_PFVAR_H

@@ -893,7 +893,7 @@ static int pcap_stats_bpf(pcap_t *p, struct pcap_stat *ps) {
 
 static int pcap_read_bpf(pcap_t *p, int cnt, pcap_handler callback,
                          u_char *user) {
-  struct pcap_bpf *pb = p->priv;
+  struct pcap_bpf *pb = static_cast<pcap_bpf *>(p->priv);
   int cc;
   int n = 0;
   u_char *bp, *ep;
@@ -1347,7 +1347,7 @@ static int bpf_load(char *errbuf) {
  * Undo any operations done when opening the device when necessary.
  */
 static void pcap_cleanup_bpf(pcap_t *p) {
-  struct pcap_bpf *pb = p->priv;
+  struct pcap_bpf *pb = static_cast<pcap_bpf *>(p->priv);
 #ifdef HAVE_BSD_IEEE80211
   int sock;
   struct ifmediareq req;
@@ -1556,7 +1556,7 @@ static int check_setif_failure(pcap_t *p, int error) {
 #endif
 
 static int pcap_activate_bpf(pcap_t *p) {
-  struct pcap_bpf *pb = p->priv;
+  struct pcap_bpf *pb = static_cast<pcap_bpf *>(p->priv);
   int status = 0;
 #ifdef HAVE_BSD_IEEE80211
   int retv;
@@ -1744,7 +1744,7 @@ static int pcap_activate_bpf(pcap_t *p) {
           }
           goto bad;
         }
-        wltdev = malloc(strlen(p->opt.device) + 2);
+        wltdev = static_cast<char *>(malloc(strlen(p->opt.device) + 2));
         if (wltdev == nullptr) {
           pcap_fmt_errmsg_for_errno(p->errbuf, PCAP_ERRBUF_SIZE, errno,
                                     "malloc");
@@ -2502,7 +2502,7 @@ static int check_bpf_bindable(const char *name) {
      * device's name.
      */
     en_name_len = strlen(name) - 1;
-    en_name = malloc(en_name_len + 1);
+    en_name = static_cast<char *>(malloc(en_name_len + 1));
     if (en_name == nullptr) {
       pcap_fmt_errmsg_for_errno(errbuf, PCAP_ERRBUF_SIZE, errno, "malloc");
       return (-1);
@@ -2768,7 +2768,7 @@ int pcap_platform_finddevs(pcap_if_list_t *devlistp, char *errbuf) {
 
 #ifdef HAVE_BSD_IEEE80211
 static int monitor_mode(pcap_t *p, int set) {
-  struct pcap_bpf *pb = p->priv;
+  struct pcap_bpf *pb = static_cast<pcap_bpf *>(p->priv);
   int sock;
   struct ifmediareq req;
   IFM_ULIST_TYPE *media_list;
@@ -3084,7 +3084,7 @@ static void remove_802_11(pcap_t *p) {
 #endif /* defined(__APPLE__) && defined(BIOCGDLTLIST) */
 
 static int pcap_setfilter_bpf(pcap_t *p, struct bpf_program *fp) {
-  struct pcap_bpf *pb = p->priv;
+  struct pcap_bpf *pb = static_cast<pcap_bpf *>(p->priv);
 
   /*
    * Free any user-mode filter we might happen to have installed.

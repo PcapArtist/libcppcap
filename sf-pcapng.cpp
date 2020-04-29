@@ -29,6 +29,7 @@
 
 #include <errno.h>
 #include <memory.h>
+#include <new>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -42,6 +43,8 @@
 #endif
 
 #include "sf-pcapng.h"
+
+#include "conversion_utils.h"
 
 /*
  * Block types.
@@ -280,7 +283,7 @@ static int read_block(FILE *fp, pcap_t *p, struct block_cursor *cursor,
   u_char *bdata;
   size_t data_remaining;
 
-  ps = p->priv;
+  ps = static_cast<pcap_ng_sf *>(p->priv);
 
   status = read_bytes(fp, &bhdr, sizeof(bhdr), 0, errbuf);
   if (status <= 0)
@@ -405,12 +408,20 @@ static void *get_from_block_data(struct block_cursor *cursor, size_t chunk_size,
   return (data);
 }
 
+template <class TYPE>
+static TYPE *get_type_from_block_data(struct block_cursor *cursor,
+                                      size_t chunk_size, char *errbuf) {
+  void *buffer = get_from_block_data(cursor, chunk_size, errbuf);
+  return new (buffer) TYPE{};
+}
+
 static struct option_header *
 get_opthdr_from_block_data(pcap_t *p, struct block_cursor *cursor,
                            char *errbuf) {
   struct option_header *opthdr;
 
-  opthdr = get_from_block_data(cursor, sizeof(*opthdr), errbuf);
+  opthdr = get_type_from_block_data<struct option_header>(
+      cursor, sizeof(*opthdr), errbuf);
   if (opthdr == nullptr) {
     /*
      * Option header is cut short.
@@ -592,7 +603,7 @@ static int add_interface(pcap_t *p, struct block_cursor *cursor, char *errbuf) {
   uint64_t tsoffset;
   int is_binary;
 
-  ps = p->priv;
+  ps = static_cast<pcap_ng_sf *>(p->priv);
 
   /*
    * Count this interface.
@@ -627,7 +638,7 @@ static int add_interface(pcap_t *p, struct block_cursor *cursor, char *errbuf) {
        * interfaces).)
        */
       new_ifaces_size = 1;
-      new_ifaces = malloc(sizeof(struct pcap_ng_if));
+      new_ifaces = c_malloc<pcap_ng_if>(sizeof(struct pcap_ng_if));
     } else {
       /*
        * It's not currently empty; double its size.
@@ -677,8 +688,7 @@ static int add_interface(pcap_t *p, struct block_cursor *cursor, char *errbuf) {
                  0xFFFFFFFFU / ((u_int)sizeof(struct pcap_ng_if)));
         return (0);
       }
-      new_ifaces =
-          realloc(ps->ifaces, new_ifaces_size * sizeof(struct pcap_ng_if));
+      new_ifaces = c_realloc<pcap_ng_if>(ps->ifaces, new_ifaces_size);
     }
     if (new_ifaces == nullptr) {
       /*
@@ -876,7 +886,7 @@ pcap_t *pcap_ng_check_header(const uint8_t *magic, FILE *fp, u_int precision,
     return (nullptr);
   }
   p->swapped = swapped;
-  ps = p->priv;
+  ps = static_cast<pcap_ng_sf *>(p->priv);
 
   /*
    * What precision does the user want?
@@ -998,7 +1008,8 @@ pcap_t *pcap_ng_check_header(const uint8_t *magic, FILE *fp, u_int precision,
        * Get a pointer to the fixed-length portion of the
        * IDB.
        */
-      idbp = get_from_block_data(&cursor, sizeof(*idbp), errbuf);
+      idbp = get_type_from_block_data<interface_description_block>(
+          &cursor, sizeof(*idbp), errbuf);
       if (idbp == nullptr)
         goto fail; /* error */
 
@@ -1068,7 +1079,7 @@ fail:
 }
 
 static void pcap_ng_cleanup(pcap_t *p) {
-  struct pcap_ng_sf *ps = p->priv;
+  struct pcap_ng_sf *ps = static_cast<pcap_ng_sf *>(p->priv);
 
   free(ps->ifaces);
   sf_cleanup(p);
@@ -1081,7 +1092,7 @@ static void pcap_ng_cleanup(pcap_t *p) {
  */
 static int pcap_ng_next_packet(pcap_t *p, struct pcap_pkthdr *hdr,
                                u_char **data) {
-  struct pcap_ng_sf *ps = p->priv;
+  struct pcap_ng_sf *ps = static_cast<pcap_ng_sf *>(p->priv);
   struct block_cursor cursor;
   int status;
   struct enhanced_packet_block *epbp;
@@ -1114,7 +1125,8 @@ static int pcap_ng_next_packet(pcap_t *p, struct pcap_pkthdr *hdr,
        * Get a pointer to the fixed-length portion of the
        * EPB.
        */
-      epbp = get_from_block_data(&cursor, sizeof(*epbp), p->errbuf);
+      epbp = get_type_from_block_data<enhanced_packet_block>(
+          &cursor, sizeof(*epbp), p->errbuf);
       if (epbp == nullptr)
         return (-1); /* error */
 
@@ -1141,7 +1153,8 @@ static int pcap_ng_next_packet(pcap_t *p, struct pcap_pkthdr *hdr,
        * Get a pointer to the fixed-length portion of the
        * SPB.
        */
-      spbp = get_from_block_data(&cursor, sizeof(*spbp), p->errbuf);
+      spbp = get_type_from_block_data<simple_packet_block>(
+          &cursor, sizeof(*spbp), p->errbuf);
       if (spbp == nullptr)
         return (-1); /* error */
 
@@ -1176,7 +1189,8 @@ static int pcap_ng_next_packet(pcap_t *p, struct pcap_pkthdr *hdr,
        * Get a pointer to the fixed-length portion of the
        * PB.
        */
-      pbp = get_from_block_data(&cursor, sizeof(*pbp), p->errbuf);
+      pbp = get_type_from_block_data<packet_block>(&cursor, sizeof(*pbp),
+                                                   p->errbuf);
       if (pbp == nullptr)
         return (-1); /* error */
 
@@ -1203,7 +1217,8 @@ static int pcap_ng_next_packet(pcap_t *p, struct pcap_pkthdr *hdr,
        * Interface Description Block.  Get a pointer
        * to its fixed-length portion.
        */
-      idbp = get_from_block_data(&cursor, sizeof(*idbp), p->errbuf);
+      idbp = get_type_from_block_data<interface_description_block>(
+          &cursor, sizeof(*idbp), p->errbuf);
       if (idbp == nullptr)
         return (-1); /* error */
 
@@ -1256,7 +1271,8 @@ static int pcap_ng_next_packet(pcap_t *p, struct pcap_pkthdr *hdr,
        * Section Header Block.  Get a pointer
        * to its fixed-length portion.
        */
-      shbp = get_from_block_data(&cursor, sizeof(*shbp), p->errbuf);
+      shbp = get_type_from_block_data<section_header_block>(
+          &cursor, sizeof(*shbp), p->errbuf);
       if (shbp == nullptr)
         return (-1); /* error */
 
@@ -1483,7 +1499,8 @@ found:
   /*
    * Get a pointer to the packet data.
    */
-  *data = get_from_block_data(&cursor, hdr->caplen, p->errbuf);
+  *data = static_cast<u_char *>(
+      get_from_block_data(&cursor, hdr->caplen, p->errbuf));
   if (*data == nullptr)
     return (-1);
 

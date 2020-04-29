@@ -176,7 +176,7 @@ int pcap_findalldevs_interfaces(pcap_if_list_t *devlistp, char *errbuf,
       (void)close(fd);
       return (-1);
     }
-    buf = malloc(buf_size);
+    buf = static_cast<char *>(malloc(buf_size));
     if (buf == nullptr) {
       pcap_fmt_errmsg_for_errno(errbuf, PCAP_ERRBUF_SIZE, errno, "malloc");
       (void)close(fd);

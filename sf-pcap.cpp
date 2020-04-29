@@ -242,7 +242,7 @@ pcap_t *pcap_check_header(const uint8_t *magic, FILE *fp, u_int precision,
 
   p->next_packet_op = pcap_next_packet;
 
-  ps = p->priv;
+  ps = static_cast<pcap_sf *>(p->priv);
 
   p->opt.tstamp_precision = precision;
 
@@ -423,7 +423,7 @@ static int grow_buffer(pcap_t *p, u_int bufsize) {
  * if there were no more packets, and -1 on an error.
  */
 static int pcap_next_packet(pcap_t *p, struct pcap_pkthdr *hdr, u_char **data) {
-  struct pcap_sf *ps = p->priv;
+  struct pcap_sf *ps = static_cast<pcap_sf *>(p->priv);
   struct pcap_sf_patched_pkthdr sf_hdr;
   FILE *fp = p->rfile;
   size_t amt_read;
@@ -689,7 +689,7 @@ static int pcap_next_packet(pcap_t *p, struct pcap_pkthdr *hdr, u_char **data) {
       return (-1);
     }
   }
-  *data = p->buffer;
+  *data = static_cast<u_char *>(p->buffer);
 
   if (p->swapped)
     swap_pseudo_headers(p->linktype, hdr, *data);
