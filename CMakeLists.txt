@@ -39,7 +39,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
 project(pcap)
 
-include(CheckCCompilerFlag)
+include(CheckCXXCompilerFlag)
 
 #
 # For checking if a compiler flag works and adding it if it does.
@@ -48,9 +48,9 @@ macro(check_and_add_compiler_option _option)
     message(STATUS "Checking C compiler flag ${_option}")
     string(REPLACE "=" "-" _temp_option_variable ${_option})
     string(REGEX REPLACE "^-" "" _option_variable ${_temp_option_variable})
-    check_c_compiler_flag("${_option}" ${_option_variable})
+    check_cxx_compiler_flag("${_option}" ${_option_variable})
     if(${${_option_variable}})
-        set(C_ADDITIONAL_FLAGS "${C_ADDITIONAL_FLAGS} ${_option}")
+        set(CXX_ADDITIONAL_FLAGS "${CXX_ADDITIONAL_FLAGS} ${_option}")
     endif()
 endmacro()
 
@@ -61,7 +61,7 @@ endmacro()
 # If not, try the appropriate flag for the compiler to enable C99
 # features.
 #
-set(C_ADDITIONAL_FLAGS "")
+set(CXX_ADDITIONAL_FLAGS "")
 if(MSVC)
     if(MSVC_VERSION LESS 1900)
         message(FATAL_ERROR "Visual Studio 2015 or later is required")
@@ -73,9 +73,9 @@ if(MSVC)
     # We assume that UTF-8 source is OK with other compilers and with
     # MSVC if it's using the Clang front end.
     #
-    if(NOT ${CMAKE_C_COMPILER} MATCHES "clang*")
-        set(C_ADDITIONAL_FLAGS "${C_ADDITIONAL_FLAGS} /utf-8")
-    endif(NOT ${CMAKE_C_COMPILER} MATCHES "clang*")
+    if(NOT ${CMAKE_CXX_COMPILER} MATCHES "clang*")
+        set(CXX_ADDITIONAL_FLAGS "${CXX_ADDITIONAL_FLAGS} /utf-8")
+    endif(NOT ${CMAKE_CXX_COMPILER} MATCHES "clang*")
 else(MSVC)
     #
     # For checking if a compiler flag works, failing if it doesn't,
@@ -85,9 +85,9 @@ else(MSVC)
         message(STATUS "Checking C compiler flag ${_option}")
         string(REPLACE "=" "-" _temp_option_variable ${_option})
         string(REGEX REPLACE "^-" "" _option_variable ${_temp_option_variable})
-        check_c_compiler_flag("${_option}" ${_option_variable})
+        check_cxx_compiler_flag("${_option}" ${_option_variable})
         if(${${_option_variable}})
-            set(C_ADDITIONAL_FLAGS "${C_ADDITIONAL_FLAGS} ${_option}")
+            set(CXX_ADDITIONAL_FLAGS "${CXX_ADDITIONAL_FLAGS} ${_option}")
         else()
             message(FATAL_ERROR "C99 support is required, but the compiler doesn't support a compiler flag to enable it")
         endif()
@@ -121,20 +121,20 @@ else(MSVC)
     # to get the C99 features that we use, or whether, if it's used, it
     # enables all the features that we require.
     #
-    if(CMAKE_C_COMPILER_ID MATCHES "GNU" OR
-       CMAKE_C_COMPILER_ID MATCHES "Clang")
-        require_and_add_compiler_option("-std=gnu99")
-    elseif(CMAKE_C_COMPILER_ID MATCHES "XL")
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR
+       CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        require_and_add_compiler_option("-std=stdc++20")
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "XL")
         #
         # We want support for extensions picked up for GNU C compatibility,
         # so we use -qlanglvl=extc99.
         #
         require_and_add_compiler_option("-qlanglvl=extc99")
-    elseif(CMAKE_C_COMPILER_ID MATCHES "HP")
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "HP")
         require_and_add_compiler_option("-AC99")
-    elseif(CMAKE_C_COMPILER_ID MATCHES "Sun")
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Sun")
         require_and_add_compiler_option("-xc99")
-    elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
         require_and_add_compiler_option("-c99")
     endif()
 endif(MSVC)
@@ -917,7 +917,7 @@ endif()
 #
 # Based on
 #
-#    https://github.cppom/commonmark/cmark/blob/master/FindAsan.cppmake
+#    https://github.cppom/commonmark/cmark/blob/master/FindAsan.cmake
 #
 # The MIT License (MIT)
 #
@@ -958,7 +958,7 @@ foreach(sanitizer IN LISTS ENABLE_SANITIZERS)
     message(STATUS "Checking sanitizer ${sanitizer}")
     set(sanitizer_variable "sanitize_${sanitizer}")
     set(CMAKE_REQUIRED_FLAGS "-Werror -fsanitize=${sanitizer}")
-    check_c_compiler_flag("-fsanitize=${sanitizer}" ${sanitizer_variable})
+    check_cxx_compiler_flag("-fsanitize=${sanitizer}" ${sanitizer_variable})
     if(${${sanitizer_variable}})
         set(SANITIZER_FLAGS "${SANITIZER_FLAGS} -fsanitize=${sanitizer}")
         message(STATUS "${sanitizer} sanitizer supported using -fsanitizer=${sanitizer}")
@@ -972,7 +972,7 @@ foreach(sanitizer IN LISTS ENABLE_SANITIZERS)
         set(sanitizer_variable "OLD_${sanitizer_variable}")
         if ("${sanitizer}" STREQUAL "address")
             set(CMAKE_REQUIRED_FLAGS "-Werror -fsanitize-address")
-            check_c_compiler_flag("-fsanitize-address" ${sanitizer_variable})
+            check_cxx_compiler_flag("-fsanitize-address" ${sanitizer_variable})
             if(${${sanitizer_variable}})
                 set(SANITIZER_FLAGS "${SANITIZER_FLAGS} -fsanitize-address")
                 message(STATUS "${sanitizer} sanitizer supported using -fsanitize-address")
@@ -981,7 +981,7 @@ foreach(sanitizer IN LISTS ENABLE_SANITIZERS)
             endif()
         elseif("${sanitizer}" STREQUAL "undefined")
             set(CMAKE_REQUIRED_FLAGS "-Werror -fcatch-undefined-behavior")
-            check_c_compiler_flag("-fcatch-undefined-behavior" ${sanitizer_variable})
+            check_cxx_compiler_flag("-fcatch-undefined-behavior" ${sanitizer_variable})
             if(${${sanitizer_variable}})
                 set(SANITIZER_FLAGS "${SANITIZER_FLAGS} -fcatch-undefined-behavior")
                 message(STATUS "${sanitizer} sanitizer supported using catch-undefined-behavior")
@@ -1851,7 +1851,7 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.devel OR EXISTS ${CMAKE_BINARY_DIR}/.deve
     #
     # Warning options.
     #
-    if(MSVC AND NOT ${CMAKE_C_COMPILER} MATCHES "clang*")
+    if(MSVC AND NOT ${CMAKE_CXX_COMPILER} MATCHES "clang*")
         #
         # MSVC, with Microsoft's front end and code generator.
         # "MSVC" is also set for Microsoft's compiler with a Clang
@@ -1945,7 +1945,7 @@ endif()
 #
 # Suppress some warnings we get with MSVC even without /Wall.
 #
-if(MSVC AND NOT ${CMAKE_C_COMPILER} MATCHES "clang*")
+if(MSVC AND NOT ${CMAKE_CXX_COMPILER} MATCHES "clang*")
     #
     # Yes, we have some functions that never return but that
     # have a non-void return type.  That's because, on some
@@ -1975,7 +1975,7 @@ file(GLOB PROJECT_SOURCE_LIST_H
 # not explicitly exported" flag.
 #
 if(NOT MSVC)
-    if(CMAKE_C_COMPILER_ID MATCHES "SunPro")
+    if(CMAKE_CXX_COMPILER_ID MATCHES "SunPro")
         #
         # Sun C/Oracle Studio.
         #
@@ -2294,14 +2294,14 @@ else(WIN32) # UN*X
 endif(WIN32)
 
 if(BUILD_SHARED_LIBS)
-    if(NOT C_ADDITIONAL_FLAGS STREQUAL "")
-        set_target_properties(${LIBRARY_NAME} PROPERTIES COMPILE_FLAGS ${C_ADDITIONAL_FLAGS})
+    if(NOT CXX_ADDITIONAL_FLAGS STREQUAL "")
+        set_target_properties(${LIBRARY_NAME} PROPERTIES COMPILE_FLAGS ${CXX_ADDITIONAL_FLAGS})
     endif()
     target_link_libraries(${LIBRARY_NAME} ${PCAP_LINK_LIBRARIES})
 endif(BUILD_SHARED_LIBS)
 
-if(NOT C_ADDITIONAL_FLAGS STREQUAL "")
-    set_target_properties(${LIBRARY_NAME}_static PROPERTIES COMPILE_FLAGS ${C_ADDITIONAL_FLAGS})
+if(NOT CXX_ADDITIONAL_FLAGS STREQUAL "")
+    set_target_properties(${LIBRARY_NAME}_static PROPERTIES COMPILE_FLAGS ${CXX_ADDITIONAL_FLAGS})
 endif()
 
 #
@@ -2705,9 +2705,9 @@ endif(NOT MSVC)
 
 # uninstall target
 configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cppmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cppmake"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
     IMMEDIATE @ONLY)
 
 add_custom_target(uninstall
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cppmake)
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
