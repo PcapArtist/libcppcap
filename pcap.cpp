@@ -2335,13 +2335,14 @@ pcap_t *pcap_open_live(const char *device, int snaplen, int promisc, int to_ms,
   return (p);
 fail:
   if (status == PCAP_ERROR)
-    snprintf(errbuf, PCAP_ERRBUF_SIZE, "%s: %.*s", device, PCAP_ERRBUF_SIZE - 3,
-             p->errbuf);
+    snprintf(errbuf, PCAP_ERRBUF_SIZE, "%s: %.*s", device,
+             static_cast<int>(PCAP_ERRBUF_SIZE - 3), p->errbuf);
   else if (status == PCAP_ERROR_NO_SUCH_DEVICE ||
            status == PCAP_ERROR_PERM_DENIED ||
            status == PCAP_ERROR_PROMISC_PERM_DENIED)
     snprintf(errbuf, PCAP_ERRBUF_SIZE, "%s: %s (%.*s)", device,
-             pcap_statustostr(status), PCAP_ERRBUF_SIZE - 6, p->errbuf);
+             pcap_statustostr(status), static_cast<int>(PCAP_ERRBUF_SIZE - 6),
+             p->errbuf);
   else
     snprintf(errbuf, PCAP_ERRBUF_SIZE, "%s: %s", device,
              pcap_statustostr(status));

@@ -131,6 +131,7 @@
 
 #ifndef PCAP_DONT_INCLUDE_PCAP_BPF_H
 #include <pcap/bpf.h>
+#include <pcap/pcap-error.h>
 #endif
 #include <list>
 #include <map>
@@ -149,8 +150,6 @@
  */
 #define PCAP_VERSION_MAJOR 2
 #define PCAP_VERSION_MINOR 4
-
-#define PCAP_ERRBUF_SIZE 256
 
 namespace pcap {
 /*
