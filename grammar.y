@@ -232,7 +232,7 @@ str2tok(const char *str, const struct tok *toks)
 	int i;
 
 	for (i = 0; toks[i].s != nullptr; i++) {
-		if (pcap_strcasecmp(toks[i].s, str) == 0) {
+		if (pcap::pcap_strcasecmp(toks[i].s, str) == 0) {
 			/*
 			 * Just in case somebody is using this to
 			 * generate values of -1/0xFFFFFFFF.
@@ -247,7 +247,7 @@ str2tok(const char *str, const struct tok *toks)
 	return (-1);
 }
 
-static const pcap::qual qerr = { Q_UNDEF, Q_UNDEF, Q_UNDEF, Q_UNDEF };
+static const qual qerr = { Q_UNDEF, Q_UNDEF, Q_UNDEF, Q_UNDEF };
 
 static void
 yyerror([[maybe_unused]] void *yyscanner, compiler_state_t *cstate, const char *msg)
@@ -263,7 +263,7 @@ pfreason_to_num(compiler_state_t *cstate, const char *reason)
 	int i;
 
 	for (i = 0; reasons[i]; i++) {
-		if (pcap_strcasecmp(reason, reasons[i]) == 0)
+		if (pcap::pcap_strcasecmp(reason, reasons[i]) == 0)
 			return (i);
 	}
 	bpf_set_error(cstate, "unknown PF reason \"%s\"", reason);
@@ -273,20 +273,20 @@ pfreason_to_num(compiler_state_t *cstate, const char *reason)
 static int
 pfaction_to_num(compiler_state_t *cstate, const char *action)
 {
-	if (pcap_strcasecmp(action, "pass") == 0 ||
-	    pcap_strcasecmp(action, "accept") == 0)
+	if (pcap::pcap_strcasecmp(action, "pass") == 0 ||
+	    pcap::pcap_strcasecmp(action, "accept") == 0)
 		return (PF_PASS);
-	else if (pcap_strcasecmp(action, "drop") == 0 ||
-		pcap_strcasecmp(action, "block") == 0)
+	else if (pcap::pcap_strcasecmp(action, "drop") == 0 ||
+		pcap::pcap_strcasecmp(action, "block") == 0)
 		return (PF_DROP);
 #if HAVE_PF_NAT_THROUGH_PF_NORDR
-	else if (pcap_strcasecmp(action, "rdr") == 0)
+	else if (pcap::pcap_strcasecmp(action, "rdr") == 0)
 		return (PF_RDR);
-	else if (pcap_strcasecmp(action, "nat") == 0)
+	else if (pcap::pcap_strcasecmp(action, "nat") == 0)
 		return (PF_NAT);
-	else if (pcap_strcasecmp(action, "binat") == 0)
+	else if (pcap::pcap_strcasecmp(action, "binat") == 0)
 		return (PF_BINAT);
-	else if (pcap_strcasecmp(action, "nordr") == 0)
+	else if (pcap::pcap_strcasecmp(action, "nordr") == 0)
 		return (PF_NORDR);
 #endif
 	else {
@@ -326,12 +326,12 @@ DIAG_OFF_BISON_BYACC
 	struct stmt *stmt;
 	struct arth *a;
 	struct {
-		pcap::qual q;
+		qual q;
 		int atmfieldtype;
 		int mtp3fieldtype;
-		struct block *b;
+		block *b;
 	} blk;
-	struct block *rblk;
+	block *rblk;
 }
 
 %type	<blk>	expr id nid pid term rterm qid
@@ -682,11 +682,11 @@ type_subtype:	ID		{ int i;
 
 pllc:	LLC			{ CHECK_PTR_VAL(($$ = gen_llc(cstate))); }
 	| LLC ID		{ CHECK_PTR_VAL($2);
-				  if (pcap_strcasecmp($2, "i") == 0) {
+				  if (pcap::pcap_strcasecmp($2, "i") == 0) {
 					CHECK_PTR_VAL(($$ = gen_llc_i(cstate)));
-				  } else if (pcap_strcasecmp($2, "s") == 0) {
+				  } else if (pcap::pcap_strcasecmp($2, "s") == 0) {
 					CHECK_PTR_VAL(($$ = gen_llc_s(cstate)));
-				  } else if (pcap_strcasecmp($2, "u") == 0) {
+				  } else if (pcap::pcap_strcasecmp($2, "u") == 0) {
 					CHECK_PTR_VAL(($$ = gen_llc_u(cstate)));
 				  } else {
 					int subtype;
@@ -710,13 +710,13 @@ pllc:	LLC			{ CHECK_PTR_VAL(($$ = gen_llc(cstate))); }
 
 dir:	  NUM			{ $$ = (int)$1; }
 	| ID			{ CHECK_PTR_VAL($1);
-				  if (pcap_strcasecmp($1, "nods") == 0)
+				  if (pcap::pcap_strcasecmp($1, "nods") == 0)
 					$$ = IEEE80211_FC1_DIR_NODS;
-				  else if (pcap_strcasecmp($1, "tods") == 0)
+				  else if (pcap::pcap_strcasecmp($1, "tods") == 0)
 					$$ = IEEE80211_FC1_DIR_TODS;
-				  else if (pcap_strcasecmp($1, "fromds") == 0)
+				  else if (pcap::pcap_strcasecmp($1, "fromds") == 0)
 					$$ = IEEE80211_FC1_DIR_FROMDS;
-				  else if (pcap_strcasecmp($1, "dstods") == 0)
+				  else if (pcap::pcap_strcasecmp($1, "dstods") == 0)
 					$$ = IEEE80211_FC1_DIR_DSTODS;
 				  else {
 					bpf_set_error(cstate, "unknown 802.11 direction");

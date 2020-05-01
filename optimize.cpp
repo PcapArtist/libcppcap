@@ -44,7 +44,6 @@
 #include "os-proto.h"
 #endif
 
-namespace pcap {
 #ifdef BDEBUG
 
 /*
@@ -239,7 +238,7 @@ typedef struct {
   int done;
 
   int n_blocks;
-  struct block **blocks;
+  block **blocks;
   int n_edges;
   struct edge **edges;
 
@@ -249,7 +248,7 @@ typedef struct {
    */
   int nodewords;
   int edgewords;
-  struct block **levels;
+  block **levels;
   bpf_u_int32 *space;
 
 #define BITS_PER_WORD (8 * sizeof(bpf_u_int32))
@@ -349,7 +348,7 @@ static void PCAP_NORETURN opt_error(opt_state_t *, const char *, ...)
 
 static void intern_blocks(opt_state_t *, struct icode *);
 
-static void find_inedges(opt_state_t *, struct block *);
+static void find_inedges(opt_state_t *, block *);
 #ifdef BDEBUG
 static void opt_dump(opt_state_t *, struct icode *);
 #endif
@@ -358,8 +357,7 @@ static void opt_dump(opt_state_t *, struct icode *);
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
-static void find_levels_r(opt_state_t *opt_state, struct icode *ic,
-                          struct block *b) {
+static void find_levels_r(opt_state_t *opt_state, struct icode *ic, block *b) {
   int level;
 
   if (isMarked(ic, b))
@@ -396,9 +394,9 @@ static void find_levels(opt_state_t *opt_state, struct icode *ic) {
  * Find dominator relationships.
  * Assumes graph has been leveled.
  */
-static void find_dom(opt_state_t *opt_state, struct block *root) {
+static void find_dom(opt_state_t *opt_state, block *root) {
   int i;
-  struct block *b;
+  block *b;
   bpf_u_int32 *x;
 
   /*
@@ -436,10 +434,10 @@ static void propedom(opt_state_t *opt_state, struct edge *ep) {
  * Compute edge dominators.
  * Assumes graph has been leveled and predecessors established.
  */
-static void find_edom(opt_state_t *opt_state, struct block *root) {
+static void find_edom(opt_state_t *opt_state, block *root) {
   int i;
   uset x;
-  struct block *b;
+  block *b;
 
   x = opt_state->all_edge_sets;
   for (i = opt_state->n_edges * opt_state->edgewords; --i >= 0;)
@@ -463,9 +461,9 @@ static void find_edom(opt_state_t *opt_state, struct block *root) {
  *
  * Assumes graph has been leveled.
  */
-static void find_closure(opt_state_t *opt_state, struct block *root) {
+static void find_closure(opt_state_t *opt_state, block *root) {
   int i;
-  struct block *b;
+  block *b;
 
   /*
    * Initialize sets to contain no nodes.
@@ -576,7 +574,7 @@ static int atomdef(struct stmt *s) {
  * statement in 'b' uses it, i.e. it kills the value left in that
  * register by a predecessor block of this block.
  */
-static void compute_local_ud(struct block *b) {
+static void compute_local_ud(block *b) {
   struct slist *s;
   atomset def = 0, use = 0, killed = 0;
   int atom;
@@ -631,9 +629,9 @@ static void compute_local_ud(struct block *b) {
 /*
  * Assume graph is already leveled.
  */
-static void find_ud(opt_state_t *opt_state, struct block *root) {
+static void find_ud(opt_state_t *opt_state, block *root) {
   int i, maxlevel;
-  struct block *p;
+  block *p;
 
   /*
    * root->level is the highest level no found;
@@ -817,14 +815,14 @@ static inline struct slist *this_op(struct slist *s) {
   return s;
 }
 
-static void opt_not(struct block *b) {
-  struct block *tmp = JT(b);
+static void opt_not(block *b) {
+  block *tmp = JT(b);
 
   JT(b) = JF(b);
   JF(b) = tmp;
 }
 
-static void opt_peep(opt_state_t *opt_state, struct block *b) {
+static void opt_peep(opt_state_t *opt_state, block *b) {
   struct slist *s;
   struct slist *next, *last;
   bpf_u_int32 val;
@@ -1316,7 +1314,7 @@ static void deadstmt(opt_state_t *opt_state, struct stmt *s,
   }
 }
 
-static void opt_deadstores(opt_state_t *opt_state, struct block *b) {
+static void opt_deadstores(opt_state_t *opt_state, block *b) {
   struct slist *s;
   int atom;
   struct stmt *last[N_ATOMS];
@@ -1334,7 +1332,7 @@ static void opt_deadstores(opt_state_t *opt_state, struct block *b) {
     }
 }
 
-static void opt_blk(opt_state_t *opt_state, struct block *b, int do_stmts) {
+static void opt_blk(opt_state_t *opt_state, block *b, int do_stmts) {
   struct slist *s;
   struct edge *p;
   int i;
@@ -1436,7 +1434,7 @@ static void opt_blk(opt_state_t *opt_state, struct block *b, int do_stmts) {
  * an exit value that is different from the corresponding exit value
  * from 'b'.
  */
-static int use_conflict(struct block *b, struct block *succ) {
+static int use_conflict(block *b, block *succ) {
   int atom;
   atomset use = succ->out_use;
 
@@ -1450,7 +1448,7 @@ static int use_conflict(struct block *b, struct block *succ) {
   return 0;
 }
 
-static struct block *fold_edge(struct block *child, struct edge *ep) {
+static block *fold_edge(block *child, struct edge *ep) {
   int sense;
   bpf_u_int32 aval0, aval1, oval0, oval1;
   int code = ep->code;
@@ -1502,7 +1500,7 @@ static struct block *fold_edge(struct block *child, struct edge *ep) {
 
 static void opt_j(opt_state_t *opt_state, struct edge *ep) {
   int i, k;
-  struct block *target;
+  block *target;
 
   if (JT(ep->succ) == 0)
     return;
@@ -1552,11 +1550,11 @@ top:
   }
 }
 
-static void or_pullup(opt_state_t *opt_state, struct block *b) {
+static void or_pullup(opt_state_t *opt_state, block *b) {
   bpf_u_int32 val;
   int at_top;
-  struct block *pull;
-  struct block **diffp, **samep;
+  block *pull;
+  block **diffp, **samep;
   struct edge *ep;
 
   ep = b->in_edges;
@@ -1642,11 +1640,11 @@ static void or_pullup(opt_state_t *opt_state, struct block *b) {
   opt_state->done = 0;
 }
 
-static void and_pullup(opt_state_t *opt_state, struct block *b) {
+static void and_pullup(opt_state_t *opt_state, block *b) {
   bpf_u_int32 val;
   int at_top;
-  struct block *pull;
-  struct block **diffp, **samep;
+  block *pull;
+  block **diffp, **samep;
   struct edge *ep;
 
   ep = b->in_edges;
@@ -1733,7 +1731,7 @@ static void and_pullup(opt_state_t *opt_state, struct block *b) {
 
 static void opt_blks(opt_state_t *opt_state, struct icode *ic, int do_stmts) {
   int i, maxlevel;
-  struct block *p;
+  block *p;
 
   init_val(opt_state);
   maxlevel = ic->root->level;
@@ -1766,14 +1764,14 @@ static void opt_blks(opt_state_t *opt_state, struct icode *ic, int do_stmts) {
   }
 }
 
-static inline void link_inedge(struct edge *parent, struct block *child) {
+static inline void link_inedge(struct edge *parent, block *child) {
   parent->next = child->in_edges;
   child->in_edges = parent;
 }
 
-static void find_inedges(opt_state_t *opt_state, struct block *root) {
+static void find_inedges(opt_state_t *opt_state, block *root) {
   int i;
-  struct block *b;
+  block *b;
 
   for (i = 0; i < opt_state->n_blocks; ++i)
     opt_state->blocks[i]->in_edges = 0;
@@ -1790,7 +1788,7 @@ static void find_inedges(opt_state_t *opt_state, struct block *root) {
   }
 }
 
-static void opt_root(struct block **b) {
+static void opt_root(block **b) {
   struct slist *tmp, *s;
 
   s = (*b)->stmts;
@@ -1871,7 +1869,7 @@ int bpf_optimize(struct icode *ic, char *errbuf) {
   return 0;
 }
 
-static void make_marks(struct icode *ic, struct block *p) {
+static void make_marks(struct icode *ic, block *p) {
   if (!isMarked(ic, p)) {
     Mark(ic, p);
     if (BPF_CLASS(p->s.code) != BPF_RET) {
@@ -1911,7 +1909,7 @@ static int eq_slist(struct slist *x, struct slist *y) {
   }
 }
 
-static inline int eq_blk(struct block *b0, struct block *b1) {
+static inline int eq_blk(block *b0, block *b1) {
   if (b0->s.code == b1->s.code && b0->s.k == b1->s.k &&
       b0->et.succ == b1->et.succ && b0->ef.succ == b1->ef.succ)
     return eq_slist(b0->stmts, b1->stmts);
@@ -1919,7 +1917,7 @@ static inline int eq_blk(struct block *b0, struct block *b1) {
 }
 
 static void intern_blocks(opt_state_t *opt_state, struct icode *ic) {
-  struct block *p;
+  block *p;
   int i, j;
   int done1; /* don't shadow global */
 top:
@@ -1978,7 +1976,7 @@ static void PCAP_NORETURN opt_error(opt_state_t *opt_state, const char *fmt,
 
   if (opt_state->errbuf != nullptr) {
     va_start(ap, fmt);
-    (void)vsnprintf(opt_state->errbuf, PCAP_ERRBUF_SIZE, fmt, ap);
+    (void)vsnprintf(opt_state->errbuf, pcap::PCAP_ERRBUF_SIZE, fmt, ap);
     va_end(ap);
   }
   longjmp(opt_state->top_ctx, 1);
@@ -2001,7 +1999,7 @@ static u_int slength(struct slist *s) {
  * Return the number of nodes reachable by 'p'.
  * All nodes should be initially unmarked.
  */
-static int count_blocks(struct icode *ic, struct block *p) {
+static int count_blocks(struct icode *ic, block *p) {
   if (p == 0 || isMarked(ic, p))
     return 0;
   Mark(ic, p);
@@ -2012,8 +2010,7 @@ static int count_blocks(struct icode *ic, struct block *p) {
  * Do a depth first search on the flow graph, numbering the
  * the basic blocks, and entering them into the 'blocks' array.`
  */
-static void number_blks_r(opt_state_t *opt_state, struct icode *ic,
-                          struct block *p) {
+static void number_blks_r(opt_state_t *opt_state, struct icode *ic, block *p) {
   int n;
 
   if (p == 0 || isMarked(ic, p))
@@ -2046,7 +2043,7 @@ static void number_blks_r(opt_state_t *opt_state, struct icode *ic,
  *
  *	an extra long jump if the false branch requires it (p->longjf).
  */
-static u_int count_stmts(struct icode *ic, struct block *p) {
+static u_int count_stmts(struct icode *ic, block *p) {
   u_int n;
 
   if (p == 0 || isMarked(ic, p))
@@ -2071,7 +2068,7 @@ static void opt_init(opt_state_t *opt_state, struct icode *ic) {
    */
   unMarkAll(ic);
   n = count_blocks(ic, ic->root);
-  opt_state->blocks = (struct block **)calloc(n, sizeof(*opt_state->blocks));
+  opt_state->blocks = (block **)calloc(n, sizeof(*opt_state->blocks));
   if (opt_state->blocks == nullptr)
     opt_error(opt_state, "malloc");
   unMarkAll(ic);
@@ -2089,7 +2086,7 @@ static void opt_init(opt_state_t *opt_state, struct icode *ic) {
    * The number of levels is bounded by the number of nodes.
    */
   opt_state->levels =
-      (struct block **)calloc(opt_state->n_blocks, sizeof(*opt_state->levels));
+      (block **)calloc(opt_state->n_blocks, sizeof(*opt_state->levels));
   if (opt_state->levels == nullptr) {
     opt_error(opt_state, "malloc");
   }
@@ -2118,7 +2115,7 @@ static void opt_init(opt_state_t *opt_state, struct icode *ic) {
   }
   opt_state->all_edge_sets = p;
   for (i = 0; i < n; ++i) {
-    struct block *b = opt_state->blocks[i];
+    block *b = opt_state->blocks[i];
 
     b->et.edom = p;
     p += opt_state->edgewords;
@@ -2171,7 +2168,7 @@ static void PCAP_NORETURN conv_error(conv_state_t *, const char *, ...)
  * properly.
  */
 static int convert_code_r(conv_state_t *conv_state, struct icode *ic,
-                          struct block *p) {
+                          block *p) {
   struct bpf_insn *dst;
   struct slist *src;
   u_int slen;
@@ -2360,11 +2357,11 @@ static int convert_code_r(conv_state_t *conv_state, struct icode *ic,
  * the routine that happens to be allocating the memory.  (By analogy, if
  * a program calls fopen() without ever calling fclose() on the FILE *,
  * it will leak the FILE structure; the leak is not in fopen(), it's in
- * the program.)  Change the program to use pcap_freecode() when it's
+ * the program.)  Change the program to use pcap::pcap_freecode() when it's
  * done with the filter program.  See the pcap man page.
  */
-struct bpf_insn *icode_to_fcode(struct icode *ic, struct block *root,
-                                u_int *lenp, char *errbuf) {
+struct bpf_insn *icode_to_fcode(struct icode *ic, block *root, u_int *lenp,
+                                char *errbuf) {
   u_int n;
   struct bpf_insn *fp;
   conv_state_t conv_state;
@@ -2386,7 +2383,7 @@ struct bpf_insn *icode_to_fcode(struct icode *ic, struct block *root,
 
     fp = (struct bpf_insn *)malloc(sizeof(*fp) * n);
     if (fp == nullptr) {
-      (void)snprintf(errbuf, PCAP_ERRBUF_SIZE, "malloc");
+      (void)snprintf(errbuf, pcap::PCAP_ERRBUF_SIZE, "malloc");
       free(fp);
       return nullptr;
     }
@@ -2411,7 +2408,7 @@ static void PCAP_NORETURN conv_error(conv_state_t *conv_state, const char *fmt,
   va_list ap;
 
   va_start(ap, fmt);
-  (void)vsnprintf(conv_state->errbuf, PCAP_ERRBUF_SIZE, fmt, ap);
+  (void)vsnprintf(conv_state->errbuf, pcap::PCAP_ERRBUF_SIZE, fmt, ap);
   va_end(ap);
   longjmp(conv_state->top_ctx, 1);
   /* NOTREACHED */
@@ -2425,7 +2422,7 @@ static void PCAP_NORETURN conv_error(conv_state_t *conv_state, const char *fmt,
  * member of the "pcap_t" with an error message, and return -1;
  * otherwise, return 0.
  */
-int install_bpf_program(pcap_t *p, struct bpf_program *fp) {
+int pcap::install_bpf_program(pcap_t *p, struct bpf_program *fp) {
   size_t prog_size;
 
   /*
@@ -2453,7 +2450,7 @@ int install_bpf_program(pcap_t *p, struct bpf_program *fp) {
 }
 
 #ifdef BDEBUG
-static void dot_dump_node(struct icode *ic, struct block *block,
+static void dot_dump_node(struct icode *ic, block *block,
                           struct bpf_program *prog, FILE *out) {
   int icount, noffset;
   int i;
@@ -2485,7 +2482,7 @@ static void dot_dump_node(struct icode *ic, struct block *block,
   dot_dump_node(ic, JF(block), prog, out);
 }
 
-static void dot_dump_edge(struct icode *ic, struct block *block, FILE *out) {
+static void dot_dump_edge(struct icode *ic, block *block, FILE *out) {
   if (block == nullptr || isMarked(ic, block))
     return;
   Mark(ic, block);
@@ -2556,7 +2553,7 @@ static int plain_dump(struct icode *ic, char *errbuf) {
 
 static void opt_dump(opt_state_t *opt_state, struct icode *ic) {
   int status;
-  char errbuf[PCAP_ERRBUF_SIZE];
+  char errbuf[pcap::PCAP_ERRBUF_SIZE];
 
   /*
    * If the CFG, in DOT format, is requested, output it rather than
@@ -2571,4 +2568,3 @@ static void opt_dump(opt_state_t *opt_state, struct icode *ic) {
 }
 
 #endif
-} // namespace pcap

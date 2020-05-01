@@ -37,10 +37,10 @@ void fuzz_openFile(const char *name) {
 }
 
 int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
-  pcap_t *pkts;
-  char errbuf[PCAP_ERRBUF_SIZE];
+  pcap::pcap_t *pkts;
+  char errbuf[pcap::PCAP_ERRBUF_SIZE];
   const u_char *pkt;
-  struct pcap_pkthdr *header;
+  struct pcap::pcap_pkthdr *header;
   int r;
   size_t filterSize;
   char *filter;
@@ -69,7 +69,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   }
 
   // initialize structure
-  pkts = pcap_open_offline("/tmp/fuzz.pcap", errbuf);
+  pkts = pcap::pcap_open_offline("/tmp/fuzz.pcap", errbuf);
   if (pkts == nullptr) {
     fprintf(outfile, "Couldn't open pcap file %s\n", errbuf);
     return 0;
@@ -86,12 +86,12 @@ int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     while (r > 0) {
       // checks filter
       fprintf(outfile, "packet length=%d/%d filter=%d\n", header->caplen,
-              header->len, pcap_offline_filter(&bpf, header, pkt));
+              header->len, pcap::pcap_offline_filter(&bpf, header, pkt));
       r = pcap_next_ex(pkts, &header, &pkt);
     }
     // close structure
     pcap_close(pkts);
-    pcap_freecode(&bpf);
+    pcap::pcap_freecode(&bpf);
   } else {
     pcap_close(pkts);
   }

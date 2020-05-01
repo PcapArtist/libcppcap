@@ -80,8 +80,6 @@
 #include <sys/socket.h>
 #endif
 
-namespace pcap {
-
 #ifndef offsetof
 #define offsetof(s, e) ((size_t) & ((s *)0)->e)
 #endif
@@ -241,9 +239,9 @@ struct chunk {
 
 /* Code generator state */
 
-struct _compiler_state {
+struct compiler_state_t {
   jmp_buf top_ctx;
-  pcap_t *bpf_pcap;
+  pcap::pcap_t *bpf_pcap;
   int error_set;
 
   struct icode ic;
@@ -441,7 +439,7 @@ void bpf_set_error(compiler_state_t *cstate, const char *fmt, ...) {
    */
   if (!cstate->error_set) {
     va_start(ap, fmt);
-    (void)vsnprintf(cstate->bpf_pcap->errbuf, PCAP_ERRBUF_SIZE, fmt, ap);
+    (void)vsnprintf(cstate->bpf_pcap->errbuf, pcap::PCAP_ERRBUF_SIZE, fmt, ap);
     va_end(ap);
     cstate->error_set = 1;
   }
@@ -459,13 +457,13 @@ static void PCAP_NORETURN bpf_error(compiler_state_t *cstate, const char *fmt,
   va_list ap;
 
   va_start(ap, fmt);
-  (void)vsnprintf(cstate->bpf_pcap->errbuf, PCAP_ERRBUF_SIZE, fmt, ap);
+  (void)vsnprintf(cstate->bpf_pcap->errbuf, pcap::PCAP_ERRBUF_SIZE, fmt, ap);
   va_end(ap);
   longjmp(cstate->top_ctx, 1);
   /*NOTREACHED*/
 }
 
-static int init_linktype(compiler_state_t *, pcap_t *);
+static int init_linktype(compiler_state_t *, pcap::pcap_t *);
 
 static void init_regs(compiler_state_t *);
 static int alloc_reg(compiler_state_t *);
@@ -475,108 +473,107 @@ static void initchunks(compiler_state_t *cstate);
 static void *newchunk_nolongjmp(compiler_state_t *cstate, size_t);
 static void *newchunk(compiler_state_t *cstate, size_t);
 static void freechunks(compiler_state_t *cstate);
-static inline struct block *new_block(compiler_state_t *cstate, int);
+static inline block *new_block(compiler_state_t *cstate, int);
 static inline struct slist *new_stmt(compiler_state_t *cstate, int);
-static struct block *gen_retblk(compiler_state_t *cstate, int);
+static block *gen_retblk(compiler_state_t *cstate, int);
 static inline void syntax(compiler_state_t *cstate);
 
-static void backpatch(struct block *, struct block *);
-static void merge(struct block *, struct block *);
-static struct block *gen_cmp(compiler_state_t *, enum e_offrel, u_int, u_int,
-                             bpf_u_int32);
-static struct block *gen_cmp_gt(compiler_state_t *, enum e_offrel, u_int, u_int,
-                                bpf_u_int32);
-static struct block *gen_cmp_ge(compiler_state_t *, enum e_offrel, u_int, u_int,
-                                bpf_u_int32);
-static struct block *gen_cmp_lt(compiler_state_t *, enum e_offrel, u_int, u_int,
-                                bpf_u_int32);
-static struct block *gen_cmp_le(compiler_state_t *, enum e_offrel, u_int, u_int,
-                                bpf_u_int32);
-static struct block *gen_mcmp(compiler_state_t *, enum e_offrel, u_int, u_int,
-                              bpf_u_int32, bpf_u_int32);
-static struct block *gen_bcmp(compiler_state_t *, enum e_offrel, u_int, u_int,
-                              const u_char *);
-static struct block *gen_ncmp(compiler_state_t *, enum e_offrel, u_int, u_int,
-                              bpf_u_int32, int, int, bpf_u_int32);
+static void backpatch(block *, block *);
+static void merge(block *, block *);
+static block *gen_cmp(compiler_state_t *, enum e_offrel, u_int, u_int,
+                      bpf_u_int32);
+static block *gen_cmp_gt(compiler_state_t *, enum e_offrel, u_int, u_int,
+                         bpf_u_int32);
+static block *gen_cmp_ge(compiler_state_t *, enum e_offrel, u_int, u_int,
+                         bpf_u_int32);
+static block *gen_cmp_lt(compiler_state_t *, enum e_offrel, u_int, u_int,
+                         bpf_u_int32);
+static block *gen_cmp_le(compiler_state_t *, enum e_offrel, u_int, u_int,
+                         bpf_u_int32);
+static block *gen_mcmp(compiler_state_t *, enum e_offrel, u_int, u_int,
+                       bpf_u_int32, bpf_u_int32);
+static block *gen_bcmp(compiler_state_t *, enum e_offrel, u_int, u_int,
+                       const u_char *);
+static block *gen_ncmp(compiler_state_t *, enum e_offrel, u_int, u_int,
+                       bpf_u_int32, int, int, bpf_u_int32);
 static struct slist *gen_load_absoffsetrel(compiler_state_t *, bpf_abs_offset *,
                                            u_int, u_int);
 static struct slist *gen_load_a(compiler_state_t *, enum e_offrel, u_int,
                                 u_int);
 static struct slist *gen_loadx_iphdrlen(compiler_state_t *);
-static struct block *gen_uncond(compiler_state_t *, int);
-static inline struct block *gen_true(compiler_state_t *);
-static inline struct block *gen_false(compiler_state_t *);
-static struct block *gen_ether_linktype(compiler_state_t *, bpf_u_int32);
-static struct block *gen_ipnet_linktype(compiler_state_t *, bpf_u_int32);
-static struct block *gen_linux_sll_linktype(compiler_state_t *, bpf_u_int32);
+static block *gen_uncond(compiler_state_t *, int);
+static inline block *gen_true(compiler_state_t *);
+static inline block *gen_false(compiler_state_t *);
+static block *gen_ether_linktype(compiler_state_t *, bpf_u_int32);
+static block *gen_ipnet_linktype(compiler_state_t *, bpf_u_int32);
+static block *gen_linux_sll_linktype(compiler_state_t *, bpf_u_int32);
 static struct slist *gen_load_prism_llprefixlen(compiler_state_t *);
 static struct slist *gen_load_avs_llprefixlen(compiler_state_t *);
 static struct slist *gen_load_radiotap_llprefixlen(compiler_state_t *);
 static struct slist *gen_load_ppi_llprefixlen(compiler_state_t *);
-static void insert_compute_vloffsets(compiler_state_t *, struct block *);
+static void insert_compute_vloffsets(compiler_state_t *, block *);
 static struct slist *gen_abs_offset_varpart(compiler_state_t *,
                                             bpf_abs_offset *);
 static bpf_u_int32 ethertype_to_ppptype(bpf_u_int32);
-static struct block *gen_linktype(compiler_state_t *, bpf_u_int32);
-static struct block *gen_snap(compiler_state_t *, bpf_u_int32, bpf_u_int32);
-static struct block *gen_llc_linktype(compiler_state_t *, bpf_u_int32);
-static struct block *gen_hostop(compiler_state_t *, bpf_u_int32, bpf_u_int32,
-                                int, bpf_u_int32, u_int, u_int);
+static block *gen_linktype(compiler_state_t *, bpf_u_int32);
+static block *gen_snap(compiler_state_t *, bpf_u_int32, bpf_u_int32);
+static block *gen_llc_linktype(compiler_state_t *, bpf_u_int32);
+static block *gen_hostop(compiler_state_t *, bpf_u_int32, bpf_u_int32, int,
+                         bpf_u_int32, u_int, u_int);
 #ifdef INET6
-static struct block *gen_hostop6(compiler_state_t *, struct in6_addr *,
-                                 struct in6_addr *, int, bpf_u_int32, u_int,
-                                 u_int);
+static block *gen_hostop6(compiler_state_t *, struct in6_addr *,
+                          struct in6_addr *, int, bpf_u_int32, u_int, u_int);
 #endif
-static struct block *gen_ahostop(compiler_state_t *, const u_char *, int);
-static struct block *gen_ehostop(compiler_state_t *, const u_char *, int);
-static struct block *gen_fhostop(compiler_state_t *, const u_char *, int);
-static struct block *gen_thostop(compiler_state_t *, const u_char *, int);
-static struct block *gen_wlanhostop(compiler_state_t *, const u_char *, int);
-static struct block *gen_ipfchostop(compiler_state_t *, const u_char *, int);
-static struct block *gen_dnhostop(compiler_state_t *, bpf_u_int32, int);
-static struct block *gen_mpls_linktype(compiler_state_t *, bpf_u_int32);
-static struct block *gen_host(compiler_state_t *, bpf_u_int32, bpf_u_int32, int,
-                              int, int);
+static block *gen_ahostop(compiler_state_t *, const u_char *, int);
+static block *gen_ehostop(compiler_state_t *, const u_char *, int);
+static block *gen_fhostop(compiler_state_t *, const u_char *, int);
+static block *gen_thostop(compiler_state_t *, const u_char *, int);
+static block *gen_wlanhostop(compiler_state_t *, const u_char *, int);
+static block *gen_ipfchostop(compiler_state_t *, const u_char *, int);
+static block *gen_dnhostop(compiler_state_t *, bpf_u_int32, int);
+static block *gen_mpls_linktype(compiler_state_t *, bpf_u_int32);
+static block *gen_host(compiler_state_t *, bpf_u_int32, bpf_u_int32, int, int,
+                       int);
 #ifdef INET6
-static struct block *gen_host6(compiler_state_t *, struct in6_addr *,
-                               struct in6_addr *, int, int, int);
+static block *gen_host6(compiler_state_t *, struct in6_addr *,
+                        struct in6_addr *, int, int, int);
 #endif
 #ifndef INET6
-static struct block *gen_gateway(compiler_state_t *, const u_char *,
-                                 struct addrinfo *, int, int);
+static block *gen_gateway(compiler_state_t *, const u_char *, struct addrinfo *,
+                          int, int);
 #endif
-static struct block *gen_ipfrag(compiler_state_t *);
-static struct block *gen_portatom(compiler_state_t *, int, bpf_u_int32);
-static struct block *gen_portrangeatom(compiler_state_t *, u_int, bpf_u_int32,
-                                       bpf_u_int32);
-static struct block *gen_portatom6(compiler_state_t *, int, bpf_u_int32);
-static struct block *gen_portrangeatom6(compiler_state_t *, u_int, bpf_u_int32,
-                                        bpf_u_int32);
-static struct block *gen_portop(compiler_state_t *, u_int, u_int, int);
-static struct block *gen_port(compiler_state_t *, u_int, int, int);
-static struct block *gen_portrangeop(compiler_state_t *, u_int, u_int,
-                                     bpf_u_int32, int);
-static struct block *gen_portrange(compiler_state_t *, u_int, u_int, int, int);
-struct block *gen_portop6(compiler_state_t *, u_int, u_int, int);
-static struct block *gen_port6(compiler_state_t *, u_int, int, int);
-static struct block *gen_portrangeop6(compiler_state_t *, u_int, u_int,
-                                      bpf_u_int32, int);
-static struct block *gen_portrange6(compiler_state_t *, u_int, u_int, int, int);
+static block *gen_ipfrag(compiler_state_t *);
+static block *gen_portatom(compiler_state_t *, int, bpf_u_int32);
+static block *gen_portrangeatom(compiler_state_t *, u_int, bpf_u_int32,
+                                bpf_u_int32);
+static block *gen_portatom6(compiler_state_t *, int, bpf_u_int32);
+static block *gen_portrangeatom6(compiler_state_t *, u_int, bpf_u_int32,
+                                 bpf_u_int32);
+static block *gen_portop(compiler_state_t *, u_int, u_int, int);
+static block *gen_port(compiler_state_t *, u_int, int, int);
+static block *gen_portrangeop(compiler_state_t *, u_int, u_int, bpf_u_int32,
+                              int);
+static block *gen_portrange(compiler_state_t *, u_int, u_int, int, int);
+block *gen_portop6(compiler_state_t *, u_int, u_int, int);
+static block *gen_port6(compiler_state_t *, u_int, int, int);
+static block *gen_portrangeop6(compiler_state_t *, u_int, u_int, bpf_u_int32,
+                               int);
+static block *gen_portrange6(compiler_state_t *, u_int, u_int, int, int);
 static int lookup_proto(compiler_state_t *, const char *, int);
-static struct block *gen_protochain(compiler_state_t *, bpf_u_int32, int);
-static struct block *gen_proto(compiler_state_t *, bpf_u_int32, int, int);
+static block *gen_protochain(compiler_state_t *, bpf_u_int32, int);
+static block *gen_proto(compiler_state_t *, bpf_u_int32, int, int);
 static struct slist *xfer_to_x(compiler_state_t *, struct arth *);
 static struct slist *xfer_to_a(compiler_state_t *, struct arth *);
-static struct block *gen_mac_multicast(compiler_state_t *, int);
-static struct block *gen_len(compiler_state_t *, int, int);
-static struct block *gen_check_802_11_data_frame(compiler_state_t *);
-static struct block *gen_geneve_ll_check(compiler_state_t *cstate);
+static block *gen_mac_multicast(compiler_state_t *, int);
+static block *gen_len(compiler_state_t *, int, int);
+static block *gen_check_802_11_data_frame(compiler_state_t *);
+static block *gen_geneve_ll_check(compiler_state_t *cstate);
 
-static struct block *gen_ppi_dlt_check(compiler_state_t *);
-static struct block *gen_atmfield_code_internal(compiler_state_t *, int,
-                                                bpf_u_int32, int, int);
-static struct block *gen_atmtype_llc(compiler_state_t *);
-static struct block *gen_msg_abbrev(compiler_state_t *, int type);
+static block *gen_ppi_dlt_check(compiler_state_t *);
+static block *gen_atmfield_code_internal(compiler_state_t *, int, bpf_u_int32,
+                                         int, int);
+static block *gen_atmtype_llc(compiler_state_t *);
+static block *gen_msg_abbrev(compiler_state_t *, int type);
 
 static void initchunks(compiler_state_t *cstate) {
   int i;
@@ -661,10 +658,10 @@ char *sdup(compiler_state_t *cstate, const char *s) {
   return (cp);
 }
 
-static inline struct block *new_block(compiler_state_t *cstate, int code) {
-  struct block *p;
+static inline block *new_block(compiler_state_t *cstate, int code) {
+  block *p;
 
-  p = (struct block *)newchunk(cstate, sizeof(*p));
+  p = (block *)newchunk(cstate, sizeof(*p));
   p->s.code = code;
   p->head = p;
 
@@ -680,8 +677,8 @@ static inline struct slist *new_stmt(compiler_state_t *cstate, int code) {
   return p;
 }
 
-static struct block *gen_retblk(compiler_state_t *cstate, int v) {
-  struct block *b = new_block(cstate, BPF_RET | BPF_K);
+static block *gen_retblk(compiler_state_t *cstate, int v) {
+  block *b = new_block(cstate, BPF_RET | BPF_K);
 
   b->s.k = v;
   return b;
@@ -691,8 +688,8 @@ static inline PCAP_NORETURN_DEF void syntax(compiler_state_t *cstate) {
   bpf_error(cstate, "syntax error in filter expression");
 }
 
-int pcap_compile(pcap_t *p, struct bpf_program *program, const char *buf,
-                 int optimize, bpf_u_int32 mask) {
+int pcap::pcap_compile(pcap_t *p, struct bpf_program *program, const char *buf,
+                       int optimize, bpf_u_int32 mask) {
 #ifdef _WIN32
   static int done = 0;
 #endif
@@ -704,12 +701,12 @@ int pcap_compile(pcap_t *p, struct bpf_program *program, const char *buf,
   int rc;
 
   /*
-   * If this pcap_t hasn't been activated, it doesn't have a
+   * If this pcap::pcap_t hasn't been activated, it doesn't have a
    * link-layer type, so we can't use it.
    */
   if (!p->activated) {
     snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
-             "not-yet-activated pcap_t passed to pcap_compile");
+             "not-yet-activated pcap::pcap_t passed to pcap::pcap_compile");
     return (-1);
   }
 
@@ -731,7 +728,7 @@ int pcap_compile(pcap_t *p, struct bpf_program *program, const char *buf,
    *
    * XXX - the fact that we happen to be compiling a filter
    * doesn't necessarily mean we'll be installing it as the
-   * filter for this pcap_t; we might be running it from userland
+   * filter for this pcap::pcap_t; we might be running it from userland
    * on captured packets to do packet classification.  We really
    * need a better way of handling this, but this is all that
    * the WinPcap remote capture code did.
@@ -848,13 +845,13 @@ quit:
 int pcap_compile_nopcap(int snaplen_arg, int linktype_arg,
                         struct bpf_program *program, const char *buf,
                         int optimize, bpf_u_int32 mask) {
-  pcap_t *p;
+  pcap::pcap_t *p;
   int ret;
 
-  p = pcap_open_dead(linktype_arg, snaplen_arg);
+  p = pcap::pcap_open_dead(linktype_arg, snaplen_arg);
   if (p == nullptr)
     return (-1);
-  ret = pcap_compile(p, program, buf, optimize, mask);
+  ret = pcap::pcap_compile(p, program, buf, optimize, mask);
   pcap_close(p);
   return (ret);
 }
@@ -863,7 +860,7 @@ int pcap_compile_nopcap(int snaplen_arg, int linktype_arg,
  * Clean up a "struct bpf_program" by freeing all the memory allocated
  * in it.
  */
-void pcap_freecode(struct bpf_program *program) {
+void pcap::pcap_freecode(struct bpf_program *program) {
   program->bf_len = 0;
   if (program->bf_insns != nullptr) {
     free((char *)program->bf_insns);
@@ -877,8 +874,8 @@ void pcap_freecode(struct bpf_program *program) {
  * back to another unresolved block (or nil).  At least one of the fields
  * in each block is already resolved.
  */
-static void backpatch(struct block *list, struct block *target) {
-  struct block *next;
+static void backpatch(block *list, block *target) {
+  block *next;
 
   while (list) {
     if (!list->sense) {
@@ -896,8 +893,8 @@ static void backpatch(struct block *list, struct block *target) {
  * Merge the lists in b0 and b1, using the 'sense' field to indicate
  * which of jt and jf is the link.
  */
-static void merge(struct block *b0, struct block *b1) {
-  struct block **p = &b0;
+static void merge(block *b0, block *b1) {
+  block **p = &b0;
 
   /* Find end of list. */
   while (*p)
@@ -907,8 +904,8 @@ static void merge(struct block *b0, struct block *b1) {
   *p = b1;
 }
 
-int finish_parse(compiler_state_t *cstate, struct block *p) {
-  struct block *ppi_dlt_check;
+int finish_parse(compiler_state_t *cstate, block *p) {
+  block *ppi_dlt_check;
 
   /*
    * Catch errors reported by us and routines below us, and return -1
@@ -962,7 +959,7 @@ int finish_parse(compiler_state_t *cstate, struct block *p) {
   return (0);
 }
 
-void gen_and(struct block *b0, struct block *b1) {
+void gen_and(block *b0, block *b1) {
   backpatch(b0, b1->head);
   b0->sense = !b0->sense;
   b1->sense = !b1->sense;
@@ -971,7 +968,7 @@ void gen_and(struct block *b0, struct block *b1) {
   b1->head = b0->head;
 }
 
-void gen_or(struct block *b0, struct block *b1) {
+void gen_or(block *b0, block *b1) {
   b0->sense = !b0->sense;
   backpatch(b0, b1->head);
   b0->sense = !b0->sense;
@@ -979,42 +976,42 @@ void gen_or(struct block *b0, struct block *b1) {
   b1->head = b0->head;
 }
 
-void gen_not(struct block *b) { b->sense = !b->sense; }
+void gen_not(block *b) { b->sense = !b->sense; }
 
-static struct block *gen_cmp(compiler_state_t *cstate, enum e_offrel offrel,
-                             u_int offset, u_int size, bpf_u_int32 v) {
+static block *gen_cmp(compiler_state_t *cstate, enum e_offrel offrel,
+                      u_int offset, u_int size, bpf_u_int32 v) {
   return gen_ncmp(cstate, offrel, offset, size, 0xffffffff, BPF_JEQ, 0, v);
 }
 
-static struct block *gen_cmp_gt(compiler_state_t *cstate, enum e_offrel offrel,
-                                u_int offset, u_int size, bpf_u_int32 v) {
+static block *gen_cmp_gt(compiler_state_t *cstate, enum e_offrel offrel,
+                         u_int offset, u_int size, bpf_u_int32 v) {
   return gen_ncmp(cstate, offrel, offset, size, 0xffffffff, BPF_JGT, 0, v);
 }
 
-static struct block *gen_cmp_ge(compiler_state_t *cstate, enum e_offrel offrel,
-                                u_int offset, u_int size, bpf_u_int32 v) {
+static block *gen_cmp_ge(compiler_state_t *cstate, enum e_offrel offrel,
+                         u_int offset, u_int size, bpf_u_int32 v) {
   return gen_ncmp(cstate, offrel, offset, size, 0xffffffff, BPF_JGE, 0, v);
 }
 
-static struct block *gen_cmp_lt(compiler_state_t *cstate, enum e_offrel offrel,
-                                u_int offset, u_int size, bpf_u_int32 v) {
+static block *gen_cmp_lt(compiler_state_t *cstate, enum e_offrel offrel,
+                         u_int offset, u_int size, bpf_u_int32 v) {
   return gen_ncmp(cstate, offrel, offset, size, 0xffffffff, BPF_JGE, 1, v);
 }
 
-static struct block *gen_cmp_le(compiler_state_t *cstate, enum e_offrel offrel,
-                                u_int offset, u_int size, bpf_u_int32 v) {
+static block *gen_cmp_le(compiler_state_t *cstate, enum e_offrel offrel,
+                         u_int offset, u_int size, bpf_u_int32 v) {
   return gen_ncmp(cstate, offrel, offset, size, 0xffffffff, BPF_JGT, 1, v);
 }
 
-static struct block *gen_mcmp(compiler_state_t *cstate, enum e_offrel offrel,
-                              u_int offset, u_int size, bpf_u_int32 v,
-                              bpf_u_int32 mask) {
+static block *gen_mcmp(compiler_state_t *cstate, enum e_offrel offrel,
+                       u_int offset, u_int size, bpf_u_int32 v,
+                       bpf_u_int32 mask) {
   return gen_ncmp(cstate, offrel, offset, size, mask, BPF_JEQ, 0, v);
 }
 
-static struct block *gen_bcmp(compiler_state_t *cstate, enum e_offrel offrel,
-                              u_int offset, u_int size, const u_char *v) {
-  struct block *b, *tmp;
+static block *gen_bcmp(compiler_state_t *cstate, enum e_offrel offrel,
+                       u_int offset, u_int size, const u_char *v) {
+  block *b, *tmp;
 
   b = nullptr;
   while (size >= 4) {
@@ -1050,11 +1047,11 @@ static struct block *gen_bcmp(compiler_state_t *cstate, enum e_offrel offrel,
  * with the test specified by "jtype"; if "reverse" is true, the test
  * should test the opposite of "jtype".
  */
-static struct block *gen_ncmp(compiler_state_t *cstate, enum e_offrel offrel,
-                              u_int offset, u_int size, bpf_u_int32 mask,
-                              int jtype, int reverse, bpf_u_int32 v) {
+static block *gen_ncmp(compiler_state_t *cstate, enum e_offrel offrel,
+                       u_int offset, u_int size, bpf_u_int32 mask, int jtype,
+                       int reverse, bpf_u_int32 v) {
   struct slist *s, *s2;
-  struct block *b;
+  block *b;
 
   s = gen_load_a(cstate, offrel, offset, size);
 
@@ -1072,7 +1069,7 @@ static struct block *gen_ncmp(compiler_state_t *cstate, enum e_offrel offrel,
   return b;
 }
 
-static int init_linktype(compiler_state_t *cstate, pcap_t *p) {
+static int init_linktype(compiler_state_t *cstate, pcap::pcap_t *p) {
   cstate->pcap_fddipad = p->fddipad;
 
   /*
@@ -1867,8 +1864,8 @@ static struct slist *gen_loadx_iphdrlen(compiler_state_t *cstate) {
   return s;
 }
 
-static struct block *gen_uncond(compiler_state_t *cstate, int rsense) {
-  struct block *b;
+static block *gen_uncond(compiler_state_t *cstate, int rsense) {
+  block *b;
   struct slist *s;
 
   s = new_stmt(cstate, BPF_LD | BPF_IMM);
@@ -1879,11 +1876,11 @@ static struct block *gen_uncond(compiler_state_t *cstate, int rsense) {
   return b;
 }
 
-static inline struct block *gen_true(compiler_state_t *cstate) {
+static inline block *gen_true(compiler_state_t *cstate) {
   return gen_uncond(cstate, 1);
 }
 
-static inline struct block *gen_false(compiler_state_t *cstate) {
+static inline block *gen_false(compiler_state_t *cstate) {
   return gen_uncond(cstate, 0);
 }
 
@@ -1905,9 +1902,9 @@ static inline struct block *gen_false(compiler_state_t *cstate) {
  * a value <= ETHERMTU to see whether it's a type field and then do
  * the appropriate test.
  */
-static struct block *gen_ether_linktype(compiler_state_t *cstate,
-                                        bpf_u_int32 ll_proto) {
-  struct block *b0, *b1;
+static block *gen_ether_linktype(compiler_state_t *cstate,
+                                 bpf_u_int32 ll_proto) {
+  block *b0, *b1;
 
   switch (ll_proto) {
 
@@ -2072,8 +2069,8 @@ static struct block *gen_ether_linktype(compiler_state_t *cstate,
   }
 }
 
-static struct block *gen_loopback_linktype(compiler_state_t *cstate,
-                                           bpf_u_int32 ll_proto) {
+static block *gen_loopback_linktype(compiler_state_t *cstate,
+                                    bpf_u_int32 ll_proto) {
   /*
    * For DLT_NULL, the link-layer header is a 32-bit word
    * containing an AF_ value in *host* byte order, and for
@@ -2110,8 +2107,8 @@ static struct block *gen_loopback_linktype(compiler_state_t *cstate,
  * "proto" is an Ethernet type value and for IPNET, if it is not IPv4
  * or IPv6 then we have an error.
  */
-static struct block *gen_ipnet_linktype(compiler_state_t *cstate,
-                                        bpf_u_int32 ll_proto) {
+static block *gen_ipnet_linktype(compiler_state_t *cstate,
+                                 bpf_u_int32 ll_proto) {
   switch (ll_proto) {
 
   case ETHERTYPE_IP:
@@ -2137,9 +2134,9 @@ static struct block *gen_ipnet_linktype(compiler_state_t *cstate,
  * match the type field or to check the type field for the special
  * LINUX_SLL_P_802_2 value and then do the appropriate test.
  */
-static struct block *gen_linux_sll_linktype(compiler_state_t *cstate,
-                                            bpf_u_int32 ll_proto) {
-  struct block *b0, *b1;
+static block *gen_linux_sll_linktype(compiler_state_t *cstate,
+                                     bpf_u_int32 ll_proto) {
+  block *b0, *b1;
 
   switch (ll_proto) {
 
@@ -2798,8 +2795,7 @@ static struct slist *gen_load_802_11_header_len(compiler_state_t *cstate,
   return s;
 }
 
-static void insert_compute_vloffsets(compiler_state_t *cstate,
-                                     struct block *b) {
+static void insert_compute_vloffsets(compiler_state_t *cstate, block *b) {
   struct slist *s;
 
   /* There is an implicit dependency between the link
@@ -2895,9 +2891,9 @@ static void insert_compute_vloffsets(compiler_state_t *cstate,
   }
 }
 
-static struct block *gen_ppi_dlt_check(compiler_state_t *cstate) {
+static block *gen_ppi_dlt_check(compiler_state_t *cstate) {
   struct slist *s_load_dlt;
-  struct block *b;
+  block *b;
 
   if (cstate->linktype == DLT_PPI) {
     /* Create the statements that check for the DLT
@@ -3011,8 +3007,8 @@ static bpf_u_int32 ethertype_to_ppptype(bpf_u_int32 ll_proto) {
  * link-layer packets (and that haven't already been done by a check
  * for that encapsulation).
  */
-static struct block *gen_prevlinkhdr_check(compiler_state_t *cstate) {
-  struct block *b0;
+static block *gen_prevlinkhdr_check(compiler_state_t *cstate) {
+  block *b0;
 
   if (cstate->is_geneve)
     return gen_geneve_ll_check(cstate);
@@ -3055,9 +3051,8 @@ static struct block *gen_prevlinkhdr_check(compiler_state_t *cstate) {
  * "proto" is an Ethernet type value, if > ETHERMTU, or an LLC SAP
  * value, if <= ETHERMTU.
  */
-static struct block *gen_linktype(compiler_state_t *cstate,
-                                  bpf_u_int32 ll_proto) {
-  struct block *b0, *b1, *b2;
+static block *gen_linktype(compiler_state_t *cstate, bpf_u_int32 ll_proto) {
+  block *b0, *b1, *b2;
   const char *description;
 
   /* are we checking MPLS-encapsulated packets? */
@@ -3542,7 +3537,8 @@ static struct block *gen_linktype(compiler_state_t *cstate,
       /*
        * No; report an error.
        */
-      description = pcap_datalink_val_to_description_or_dlt(cstate->linktype);
+      description =
+          pcap::pcap_datalink_val_to_description_or_dlt(cstate->linktype);
       bpf_error(cstate, "%s link-layer type filtering not implemented",
                 description);
       /*NOTREACHED */
@@ -3557,8 +3553,8 @@ static struct block *gen_linktype(compiler_state_t *cstate,
  * field of 0x03 in the LLC header, and for the specified organization
  * code and protocol type in the SNAP header.
  */
-static struct block *gen_snap(compiler_state_t *cstate, bpf_u_int32 orgcode,
-                              bpf_u_int32 ptype) {
+static block *gen_snap(compiler_state_t *cstate, bpf_u_int32 orgcode,
+                       bpf_u_int32 ptype) {
   u_char snapblock[8];
 
   snapblock[0] = LLCSAP_SNAP; /* DSAP = SNAP */
@@ -3577,8 +3573,8 @@ static struct block *gen_snap(compiler_state_t *cstate, bpf_u_int32 orgcode,
 /*
  * Generate code to match frames with an LLC header.
  */
-static struct block *gen_llc_internal(compiler_state_t *cstate) {
-  struct block *b0, *b1;
+static block *gen_llc_internal(compiler_state_t *cstate) {
+  block *b0, *b1;
 
   switch (cstate->linktype) {
 
@@ -3642,12 +3638,12 @@ static struct block *gen_llc_internal(compiler_state_t *cstate) {
 
   default:
     bpf_error(cstate, "'llc' not supported for %s",
-              pcap_datalink_val_to_description_or_dlt(cstate->linktype));
+              pcap::pcap_datalink_val_to_description_or_dlt(cstate->linktype));
     /*NOTREACHED*/
   }
 }
 
-struct block *gen_llc(compiler_state_t *cstate) {
+block *gen_llc(compiler_state_t *cstate) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -3658,8 +3654,8 @@ struct block *gen_llc(compiler_state_t *cstate) {
   return gen_llc_internal(cstate);
 }
 
-struct block *gen_llc_i(compiler_state_t *cstate) {
-  struct block *b0, *b1;
+block *gen_llc_i(compiler_state_t *cstate) {
+  block *b0, *b1;
   struct slist *s;
 
   /*
@@ -3687,8 +3683,8 @@ struct block *gen_llc_i(compiler_state_t *cstate) {
   return b1;
 }
 
-struct block *gen_llc_s(compiler_state_t *cstate) {
-  struct block *b0, *b1;
+block *gen_llc_s(compiler_state_t *cstate) {
+  block *b0, *b1;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -3711,8 +3707,8 @@ struct block *gen_llc_s(compiler_state_t *cstate) {
   return b1;
 }
 
-struct block *gen_llc_u(compiler_state_t *cstate) {
-  struct block *b0, *b1;
+block *gen_llc_u(compiler_state_t *cstate) {
+  block *b0, *b1;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -3735,8 +3731,8 @@ struct block *gen_llc_u(compiler_state_t *cstate) {
   return b1;
 }
 
-struct block *gen_llc_s_subtype(compiler_state_t *cstate, bpf_u_int32 subtype) {
-  struct block *b0, *b1;
+block *gen_llc_s_subtype(compiler_state_t *cstate, bpf_u_int32 subtype) {
+  block *b0, *b1;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -3758,8 +3754,8 @@ struct block *gen_llc_s_subtype(compiler_state_t *cstate, bpf_u_int32 subtype) {
   return b1;
 }
 
-struct block *gen_llc_u_subtype(compiler_state_t *cstate, bpf_u_int32 subtype) {
-  struct block *b0, *b1;
+block *gen_llc_u_subtype(compiler_state_t *cstate, bpf_u_int32 subtype) {
+  block *b0, *b1;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -3793,8 +3789,7 @@ struct block *gen_llc_u_subtype(compiler_state_t *cstate, bpf_u_int32 subtype) {
  * match the DSAP or both DSAP and LSAP or to check the OUI and
  * protocol ID in a SNAP header.
  */
-static struct block *gen_llc_linktype(compiler_state_t *cstate,
-                                      bpf_u_int32 ll_proto) {
+static block *gen_llc_linktype(compiler_state_t *cstate, bpf_u_int32 ll_proto) {
   /*
    * XXX - handle token-ring variable-length header.
    */
@@ -3866,10 +3861,10 @@ static struct block *gen_llc_linktype(compiler_state_t *cstate,
   }
 }
 
-static struct block *gen_hostop(compiler_state_t *cstate, bpf_u_int32 addr,
-                                bpf_u_int32 mask, int dir, bpf_u_int32 ll_proto,
-                                u_int src_off, u_int dst_off) {
-  struct block *b0, *b1;
+static block *gen_hostop(compiler_state_t *cstate, bpf_u_int32 addr,
+                         bpf_u_int32 mask, int dir, bpf_u_int32 ll_proto,
+                         u_int src_off, u_int dst_off) {
+  block *b0, *b1;
   u_int offset;
 
   switch (dir) {
@@ -3936,11 +3931,10 @@ static struct block *gen_hostop(compiler_state_t *cstate, bpf_u_int32 addr,
 }
 
 #ifdef INET6
-static struct block *gen_hostop6(compiler_state_t *cstate,
-                                 struct in6_addr *addr, struct in6_addr *mask,
-                                 int dir, bpf_u_int32 ll_proto, u_int src_off,
-                                 u_int dst_off) {
-  struct block *b0, *b1;
+static block *gen_hostop6(compiler_state_t *cstate, struct in6_addr *addr,
+                          struct in6_addr *mask, int dir, bpf_u_int32 ll_proto,
+                          u_int src_off, u_int dst_off) {
+  block *b0, *b1;
   u_int offset;
   uint32_t *a, *m;
 
@@ -4018,9 +4012,9 @@ static struct block *gen_hostop6(compiler_state_t *cstate,
 }
 #endif
 
-static struct block *gen_ehostop(compiler_state_t *cstate, const u_char *eaddr,
-                                 int dir) {
-  struct block *b0, *b1;
+static block *gen_ehostop(compiler_state_t *cstate, const u_char *eaddr,
+                          int dir) {
+  block *b0, *b1;
 
   switch (dir) {
   case Q_SRC:
@@ -4077,9 +4071,9 @@ static struct block *gen_ehostop(compiler_state_t *cstate, const u_char *eaddr,
 /*
  * Like gen_ehostop, but for DLT_FDDI
  */
-static struct block *gen_fhostop(compiler_state_t *cstate, const u_char *eaddr,
-                                 int dir) {
-  struct block *b0, *b1;
+static block *gen_fhostop(compiler_state_t *cstate, const u_char *eaddr,
+                          int dir) {
+  block *b0, *b1;
 
   switch (dir) {
   case Q_SRC:
@@ -4132,9 +4126,9 @@ static struct block *gen_fhostop(compiler_state_t *cstate, const u_char *eaddr,
 /*
  * Like gen_ehostop, but for DLT_IEEE802 (Token Ring)
  */
-static struct block *gen_thostop(compiler_state_t *cstate, const u_char *eaddr,
-                                 int dir) {
-  struct block *b0, *b1;
+static block *gen_thostop(compiler_state_t *cstate, const u_char *eaddr,
+                          int dir) {
+  block *b0, *b1;
 
   switch (dir) {
   case Q_SRC:
@@ -4188,9 +4182,9 @@ static struct block *gen_thostop(compiler_state_t *cstate, const u_char *eaddr,
  * Like gen_ehostop, but for DLT_IEEE802_11 (802.11 wireless LAN) and
  * various 802.11 + radio headers.
  */
-static struct block *gen_wlanhostop(compiler_state_t *cstate,
-                                    const u_char *eaddr, int dir) {
-  struct block *b0, *b1, *b2;
+static block *gen_wlanhostop(compiler_state_t *cstate, const u_char *eaddr,
+                             int dir) {
+  block *b0, *b1, *b2;
   struct slist *s;
 
 #ifdef ENABLE_WLAN_FILTERING_PATCH
@@ -4611,9 +4605,9 @@ static struct block *gen_wlanhostop(compiler_state_t *cstate,
  * (We assume that the addresses are IEEE 48-bit MAC addresses,
  * as the RFC states.)
  */
-static struct block *gen_ipfchostop(compiler_state_t *cstate,
-                                    const u_char *eaddr, int dir) {
-  struct block *b0, *b1;
+static block *gen_ipfchostop(compiler_state_t *cstate, const u_char *eaddr,
+                             int dir) {
+  block *b0, *b1;
 
   switch (dir) {
   case Q_SRC:
@@ -4681,9 +4675,9 @@ static struct block *gen_ipfchostop(compiler_state_t *cstate,
  * make the filter even more inefficient, although one could be clever
  * and not generate masking instructions if the mask is 0xFFFF.
  */
-static struct block *gen_dnhostop(compiler_state_t *cstate, bpf_u_int32 addr,
-                                  int dir) {
-  struct block *b0, *b1, *b2, *tmp;
+static block *gen_dnhostop(compiler_state_t *cstate, bpf_u_int32 addr,
+                           int dir) {
+  block *b0, *b1, *b2, *tmp;
   u_int offset_lh; /* offset if long header is received */
   u_int offset_sh; /* offset if short header is received */
 
@@ -4787,9 +4781,9 @@ static struct block *gen_dnhostop(compiler_state_t *cstate, bpf_u_int32 addr,
  * test the bottom-of-stack bit, and then check the version number
  * field in the IP header.
  */
-static struct block *gen_mpls_linktype(compiler_state_t *cstate,
-                                       bpf_u_int32 ll_proto) {
-  struct block *b0, *b1;
+static block *gen_mpls_linktype(compiler_state_t *cstate,
+                                bpf_u_int32 ll_proto) {
+  block *b0, *b1;
 
   switch (ll_proto) {
 
@@ -4816,9 +4810,9 @@ static struct block *gen_mpls_linktype(compiler_state_t *cstate,
   }
 }
 
-static struct block *gen_host(compiler_state_t *cstate, bpf_u_int32 addr,
-                              bpf_u_int32 mask, int proto, int dir, int type) {
-  struct block *b0, *b1;
+static block *gen_host(compiler_state_t *cstate, bpf_u_int32 addr,
+                       bpf_u_int32 mask, int proto, int dir, int type) {
+  block *b0, *b1;
   const char *typestr;
 
   if (type == Q_NET)
@@ -4966,9 +4960,8 @@ static struct block *gen_host(compiler_state_t *cstate, bpf_u_int32 addr,
 }
 
 #ifdef INET6
-static struct block *gen_host6(compiler_state_t *cstate, struct in6_addr *addr,
-                               struct in6_addr *mask, int proto, int dir,
-                               int type) {
+static block *gen_host6(compiler_state_t *cstate, struct in6_addr *addr,
+                        struct in6_addr *mask, int proto, int dir, int type) {
   const char *typestr;
 
   if (type == Q_NET)
@@ -5106,9 +5099,9 @@ static struct block *gen_host6(compiler_state_t *cstate, struct in6_addr *addr,
 #endif
 
 #ifndef INET6
-static struct block *gen_gateway(compiler_state_t *cstate, const u_char *eaddr,
-                                 struct addrinfo *alist, int proto, int dir) {
-  struct block *b0, *b1, *tmp;
+static block *gen_gateway(compiler_state_t *cstate, const u_char *eaddr,
+                          struct addrinfo *alist, int proto, int dir) {
+  block *b0, *b1, *tmp;
   struct addrinfo *ai;
   struct sockaddr_in *sin;
 
@@ -5209,10 +5202,9 @@ static struct block *gen_gateway(compiler_state_t *cstate, const u_char *eaddr,
 }
 #endif
 
-static struct block *gen_proto_abbrev_internal(compiler_state_t *cstate,
-                                               int proto) {
-  struct block *b0;
-  struct block *b1;
+static block *gen_proto_abbrev_internal(compiler_state_t *cstate, int proto) {
+  block *b0;
+  block *b1;
 
   switch (proto) {
 
@@ -5450,7 +5442,7 @@ static struct block *gen_proto_abbrev_internal(compiler_state_t *cstate,
   return b1;
 }
 
-struct block *gen_proto_abbrev(compiler_state_t *cstate, int proto) {
+block *gen_proto_abbrev(compiler_state_t *cstate, int proto) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -5461,9 +5453,9 @@ struct block *gen_proto_abbrev(compiler_state_t *cstate, int proto) {
   return gen_proto_abbrev_internal(cstate, proto);
 }
 
-static struct block *gen_ipfrag(compiler_state_t *cstate) {
+static block *gen_ipfrag(compiler_state_t *cstate) {
   struct slist *s;
-  struct block *b;
+  block *b;
 
   /* not IPv4 frag other than the first frag */
   s = gen_load_a(cstate, OR_LINKPL, 6, BPF_H);
@@ -5484,19 +5476,17 @@ static struct block *gen_ipfrag(compiler_state_t *cstate) {
  * variable-length link-layer headers (such as Token Ring or 802.11
  * headers).
  */
-static struct block *gen_portatom(compiler_state_t *cstate, int off,
-                                  bpf_u_int32 v) {
+static block *gen_portatom(compiler_state_t *cstate, int off, bpf_u_int32 v) {
   return gen_cmp(cstate, OR_TRAN_IPV4, off, BPF_H, v);
 }
 
-static struct block *gen_portatom6(compiler_state_t *cstate, int off,
-                                   bpf_u_int32 v) {
+static block *gen_portatom6(compiler_state_t *cstate, int off, bpf_u_int32 v) {
   return gen_cmp(cstate, OR_TRAN_IPV6, off, BPF_H, v);
 }
 
-static struct block *gen_portop(compiler_state_t *cstate, u_int port,
-                                u_int proto, int dir) {
-  struct block *b0, *b1, *tmp;
+static block *gen_portop(compiler_state_t *cstate, u_int port, u_int proto,
+                         int dir) {
+  block *b0, *b1, *tmp;
 
   /* ip proto 'proto' and not a fragment other than the first fragment */
   tmp = gen_cmp(cstate, OR_LINKPL, 9, BPF_B, proto);
@@ -5562,9 +5552,9 @@ static struct block *gen_portop(compiler_state_t *cstate, u_int port,
   return b1;
 }
 
-static struct block *gen_port(compiler_state_t *cstate, u_int port,
-                              int ip_proto, int dir) {
-  struct block *b0, *b1, *tmp;
+static block *gen_port(compiler_state_t *cstate, u_int port, int ip_proto,
+                       int dir) {
+  block *b0, *b1, *tmp;
 
   /*
    * ether proto ip
@@ -5607,9 +5597,8 @@ static struct block *gen_port(compiler_state_t *cstate, u_int port,
   return b1;
 }
 
-struct block *gen_portop6(compiler_state_t *cstate, u_int port, u_int proto,
-                          int dir) {
-  struct block *b0, *b1, *tmp;
+block *gen_portop6(compiler_state_t *cstate, u_int port, u_int proto, int dir) {
+  block *b0, *b1, *tmp;
 
   /* ip6 proto 'proto' */
   /* XXX - catch the first fragment of a fragmented packet? */
@@ -5645,9 +5634,9 @@ struct block *gen_portop6(compiler_state_t *cstate, u_int port, u_int proto,
   return b1;
 }
 
-static struct block *gen_port6(compiler_state_t *cstate, u_int port,
-                               int ip_proto, int dir) {
-  struct block *b0, *b1, *tmp;
+static block *gen_port6(compiler_state_t *cstate, u_int port, int ip_proto,
+                        int dir) {
+  block *b0, *b1, *tmp;
 
   /* link proto ip6 */
   b0 = gen_linktype(cstate, ETHERTYPE_IPV6);
@@ -5675,9 +5664,9 @@ static struct block *gen_port6(compiler_state_t *cstate, u_int port,
 }
 
 /* gen_portrange code */
-static struct block *gen_portrangeatom(compiler_state_t *cstate, u_int off,
-                                       bpf_u_int32 v1, bpf_u_int32 v2) {
-  struct block *b1, *b2;
+static block *gen_portrangeatom(compiler_state_t *cstate, u_int off,
+                                bpf_u_int32 v1, bpf_u_int32 v2) {
+  block *b1, *b2;
 
   if (v1 > v2) {
     /*
@@ -5698,9 +5687,9 @@ static struct block *gen_portrangeatom(compiler_state_t *cstate, u_int off,
   return b2;
 }
 
-static struct block *gen_portrangeop(compiler_state_t *cstate, u_int port1,
-                                     u_int port2, bpf_u_int32 proto, int dir) {
-  struct block *b0, *b1, *tmp;
+static block *gen_portrangeop(compiler_state_t *cstate, u_int port1,
+                              u_int port2, bpf_u_int32 proto, int dir) {
+  block *b0, *b1, *tmp;
 
   /* ip proto 'proto' and not a fragment other than the first fragment */
   tmp = gen_cmp(cstate, OR_LINKPL, 9, BPF_B, proto);
@@ -5770,9 +5759,9 @@ static struct block *gen_portrangeop(compiler_state_t *cstate, u_int port1,
   return b1;
 }
 
-static struct block *gen_portrange(compiler_state_t *cstate, u_int port1,
-                                   u_int port2, int ip_proto, int dir) {
-  struct block *b0, *b1, *tmp;
+static block *gen_portrange(compiler_state_t *cstate, u_int port1, u_int port2,
+                            int ip_proto, int dir) {
+  block *b0, *b1, *tmp;
 
   /* link proto ip */
   b0 = gen_linktype(cstate, ETHERTYPE_IP);
@@ -5799,9 +5788,9 @@ static struct block *gen_portrange(compiler_state_t *cstate, u_int port1,
   return b1;
 }
 
-static struct block *gen_portrangeatom6(compiler_state_t *cstate, u_int off,
-                                        bpf_u_int32 v1, bpf_u_int32 v2) {
-  struct block *b1, *b2;
+static block *gen_portrangeatom6(compiler_state_t *cstate, u_int off,
+                                 bpf_u_int32 v1, bpf_u_int32 v2) {
+  block *b1, *b2;
 
   if (v1 > v2) {
     /*
@@ -5822,9 +5811,9 @@ static struct block *gen_portrangeatom6(compiler_state_t *cstate, u_int off,
   return b2;
 }
 
-static struct block *gen_portrangeop6(compiler_state_t *cstate, u_int port1,
-                                      u_int port2, bpf_u_int32 proto, int dir) {
-  struct block *b0, *b1, *tmp;
+static block *gen_portrangeop6(compiler_state_t *cstate, u_int port1,
+                               u_int port2, bpf_u_int32 proto, int dir) {
+  block *b0, *b1, *tmp;
 
   /* ip6 proto 'proto' */
   /* XXX - catch the first fragment of a fragmented packet? */
@@ -5860,9 +5849,9 @@ static struct block *gen_portrangeop6(compiler_state_t *cstate, u_int port1,
   return b1;
 }
 
-static struct block *gen_portrange6(compiler_state_t *cstate, u_int port1,
-                                    u_int port2, int ip_proto, int dir) {
-  struct block *b0, *b1, *tmp;
+static block *gen_portrange6(compiler_state_t *cstate, u_int port1, u_int port2,
+                             int ip_proto, int dir) {
+  block *b0, *b1, *tmp;
 
   /* link proto ip6 */
   b0 = gen_linktype(cstate, ETHERTYPE_IPV6);
@@ -5938,12 +5927,12 @@ gen_joinsp(struct stmt **s, int n)
 }
 #endif
 
-static struct block *gen_protochain(compiler_state_t *cstate, bpf_u_int32 v,
-                                    int proto) {
+static block *gen_protochain(compiler_state_t *cstate, bpf_u_int32 v,
+                             int proto) {
 #ifdef NO_PROTOCHAIN
   return gen_proto(cstate, v, proto);
 #else
-  struct block *b0, *b;
+  block *b0, *b;
   struct slist *s[100];
   int fix2, fix3, fix4, fix5;
   int ahcheck, again, end;
@@ -6229,9 +6218,9 @@ static struct block *gen_protochain(compiler_state_t *cstate, bpf_u_int32 v,
 #endif
 }
 
-static struct block *gen_check_802_11_data_frame(compiler_state_t *cstate) {
+static block *gen_check_802_11_data_frame(compiler_state_t *cstate) {
   struct slist *s;
-  struct block *b0, *b1;
+  block *b0, *b1;
 
   /*
    * A data frame has the 0x08 bit (b3) in the frame control field set
@@ -6262,11 +6251,11 @@ static struct block *gen_check_802_11_data_frame(compiler_state_t *cstate) {
  * If <proto> is Q_DEFAULT, i.e. just "proto" was specified, it checks
  * against Q_IP and Q_IPV6.
  */
-static struct block *gen_proto(compiler_state_t *cstate, bpf_u_int32 v,
-                               int proto, int dir) {
-  struct block *b0, *b1;
+static block *gen_proto(compiler_state_t *cstate, bpf_u_int32 v, int proto,
+                        int dir) {
+  block *b0, *b1;
 #ifndef CHASE_CHAIN
-  struct block *b2;
+  block *b2;
 #endif
 
   if (dir != Q_DEFAULT)
@@ -6521,8 +6510,7 @@ static struct block *gen_proto(compiler_state_t *cstate, bpf_u_int32 v,
   /*NOTREACHED*/
 }
 
-struct block *gen_scode(compiler_state_t *cstate, const char *name,
-                        struct qual q) {
+block *gen_scode(compiler_state_t *cstate, const char *name, struct qual q) {
   int proto = q.proto;
   int dir = q.dir;
   int tproto;
@@ -6535,7 +6523,7 @@ struct block *gen_scode(compiler_state_t *cstate, const char *name,
   struct sockaddr_in6 *sin6;
   struct in6_addr mask128;
 #endif /*INET6*/
-  struct block *b, *tmp;
+  block *b, *tmp;
   int port, real_proto;
   int port1, port2;
 
@@ -6824,8 +6812,8 @@ struct block *gen_scode(compiler_state_t *cstate, const char *name,
   /*NOTREACHED*/
 }
 
-struct block *gen_mcode(compiler_state_t *cstate, const char *s1,
-                        const char *s2, bpf_u_int32 masklen, struct qual q) {
+block *gen_mcode(compiler_state_t *cstate, const char *s1, const char *s2,
+                 bpf_u_int32 masklen, struct qual q) {
   int nlen, mlen;
   bpf_u_int32 n, m;
 
@@ -6878,8 +6866,8 @@ struct block *gen_mcode(compiler_state_t *cstate, const char *s1,
   /*NOTREACHED*/
 }
 
-struct block *gen_ncode(compiler_state_t *cstate, const char *s, bpf_u_int32 v,
-                        struct qual q) {
+block *gen_ncode(compiler_state_t *cstate, const char *s, bpf_u_int32 v,
+                 struct qual q) {
   bpf_u_int32 mask;
   int proto;
   int dir;
@@ -6947,7 +6935,7 @@ struct block *gen_ncode(compiler_state_t *cstate, const char *s, bpf_u_int32 v,
       bpf_error(cstate, "illegal port number %u > 65535", v);
 
     {
-      struct block *b;
+      block *b;
       b = gen_port(cstate, v, proto, dir);
       gen_or(gen_port6(cstate, v, proto, dir), b);
       return b;
@@ -6969,7 +6957,7 @@ struct block *gen_ncode(compiler_state_t *cstate, const char *s, bpf_u_int32 v,
       bpf_error(cstate, "illegal port number %u > 65535", v);
 
     {
-      struct block *b;
+      block *b;
       b = gen_portrange(cstate, v, v, proto, dir);
       gen_or(gen_portrange6(cstate, v, v, proto, dir), b);
       return b;
@@ -6997,12 +6985,12 @@ struct block *gen_ncode(compiler_state_t *cstate, const char *s, bpf_u_int32 v,
 }
 
 #ifdef INET6
-struct block *gen_mcode6(compiler_state_t *cstate, const char *s1,
-                         const char *s2, bpf_u_int32 masklen, struct qual q) {
+block *gen_mcode6(compiler_state_t *cstate, const char *s1, const char *s2,
+                  bpf_u_int32 masklen, struct qual q) {
   struct addrinfo *res;
   struct in6_addr *addr;
   struct in6_addr mask;
-  struct block *b;
+  block *b;
   uint32_t *a, *m;
 
   /*
@@ -7059,9 +7047,8 @@ struct block *gen_mcode6(compiler_state_t *cstate, const char *s1,
 }
 #endif /*INET6*/
 
-struct block *gen_ecode(compiler_state_t *cstate, const char *s,
-                        struct qual q) {
-  struct block *b, *tmp;
+block *gen_ecode(compiler_state_t *cstate, const char *s, struct qual q) {
+  block *b, *tmp;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -7152,7 +7139,7 @@ static struct arth *gen_load_internal(compiler_state_t *cstate, int proto,
                                       struct arth *inst, bpf_u_int32 size) {
   int size_code;
   struct slist *s, *tmp;
-  struct block *b;
+  block *b;
   int regno = alloc_reg(cstate);
 
   free_reg(cstate, inst->regno);
@@ -7433,11 +7420,11 @@ struct arth *gen_load(compiler_state_t *cstate, int proto, struct arth *inst,
   return gen_load_internal(cstate, proto, inst, size);
 }
 
-static struct block *gen_relation_internal(compiler_state_t *cstate, int code,
-                                           struct arth *a0, struct arth *a1,
-                                           int reversed) {
+static block *gen_relation_internal(compiler_state_t *cstate, int code,
+                                    struct arth *a0, struct arth *a1,
+                                    int reversed) {
   struct slist *s0, *s1, *s2;
-  struct block *b, *tmp;
+  block *b, *tmp;
 
   s0 = xfer_to_x(cstate, a1);
   s1 = xfer_to_a(cstate, a0);
@@ -7474,8 +7461,8 @@ static struct block *gen_relation_internal(compiler_state_t *cstate, int code,
   return b;
 }
 
-struct block *gen_relation(compiler_state_t *cstate, int code, struct arth *a0,
-                           struct arth *a1, int reversed) {
+block *gen_relation(compiler_state_t *cstate, int code, struct arth *a0,
+                    struct arth *a1, int reversed) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -7655,9 +7642,9 @@ static void free_reg(compiler_state_t *cstate, int n) {
   cstate->regused[n] = 0;
 }
 
-static struct block *gen_len(compiler_state_t *cstate, int jmp, int n) {
+static block *gen_len(compiler_state_t *cstate, int jmp, int n) {
   struct slist *s;
-  struct block *b;
+  block *b;
 
   s = new_stmt(cstate, BPF_LD | BPF_LEN);
   b = new_block(cstate, JMP(jmp));
@@ -7667,7 +7654,7 @@ static struct block *gen_len(compiler_state_t *cstate, int jmp, int n) {
   return b;
 }
 
-struct block *gen_greater(compiler_state_t *cstate, int n) {
+block *gen_greater(compiler_state_t *cstate, int n) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -7681,8 +7668,8 @@ struct block *gen_greater(compiler_state_t *cstate, int n) {
 /*
  * Actually, this is less than or equal.
  */
-struct block *gen_less(compiler_state_t *cstate, int n) {
-  struct block *b;
+block *gen_less(compiler_state_t *cstate, int n) {
+  block *b;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -7707,9 +7694,8 @@ struct block *gen_less(compiler_state_t *cstate, int n) {
  * would be a way of testing particular radio header values, which
  * would generate code appropriate to the radio header in question.
  */
-struct block *gen_byteop(compiler_state_t *cstate, int op, int idx,
-                         bpf_u_int32 val) {
-  struct block *b;
+block *gen_byteop(compiler_state_t *cstate, int op, int idx, bpf_u_int32 val) {
+  block *b;
   struct slist *s;
 
   /*
@@ -7752,9 +7738,9 @@ struct block *gen_byteop(compiler_state_t *cstate, int op, int idx,
 
 static const u_char abroadcast[] = {0x0};
 
-struct block *gen_broadcast(compiler_state_t *cstate, int proto) {
+block *gen_broadcast(compiler_state_t *cstate, int proto) {
   bpf_u_int32 hostmask;
-  struct block *b0, *b1, *b2;
+  block *b0, *b1, *b2;
   static const u_char ebroadcast[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 
   /*
@@ -7821,8 +7807,8 @@ struct block *gen_broadcast(compiler_state_t *cstate, int proto) {
  * Generate code to test the low-order bit of a MAC address (that's
  * the bottom bit of the *first* byte).
  */
-static struct block *gen_mac_multicast(compiler_state_t *cstate, int offset) {
-  struct block *b0;
+static block *gen_mac_multicast(compiler_state_t *cstate, int offset) {
+  block *b0;
   struct slist *s;
 
   /* link[offset] & 1 != 0 */
@@ -7833,8 +7819,8 @@ static struct block *gen_mac_multicast(compiler_state_t *cstate, int offset) {
   return b0;
 }
 
-struct block *gen_multicast(compiler_state_t *cstate, int proto) {
-  struct block *b0, *b1, *b2;
+block *gen_multicast(compiler_state_t *cstate, int proto) {
+  block *b0, *b1, *b2;
   struct slist *s;
 
   /*
@@ -8026,8 +8012,8 @@ struct block *gen_multicast(compiler_state_t *cstate, int proto) {
  * Capturing only unicast traffic destined for this host is probably
  * better accomplished using a higher-layer filter.
  */
-struct block *gen_inbound(compiler_state_t *cstate, int dir) {
-  struct block *b0;
+block *gen_inbound(compiler_state_t *cstate, int dir) {
+  block *b0;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -8151,9 +8137,9 @@ struct block *gen_inbound(compiler_state_t *cstate, int dir) {
      */
     if (cstate->bpf_pcap->rfile != nullptr) {
       /* We have a FILE *, so this is a savefile */
-      bpf_error(cstate,
-                "inbound/outbound not supported on %s when reading savefiles",
-                pcap_datalink_val_to_description_or_dlt(cstate->linktype));
+      bpf_error(
+          cstate, "inbound/outbound not supported on %s when reading savefiles",
+          pcap::pcap_datalink_val_to_description_or_dlt(cstate->linktype));
       /*NOTREACHED*/
     }
     /* match outgoing packets */
@@ -8165,7 +8151,7 @@ struct block *gen_inbound(compiler_state_t *cstate, int dir) {
     }
 #else  /* defined(linux) */
     bpf_error(cstate, "inbound/outbound not supported on %s",
-              pcap_datalink_val_to_description_or_dlt(cstate->linktype));
+              pcap::pcap_datalink_val_to_description_or_dlt(cstate->linktype));
     /*NOTREACHED*/
 #endif /* defined(linux) */
   }
@@ -8174,8 +8160,8 @@ struct block *gen_inbound(compiler_state_t *cstate, int dir) {
 
 #ifdef HAVE_NET_PFVAR_H
 /* PF firewall log matched interface */
-struct block *gen_pf_ifname(compiler_state_t *cstate, const char *ifname) {
-  struct block *b0;
+block *gen_pf_ifname(compiler_state_t *cstate, const char *ifname) {
+  block *b0;
   u_int len, off;
 
   /*
@@ -8202,8 +8188,8 @@ struct block *gen_pf_ifname(compiler_state_t *cstate, const char *ifname) {
 }
 
 /* PF firewall log ruleset name */
-struct block *gen_pf_ruleset(compiler_state_t *cstate, char *ruleset) {
-  struct block *b0;
+block *gen_pf_ruleset(compiler_state_t *cstate, char *ruleset) {
+  block *b0;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -8229,8 +8215,8 @@ struct block *gen_pf_ruleset(compiler_state_t *cstate, char *ruleset) {
 }
 
 /* PF firewall log rule number */
-struct block *gen_pf_rnr(compiler_state_t *cstate, int rnr) {
-  struct block *b0;
+block *gen_pf_rnr(compiler_state_t *cstate, int rnr) {
+  block *b0;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -8250,8 +8236,8 @@ struct block *gen_pf_rnr(compiler_state_t *cstate, int rnr) {
 }
 
 /* PF firewall log sub-rule number */
-struct block *gen_pf_srnr(compiler_state_t *cstate, int srnr) {
-  struct block *b0;
+block *gen_pf_srnr(compiler_state_t *cstate, int srnr) {
+  block *b0;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -8271,8 +8257,8 @@ struct block *gen_pf_srnr(compiler_state_t *cstate, int srnr) {
 }
 
 /* PF firewall log reason code */
-struct block *gen_pf_reason(compiler_state_t *cstate, int reason) {
-  struct block *b0;
+block *gen_pf_reason(compiler_state_t *cstate, int reason) {
+  block *b0;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -8292,8 +8278,8 @@ struct block *gen_pf_reason(compiler_state_t *cstate, int reason) {
 }
 
 /* PF firewall log action */
-struct block *gen_pf_action(compiler_state_t *cstate, int action) {
-  struct block *b0;
+block *gen_pf_action(compiler_state_t *cstate, int action) {
+  block *b0;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -8312,8 +8298,8 @@ struct block *gen_pf_action(compiler_state_t *cstate, int action) {
   return (b0);
 }
 #else  /* !HAVE_NET_PFVAR_H */
-struct block *gen_pf_ifname(compiler_state_t *cstate,
-                            [[maybe_unused]] const char *ifname) {
+block *gen_pf_ifname(compiler_state_t *cstate,
+                     [[maybe_unused]] const char *ifname) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -8325,8 +8311,8 @@ struct block *gen_pf_ifname(compiler_state_t *cstate,
   /*NOTREACHED*/
 }
 
-struct block *gen_pf_ruleset(compiler_state_t *cstate,
-                             [[maybe_unused]] char *ruleset) {
+block *gen_pf_ruleset(compiler_state_t *cstate,
+                      [[maybe_unused]] char *ruleset) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -8338,7 +8324,7 @@ struct block *gen_pf_ruleset(compiler_state_t *cstate,
   /*NOTREACHED*/
 }
 
-struct block *gen_pf_rnr(compiler_state_t *cstate, [[maybe_unused]] int rnr) {
+block *gen_pf_rnr(compiler_state_t *cstate, [[maybe_unused]] int rnr) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -8350,7 +8336,7 @@ struct block *gen_pf_rnr(compiler_state_t *cstate, [[maybe_unused]] int rnr) {
   /*NOTREACHED*/
 }
 
-struct block *gen_pf_srnr(compiler_state_t *cstate, [[maybe_unused]] int srnr) {
+block *gen_pf_srnr(compiler_state_t *cstate, [[maybe_unused]] int srnr) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -8362,8 +8348,7 @@ struct block *gen_pf_srnr(compiler_state_t *cstate, [[maybe_unused]] int srnr) {
   /*NOTREACHED*/
 }
 
-struct block *gen_pf_reason(compiler_state_t *cstate,
-                            [[maybe_unused]] int reason) {
+block *gen_pf_reason(compiler_state_t *cstate, [[maybe_unused]] int reason) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -8375,8 +8360,7 @@ struct block *gen_pf_reason(compiler_state_t *cstate,
   /*NOTREACHED*/
 }
 
-struct block *gen_pf_action(compiler_state_t *cstate,
-                            [[maybe_unused]] int action) {
+block *gen_pf_action(compiler_state_t *cstate, [[maybe_unused]] int action) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -8390,9 +8374,9 @@ struct block *gen_pf_action(compiler_state_t *cstate,
 #endif /* HAVE_NET_PFVAR_H */
 
 /* IEEE 802.11 wireless header */
-struct block *gen_p80211_type(compiler_state_t *cstate, bpf_u_int32 type,
-                              bpf_u_int32 mask) {
-  struct block *b0;
+block *gen_p80211_type(compiler_state_t *cstate, bpf_u_int32 type,
+                       bpf_u_int32 mask) {
+  block *b0;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -8418,8 +8402,8 @@ struct block *gen_p80211_type(compiler_state_t *cstate, bpf_u_int32 type,
   return (b0);
 }
 
-struct block *gen_p80211_fcdir(compiler_state_t *cstate, bpf_u_int32 fcdir) {
-  struct block *b0;
+block *gen_p80211_fcdir(compiler_state_t *cstate, bpf_u_int32 fcdir) {
+  block *b0;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -8446,9 +8430,8 @@ struct block *gen_p80211_fcdir(compiler_state_t *cstate, bpf_u_int32 fcdir) {
   return (b0);
 }
 
-struct block *gen_acode(compiler_state_t *cstate, const char *s,
-                        struct qual q) {
-  struct block *b;
+block *gen_acode(compiler_state_t *cstate, const char *s, struct qual q) {
+  block *b;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -8479,9 +8462,9 @@ struct block *gen_acode(compiler_state_t *cstate, const char *s,
   }
 }
 
-static struct block *gen_ahostop(compiler_state_t *cstate, const u_char *eaddr,
-                                 int dir) {
-  struct block *b0, *b1;
+static block *gen_ahostop(compiler_state_t *cstate, const u_char *eaddr,
+                          int dir) {
+  block *b0, *b1;
 
   switch (dir) {
   /* src comes first, different from Ethernet */
@@ -8532,8 +8515,8 @@ static struct block *gen_ahostop(compiler_state_t *cstate, const u_char *eaddr,
   /*NOTREACHED*/
 }
 
-static struct block *gen_vlan_tpid_test(compiler_state_t *cstate) {
-  struct block *b0, *b1;
+static block *gen_vlan_tpid_test(compiler_state_t *cstate) {
+  block *b0, *b1;
 
   /* check for VLAN, including QinQ */
   b0 = gen_linktype(cstate, ETHERTYPE_8021Q);
@@ -8546,18 +8529,18 @@ static struct block *gen_vlan_tpid_test(compiler_state_t *cstate) {
   return b1;
 }
 
-static struct block *gen_vlan_vid_test(compiler_state_t *cstate,
-                                       bpf_u_int32 vlan_num) {
+static block *gen_vlan_vid_test(compiler_state_t *cstate,
+                                bpf_u_int32 vlan_num) {
   if (vlan_num > 0x0fff) {
     bpf_error(cstate, "VLAN tag %u greater than maximum %u", vlan_num, 0x0fff);
   }
   return gen_mcmp(cstate, OR_LINKPL, 0, BPF_H, vlan_num, 0x0fff);
 }
 
-static struct block *gen_vlan_no_bpf_extensions(compiler_state_t *cstate,
-                                                bpf_u_int32 vlan_num,
-                                                int has_vlan_tag) {
-  struct block *b0, *b1;
+static block *gen_vlan_no_bpf_extensions(compiler_state_t *cstate,
+                                         bpf_u_int32 vlan_num,
+                                         int has_vlan_tag) {
+  block *b0, *b1;
 
   b0 = gen_vlan_tpid_test(cstate);
 
@@ -8603,8 +8586,7 @@ static void gen_vlan_vloffset_add(compiler_state_t *cstate, bpf_abs_offset *off,
  * patch block b_tpid (VLAN TPID test) to update variable parts of link payload
  * and link type offsets first
  */
-static void gen_vlan_patch_tpid_test(compiler_state_t *cstate,
-                                     struct block *b_tpid) {
+static void gen_vlan_patch_tpid_test(compiler_state_t *cstate, block *b_tpid) {
   struct slist s;
 
   /* offset determined at run time, shift variable part */
@@ -8622,8 +8604,7 @@ static void gen_vlan_patch_tpid_test(compiler_state_t *cstate,
  * patch block b_vid (VLAN id test) to load VID value either from packet
  * metadata (using BPF extensions) if SKF_AD_VLAN_TAG_PRESENT is true
  */
-static void gen_vlan_patch_vid_test(compiler_state_t *cstate,
-                                    struct block *b_vid) {
+static void gen_vlan_patch_vid_test(compiler_state_t *cstate, block *b_vid) {
   struct slist *s, *s2, *sjeq;
   unsigned cnt;
 
@@ -8665,10 +8646,9 @@ static void gen_vlan_patch_vid_test(compiler_state_t *cstate,
  * header for VLAN tag. As the decision is done at run time, we need
  * update variable part of the offsets
  */
-static struct block *gen_vlan_bpf_extensions(compiler_state_t *cstate,
-                                             bpf_u_int32 vlan_num,
-                                             int has_vlan_tag) {
-  struct block *b0, *b_tpid, *b_vid = nullptr;
+static block *gen_vlan_bpf_extensions(compiler_state_t *cstate,
+                                      bpf_u_int32 vlan_num, int has_vlan_tag) {
+  block *b0, *b_tpid, *b_vid = nullptr;
   struct slist *s;
 
   /* generate new filter code based on extracting packet
@@ -8711,9 +8691,9 @@ static struct block *gen_vlan_bpf_extensions(compiler_state_t *cstate,
 /*
  * support IEEE 802.1Q VLAN trunk over ethernet
  */
-struct block *gen_vlan(compiler_state_t *cstate, bpf_u_int32 vlan_num,
-                       int has_vlan_tag) {
-  struct block *b0;
+block *gen_vlan(compiler_state_t *cstate, bpf_u_int32 vlan_num,
+                int has_vlan_tag) {
+  block *b0;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -8789,7 +8769,7 @@ struct block *gen_vlan(compiler_state_t *cstate, bpf_u_int32 vlan_num,
 
   default:
     bpf_error(cstate, "no VLAN support for %s",
-              pcap_datalink_val_to_description_or_dlt(cstate->linktype));
+              pcap::pcap_datalink_val_to_description_or_dlt(cstate->linktype));
     /*NOTREACHED*/
   }
 
@@ -8805,10 +8785,10 @@ struct block *gen_vlan(compiler_state_t *cstate, bpf_u_int32 vlan_num,
  * label_num might be clobbered by longjmp - yeah, it might, but *WHO CARES*?
  * It's not *used* after setjmp returns.
  */
-struct block *gen_mpls(compiler_state_t *cstate, bpf_u_int32 label_num_arg,
-                       int has_label_num) {
+block *gen_mpls(compiler_state_t *cstate, bpf_u_int32 label_num_arg,
+                int has_label_num) {
   volatile bpf_u_int32 label_num = label_num_arg;
-  struct block *b0, *b1;
+  block *b0, *b1;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -8843,8 +8823,9 @@ struct block *gen_mpls(compiler_state_t *cstate, bpf_u_int32 label_num_arg,
        * leave it for now */
 
     default:
-      bpf_error(cstate, "no MPLS support for %s",
-                pcap_datalink_val_to_description_or_dlt(cstate->linktype));
+      bpf_error(
+          cstate, "no MPLS support for %s",
+          pcap::pcap_datalink_val_to_description_or_dlt(cstate->linktype));
       /*NOTREACHED*/
     }
   }
@@ -8885,7 +8866,7 @@ struct block *gen_mpls(compiler_state_t *cstate, bpf_u_int32 label_num_arg,
 /*
  * Support PPPOE discovery and session.
  */
-struct block *gen_pppoed(compiler_state_t *cstate) {
+block *gen_pppoed(compiler_state_t *cstate) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -8897,9 +8878,9 @@ struct block *gen_pppoed(compiler_state_t *cstate) {
   return gen_linktype(cstate, ETHERTYPE_PPPOED);
 }
 
-struct block *gen_pppoes(compiler_state_t *cstate, bpf_u_int32 sess_num,
-                         int has_sess_num) {
-  struct block *b0, *b1;
+block *gen_pppoes(compiler_state_t *cstate, bpf_u_int32 sess_num,
+                  int has_sess_num) {
+  block *b0, *b1;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -8958,11 +8939,11 @@ struct block *gen_pppoes(compiler_state_t *cstate, bpf_u_int32 sess_num,
 
 /* Check that this is Geneve and the VNI is correct if
  * specified. Parameterized to handle both IPv4 and IPv6. */
-static struct block *gen_geneve_check(
-    compiler_state_t *cstate,
-    struct block *(*gen_portfn)(compiler_state_t *, u_int, int, int),
-    enum e_offrel offrel, bpf_u_int32 vni, int has_vni) {
-  struct block *b0, *b1;
+static block *
+gen_geneve_check(compiler_state_t *cstate,
+                 block *(*gen_portfn)(compiler_state_t *, u_int, int, int),
+                 enum e_offrel offrel, bpf_u_int32 vni, int has_vni) {
+  block *b0, *b1;
 
   b0 = gen_portfn(cstate, GENEVE_PORT, IPPROTO_UDP, Q_DST);
 
@@ -8991,9 +8972,9 @@ static struct block *gen_geneve_check(
  * - Place the IP header length (plus variable link prefix if
  *   needed) into register A to be used later to compute
  *   the inner packet offsets. */
-static struct block *gen_geneve4(compiler_state_t *cstate, bpf_u_int32 vni,
-                                 int has_vni) {
-  struct block *b0, *b1;
+static block *gen_geneve4(compiler_state_t *cstate, bpf_u_int32 vni,
+                          int has_vni) {
+  block *b0, *b1;
   struct slist *s, *s1;
 
   b0 = gen_geneve_check(cstate, gen_port, OR_TRAN_IPV4, vni, has_vni);
@@ -9016,9 +8997,9 @@ static struct block *gen_geneve4(compiler_state_t *cstate, bpf_u_int32 vni,
   return b1;
 }
 
-static struct block *gen_geneve6(compiler_state_t *cstate, bpf_u_int32 vni,
-                                 int has_vni) {
-  struct block *b0, *b1;
+static block *gen_geneve6(compiler_state_t *cstate, bpf_u_int32 vni,
+                          int has_vni) {
+  block *b0, *b1;
   struct slist *s, *s1;
 
   b0 = gen_geneve_check(cstate, gen_port6, OR_TRAN_IPV6, vni, has_vni);
@@ -9191,9 +9172,8 @@ static struct slist *gen_geneve_offsets(compiler_state_t *cstate) {
 }
 
 /* Check to see if this is a Geneve packet. */
-struct block *gen_geneve(compiler_state_t *cstate, bpf_u_int32 vni,
-                         int has_vni) {
-  struct block *b0, *b1;
+block *gen_geneve(compiler_state_t *cstate, bpf_u_int32 vni, int has_vni) {
+  block *b0, *b1;
   struct slist *s;
 
   /*
@@ -9227,8 +9207,8 @@ struct block *gen_geneve(compiler_state_t *cstate, bpf_u_int32 vni,
 
 /* Check that the encapsulated frame has a link layer header
  * for Ethernet filters. */
-static struct block *gen_geneve_ll_check(compiler_state_t *cstate) {
-  struct block *b0;
+static block *gen_geneve_ll_check(compiler_state_t *cstate) {
+  block *b0;
   struct slist *s, *s1;
 
   /* The easiest way to see if there is a link layer present
@@ -9252,11 +9232,10 @@ static struct block *gen_geneve_ll_check(compiler_state_t *cstate) {
   return b0;
 }
 
-static struct block *gen_atmfield_code_internal(compiler_state_t *cstate,
-                                                int atmfield,
-                                                bpf_u_int32 jvalue, int jtype,
-                                                int reverse) {
-  struct block *b0;
+static block *gen_atmfield_code_internal(compiler_state_t *cstate, int atmfield,
+                                         bpf_u_int32 jvalue, int jtype,
+                                         int reverse) {
+  block *b0;
 
   switch (atmfield) {
 
@@ -9307,8 +9286,8 @@ static struct block *gen_atmfield_code_internal(compiler_state_t *cstate,
   return b0;
 }
 
-static struct block *gen_atmtype_metac(compiler_state_t *cstate) {
-  struct block *b0, *b1;
+static block *gen_atmtype_metac(compiler_state_t *cstate) {
+  block *b0, *b1;
 
   b0 = gen_atmfield_code_internal(cstate, A_VPI, 0, BPF_JEQ, 0);
   b1 = gen_atmfield_code_internal(cstate, A_VCI, 1, BPF_JEQ, 0);
@@ -9316,8 +9295,8 @@ static struct block *gen_atmtype_metac(compiler_state_t *cstate) {
   return b1;
 }
 
-static struct block *gen_atmtype_sc(compiler_state_t *cstate) {
-  struct block *b0, *b1;
+static block *gen_atmtype_sc(compiler_state_t *cstate) {
+  block *b0, *b1;
 
   b0 = gen_atmfield_code_internal(cstate, A_VPI, 0, BPF_JEQ, 0);
   b1 = gen_atmfield_code_internal(cstate, A_VCI, 5, BPF_JEQ, 0);
@@ -9325,16 +9304,16 @@ static struct block *gen_atmtype_sc(compiler_state_t *cstate) {
   return b1;
 }
 
-static struct block *gen_atmtype_llc(compiler_state_t *cstate) {
-  struct block *b0;
+static block *gen_atmtype_llc(compiler_state_t *cstate) {
+  block *b0;
 
   b0 = gen_atmfield_code_internal(cstate, A_PROTOTYPE, PT_LLC, BPF_JEQ, 0);
   cstate->linktype = cstate->prevlinktype;
   return b0;
 }
 
-struct block *gen_atmfield_code(compiler_state_t *cstate, int atmfield,
-                                bpf_u_int32 jvalue, int jtype, int reverse) {
+block *gen_atmfield_code(compiler_state_t *cstate, int atmfield,
+                         bpf_u_int32 jvalue, int jtype, int reverse) {
   /*
    * Catch errors reported by us and routines below us, and return nullptr
    * on an error.
@@ -9345,8 +9324,8 @@ struct block *gen_atmfield_code(compiler_state_t *cstate, int atmfield,
   return gen_atmfield_code_internal(cstate, atmfield, jvalue, jtype, reverse);
 }
 
-struct block *gen_atmtype_abbrev(compiler_state_t *cstate, int type) {
-  struct block *b0, *b1;
+block *gen_atmtype_abbrev(compiler_state_t *cstate, int type) {
+  block *b0, *b1;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -9451,8 +9430,8 @@ struct block *gen_atmtype_abbrev(compiler_state_t *cstate, int type) {
  * MSU, length is 3 or more
  * For MTP2_HSL, sequences are on 2 bytes, and length on 9 bits
  */
-struct block *gen_mtp2type_abbrev(compiler_state_t *cstate, int type) {
-  struct block *b0, *b1;
+block *gen_mtp2type_abbrev(compiler_state_t *cstate, int type) {
+  block *b0, *b1;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -9530,11 +9509,10 @@ struct block *gen_mtp2type_abbrev(compiler_state_t *cstate, int type) {
  * jvalue might be clobbered by longjmp - yeah, it might, but *WHO CARES*?
  * It's not *used* after setjmp returns.
  */
-struct block *gen_mtp3field_code(compiler_state_t *cstate, int mtp3field,
-                                 bpf_u_int32 jvalue_arg, int jtype,
-                                 int reverse) {
+block *gen_mtp3field_code(compiler_state_t *cstate, int mtp3field,
+                          bpf_u_int32 jvalue_arg, int jtype, int reverse) {
   volatile bpf_u_int32 jvalue = jvalue_arg;
-  struct block *b0;
+  block *b0;
   bpf_u_int32 val1, val2, val3;
   u_int newoff_sio;
   u_int newoff_opc;
@@ -9635,8 +9613,8 @@ struct block *gen_mtp3field_code(compiler_state_t *cstate, int mtp3field,
   return b0;
 }
 
-static struct block *gen_msg_abbrev(compiler_state_t *cstate, int type) {
-  struct block *b1;
+static block *gen_msg_abbrev(compiler_state_t *cstate, int type) {
+  block *b1;
 
   /*
    * Q.2931 signalling protocol messages for handling virtual circuits
@@ -9676,8 +9654,8 @@ static struct block *gen_msg_abbrev(compiler_state_t *cstate, int type) {
   return b1;
 }
 
-struct block *gen_atmmulti_abbrev(compiler_state_t *cstate, int type) {
-  struct block *b0, *b1;
+block *gen_atmmulti_abbrev(compiler_state_t *cstate, int type) {
+  block *b0, *b1;
 
   /*
    * Catch errors reported by us and routines below us, and return nullptr
@@ -9753,5 +9731,3 @@ struct block *gen_atmmulti_abbrev(compiler_state_t *cstate, int type) {
   }
   return b1;
 }
-
-} // namespace pcap
