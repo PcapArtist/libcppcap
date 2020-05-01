@@ -638,16 +638,16 @@ static constexpr capture_source_type capture_source_types[] = {
  * The list, as returned through "alldevsp", may be nullptr if no interfaces
  * were up and could be opened.
  */
-std::variant<std::string, Interfaces> pcap_findalldevs() {
+std::variant<PcapError, Interfaces> pcap_findalldevs() {
   size_t i;
   Interfaces devlist;
-  std::string error;
+  PcapError error;
 
   /*
    * Find all the local network interfaces on which we
    * can capture.
    */
-  if (pcap_platform_finddevs(&devlist, error.data()) == -1) {
+  if (pcap_platform_finddevs(&devlist, error.string.data()) == -1) {
     /*
      * Failed - free all of the entries we were given
      * before we failed.
@@ -660,7 +660,8 @@ std::variant<std::string, Interfaces> pcap_findalldevs() {
    * source types what interfaces they have.
    */
   for (i = 0; capture_source_types[i].findalldevs_op != nullptr; i++) {
-    if (capture_source_types[i].findalldevs_op(&devlist, error.data()) == -1) {
+    if (capture_source_types[i].findalldevs_op(&devlist, error.string.data()) ==
+        -1) {
       /*
        * We had an error; free the list we've been
        * constructing.
@@ -916,7 +917,7 @@ get_if_description([[maybe_unused]] std::string_view name) {
  * IFF_ flags and description, and, if that succeeds, return a pointer to
  * the new entry, otherwise return nullptr and set errbuf to an error message.
  */
-std::variant<std::string, Interfaces::iterator>
+std::variant<PcapError, Interfaces::iterator>
 find_or_add_if(Interfaces &devlistp, std::string_view name,
                bpf_u_int32 if_flags, get_if_flags_func get_flags_func) {
   bpf_u_int32 pcap_flags;
@@ -972,7 +973,7 @@ find_or_add_if(Interfaces &devlistp, std::string_view name,
  * call may be the only call made to add to the list, and we want to
  * add interfaces even if they have no addresses.)
  */
-std::optional<std::string>
+std::optional<PcapError>
 add_addr_to_if(Interfaces &devlistp, std::string_view name,
                bpf_u_int32 if_flags, get_if_flags_func get_flags_func,
                std::string_view addr, std::string_view netmask,
@@ -982,11 +983,11 @@ add_addr_to_if(Interfaces &devlistp, std::string_view name,
    * Check whether the device exists and, if not, add it.
    */
   auto curdev = find_or_add_if(devlistp, name, if_flags, get_flags_func);
-  if (std::holds_alternative<std::string>(curdev)) {
+  if (std::holds_alternative<PcapError>(curdev)) {
     /*
      * Error - give up.
      */
-    return {std::move(std::get<std::string>(curdev))};
+    return {std::move(std::get<PcapError>(curdev))};
   }
 
   if (addr.size() == 0) {
@@ -1032,12 +1033,12 @@ void add_addr_to_dev(Interface &curdev, std::string addr, std::string netmask,
  * flags and description, and, if that succeeds, return 0, otherwise
  * return -1 and set errbuf to an error message.
  */
-std::variant<std::string, Interfaces::iterator>
+std::variant<PcapError, Interfaces::iterator>
 find_or_add_dev(Interfaces &interfaces, std::string_view name,
                 bpf_u_int32 flags, get_if_flags_func get_flags_func,
                 std::string_view description) {
 
-  std::string errbuf(PCAP_ERRBUF_SIZE, '\0');
+  PcapError error;
 
   /*
    * Is there already an entry in the list for this device?
@@ -1057,12 +1058,12 @@ find_or_add_dev(Interfaces &interfaces, std::string_view name,
   /*
    * Try to get additional flags for the device.
    */
-  if ((*get_flags_func)(std::string(name).c_str(), &flags, errbuf.data()) ==
-      -1) {
+  if ((*get_flags_func)(std::string(name).c_str(), &flags,
+                        error.string.data()) == -1) {
     /*
      * Failed.
      */
-    return errbuf;
+    return error;
   }
 
   /*

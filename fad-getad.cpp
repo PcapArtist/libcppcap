@@ -263,7 +263,7 @@ int pcap_findalldevs_interfaces(Interfaces *devlistp, char *errbuf,
             add_addr_to_if(*devlistp, ifa->ifa_name, ifa->ifa_flags,
                            get_flags_func, addr, netmask, broadaddr, dstaddr);
         add_ret != std::nullopt) {
-      strncpy(errbuf, add_ret->c_str(), PCAP_ERRBUF_SIZE);
+      strncpy(errbuf, add_ret->string.c_str(), PCAP_ERRBUF_SIZE);
       ret = -1;
       break;
     }

@@ -604,7 +604,7 @@ PCAP_API int pcap_dump_flush(pcap_dumper_t *);
 PCAP_API void pcap_dump_close(pcap_dumper_t *);
 PCAP_API void pcap_dump(u_char *, const struct pcap_pkthdr *, const u_char *);
 
-PCAP_API std::variant<std::string, Interfaces> pcap_findalldevs();
+PCAP_API std::variant<PcapError, Interfaces> pcap_findalldevs();
 
 /*
  * We return a pointer to the version string, rather than exporting the

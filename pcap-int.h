@@ -501,7 +501,7 @@ int pcap_platform_finddevs(Interfaces *, char *);
 int pcap_findalldevs_interfaces(Interfaces *, char *, int (*)(const char *),
                                 get_if_flags_func);
 #endif
-std::variant<std::string, Interfaces::iterator>
+std::variant<PcapError, Interfaces::iterator>
 find_or_add_dev(Interfaces &interfaces, std::string_view name,
                 bpf_u_int32 flags, get_if_flags_func get_flags_func,
                 std::string_view description);
@@ -511,10 +511,10 @@ Interfaces::iterator add_dev(Interfaces &devlistp, std::string name,
 void add_addr_to_dev(Interface &curdev, std::string addr, std::string netmask,
                      std::string broadaddr, std::string dstaddr);
 #ifndef _WIN32
-std::variant<std::string, Interfaces::iterator>
+std::variant<PcapError, Interfaces::iterator>
 find_or_add_if(Interfaces &devlistp, std::string_view name,
                bpf_u_int32 if_flags, get_if_flags_func get_flags_func);
-std::optional<std::string>
+std::optional<PcapError>
 add_addr_to_if(Interfaces &devlistp, std::string_view name,
                bpf_u_int32 if_flags, get_if_flags_func get_flags_func,
                std::string_view addr, std::string_view netmask,
