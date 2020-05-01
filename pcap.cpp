@@ -1002,7 +1002,9 @@ add_addr_to_if(Interfaces &devlistp, std::string_view name,
    * address for it; add an entry for that address to the
    * interface's list of addresses.
    */
-  add_addr_to_dev(curdev, addr, netmask, broadaddr, dstaddr);
+  add_addr_to_dev(std::get<Interfaces::iterator>(curdev)->second,
+                  std::string(*addr), std::string(netmask),
+                  std::string(broadaddr), std::string(dstaddr));
   return std::nullopt;
 }
 #endif /* _WIN32 */
@@ -1066,7 +1068,8 @@ find_or_add_dev(Interfaces &interfaces, std::string_view name,
   /*
    * Now, try to add it to the list of devices.
    */
-  return {add_dev(interfaces, name, flags, description)};
+  return {
+      add_dev(interfaces, std::string(name), flags, std::string(description))};
 }
 
 /*
@@ -1086,105 +1089,15 @@ Interfaces::iterator find_dev(Interfaces &devlistp, std::string_view name) {
  *
  * If we weren't given a description, try to get one.
  */
-Interfaces::iterator add_dev(Interfaces &devlistp, std::string_view name,
-                             bpf_u_int32 flags, std::string_view description) {
+Interfaces::iterator add_dev(Interfaces &devlistp, std::string name,
+                             bpf_u_int32 flags, std::string description) {
 
   auto priority = get_figure_of_merit(flags, name);
 
-  return devlistp.emplace(std::piecewise_construct,
-                          std::forward_as_tuple(priority),
-                          std::forward_as_tuple(name, description, {}, flags));
+  return devlistp.emplace(
+      std::piecewise_construct, std::forward_as_tuple(priority),
+      std::forward_as_tuple(std::move(name), std::move(description), flags));
 }
-
-/*
- * pcap-npf.cpp has its own pcap_lookupdev(), for compatibility reasons, as
- * it actually returns the names of all interfaces, with a NUL separator
- * between them; some callers may depend on that.
- *
- * MS-DOS has its own pcap_lookupdev(), but that might be useful only
- * as an optimization.
- *
- * In all other cases, we just use pcap_findalldevs() to get a list of
- * devices, and pick from that list.
- */
-#if !defined(HAVE_PACKET32) && !defined(MSDOS)
-/*
- * Return the name of a network interface attached to the system, or nullptr
- * if none can be found.  The interface must be configured up; the
- * lowest unit number is preferred; loopback is ignored.
- */
-char *pcap_lookupdev(char *errbuf) {
-#ifdef _WIN32
-/*
- * Windows - use the same size as the old WinPcap 3.1 code.
- * XXX - this is probably bigger than it needs to be.
- */
-#define IF_NAMESIZE 8192
-#else
-/*
- * UN*X - use the system's interface name size.
- * XXX - that might not be large enough for capture devices
- * that aren't regular network interfaces.
- */
-/* for old BSD systems, including bsdi3 */
-#ifndef IF_NAMESIZE
-#define IF_NAMESIZE IFNAMSIZ
-#endif
-#endif
-  static char device[IF_NAMESIZE + 1];
-  char *ret;
-
-  /*
-   * We disable this in "new API" mode, because 1) in WinPcap/Npcap,
-   * it may return UTF-16 strings, for backwards-compatibility
-   * reasons, and we're also disabling the hack to make that work,
-   * for not-going-past-the-end-of-a-string reasons, and 2) we
-   * want its behavior to be consistent.
-   *
-   * In addition, it's not thread-safe, so we've marked it as
-   * deprecated.
-   */
-  if (pcap_new_api) {
-    snprintf(errbuf, PCAP_ERRBUF_SIZE,
-             "pcap_lookupdev() is deprecated and is not supported in programs "
-             "calling pcap_init()");
-    return (nullptr);
-  }
-
-  auto find_devs_ret = pcap_findalldevs();
-
-  if (!std::holds_alternative<Interfaces>(find_devs_ret)) {
-    return (nullptr);
-  }
-
-  auto *alldevs = std::get<Interfaces>(find_devs_ret).beginning;
-
-  if (alldevs == nullptr || (alldevs->flags & PCAP_IF_LOOPBACK)) {
-    /*
-     * There are no devices on the list, or the first device
-     * on the list is a loopback device, which means there
-     * are no non-loopback devices on the list.  This means
-     * we can't return any device.
-     *
-     * XXX - why not return a loopback device?  If we can't
-     * capture on it, it won't be on the list, and if it's
-     * on the list, there aren't any non-loopback devices,
-     * so why not just supply it as the default device?
-     */
-    (void)pcap_strlcpy(errbuf, "no suitable device found", PCAP_ERRBUF_SIZE);
-    ret = nullptr;
-  } else {
-    /*
-     * Return the name of the first device on the list.
-     */
-    (void)pcap_strlcpy(device, alldevs->name, sizeof(device));
-    ret = device;
-  }
-
-  pcap_freealldevs(alldevs);
-  return (ret);
-}
-#endif /* !defined(HAVE_PACKET32) && !defined(MSDOS) */
 
 #if !defined(_WIN32) && !defined(MSDOS)
 /*

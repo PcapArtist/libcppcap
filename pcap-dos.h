@@ -84,14 +84,6 @@ typedef unsigned __int64 QWORD;
 #define max(a, b) ((a) < (b) ? (b) : (a))
 #endif
 
-#if !defined(_U_) && defined(__GNUC__)
-#define _U_ __attribute__((unused))
-#endif
-
-#ifndef _U_
-#define _U_
-#endif
-
 #if defined(USE_32BIT_DRIVERS)
 #include "msdos/pm_drvr/lock.h"
 

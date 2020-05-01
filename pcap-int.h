@@ -506,8 +506,8 @@ find_or_add_dev(Interfaces &interfaces, std::string_view name,
                 bpf_u_int32 flags, get_if_flags_func get_flags_func,
                 std::string_view description);
 Interfaces::iterator find_dev(Interfaces &devlistp, std::string_view name);
-Interfaces::iterator add_dev(Interfaces &devlistp, std::string_view name,
-                             bpf_u_int32 flags, std::string_view description);
+Interfaces::iterator add_dev(Interfaces &devlistp, std::string name,
+                             bpf_u_int32 flags, std::string description);
 void add_addr_to_dev(Interface &curdev, std::string addr, std::string netmask,
                      std::string broadaddr, std::string dstaddr);
 #ifndef _WIN32

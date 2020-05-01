@@ -448,32 +448,6 @@ static void pcap_cleanup_dos(pcap_t *p) {
 }
 
 /*
- * Return the name of the 1st network interface,
- * or nullptr if none can be found.
- */
-char *pcap_lookupdev(char *ebuf) {
-  struct device *dev;
-
-#ifdef USE_32BIT_DRIVERS
-  init_32bit();
-#endif
-
-  for (dev = (struct device *)dev_base; dev; dev = dev->next) {
-    PCAP_ASSERT(dev->probe);
-
-    if ((*dev->probe)(dev)) {
-      FLUSHK();
-      probed_dev = (struct device *)dev; /* remember last probed device */
-      return (char *)dev->name;
-    }
-  }
-
-  if (ebuf)
-    strcpy(ebuf, "No driver found");
-  return (nullptr);
-}
-
-/*
  * Gets localnet & netmask from Watt-32.
  */
 int pcap_lookupnet(const char *device, bpf_u_int32 *localnet,

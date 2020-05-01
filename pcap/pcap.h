@@ -298,8 +298,12 @@ struct pcap_stat_ex {
 struct Interface {
   std::string name;        /* name to hand to "pcap_open_live()" */
   std::string description; /* textual description of interface, or nullptr */
-  std::list<pcap_addr> addresses;
+  std::list<pcap_addr> addresses{};
   bpf_u_int32 flags; /* PCAP_IF_ interface flags */
+
+  Interface(std::string name_, std::string description_, bpf_u_int32 flags_)
+      : name(std::move(name_)), description(std::move(description_)),
+        flags(flags_) {}
 };
 
 /*
@@ -328,6 +332,11 @@ struct pcap_addr {
   std::string netmask;   /* netmask for that address */
   std::string broadaddr; /* broadcast address for that address */
   std::string dstaddr;   /* P2P destination address for that address */
+
+  pcap_addr(std::string addr_, std::string netmask_, std::string broadaddr_,
+            std::string dstaddr_)
+      : addr(std::move(addr_)), netmask(std::move(netmask_)),
+        broadaddr(std::move(broadaddr_)), dstaddr(std::move(dstaddr_)) {}
 };
 
 typedef void (*pcap_handler)(u_char *, const struct pcap_pkthdr *,
@@ -394,16 +403,6 @@ typedef void (*pcap_handler)(u_char *, const struct pcap_pkthdr *,
 #define PCAP_CHAR_ENC_UTF_8 0x00000001U /* strings are in UTF-8 */
 
 PCAP_API int pcap_init(unsigned int, char *);
-
-/*
- * We're deprecating pcap_lookupdev() for various reasons (not
- * thread-safe, can behave weirdly with WinPcap).  Callers
- * should use pcap_findalldevs() and use the first device.
- */
-PCAP_API char *pcap_lookupdev(char *)
-    PCAP_DEPRECATED(pcap_lookupdev,
-                    "use 'pcap_findalldevs' and use the first device");
-
 PCAP_API int pcap_lookupnet(const char *, bpf_u_int32 *, bpf_u_int32 *, char *);
 
 PCAP_API pcap_t *pcap_create(const char *, char *);
