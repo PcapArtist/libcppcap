@@ -702,7 +702,8 @@ static int dag_read(pcap_t *p, int cnt, pcap_handler callback, u_char *user) {
   return processed;
 }
 
-static int dag_inject(pcap_t *p, const void *buf _U_, int size _U_) {
+static int dag_inject(pcap_t *p, [[maybe_unused]] const void *buf,
+                      [[maybe_unused]] int size) {
   pcap_strlcpy(p->errbuf, "Sending packets isn't supported on DAG cards",
                PCAP_ERRBUF_SIZE);
   return (-1);
@@ -1121,7 +1122,7 @@ static int dag_stats(pcap_t *p, struct pcap_stat *ps) {
 /*
  * Add all DAG devices.
  */
-int dag_findalldevs(pcap_if_list_t *devlistp, char *errbuf) {
+int dag_findalldevs(Interfaces *devlistp, char *errbuf) {
   char name[12]; /* XXX - pick a size */
   int c;
   char dagname[DAGNAME_BUFSIZE];
@@ -1394,7 +1395,8 @@ static int dag_get_datalink(pcap_t *p) {
 /*
  * There are no regular interfaces, just DAG interfaces.
  */
-int pcap_platform_finddevs(pcap_if_list_t *devlistp _U_, char *errbuf) {
+int pcap_platform_finddevs([[maybe_unused]] Interfaces *devlistp,
+                           char *errbuf) {
   return (0);
 }
 

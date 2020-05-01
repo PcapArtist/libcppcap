@@ -77,6 +77,8 @@
 #endif /* HAVE_NETPACKET_PACKET_H */
 #endif /* (defined(linux) || defined(__Lynx__)) && defined(AF_PACKET) */
 
+namespace pcap {
+
 /*
  * This is fun.
  *
@@ -140,12 +142,11 @@ static size_t get_sa_len(struct sockaddr *addr) {
  * The list, as returned through "alldevsp", may be nullptr if no interfaces
  * could be opened.
  */
-int pcap_findalldevs_interfaces(pcap_if_list_t *devlistp, char *errbuf,
+int pcap_findalldevs_interfaces(Interfaces *devlistp, char *errbuf,
                                 int (*check_usable)(const char *),
                                 get_if_flags_func get_flags_func) {
   struct ifaddrs *ifap, *ifa;
-  struct sockaddr *addr, *netmask, *broadaddr, *dstaddr;
-  size_t addr_size, broadaddr_size, dstaddr_size;
+  std::string_view addr, netmask, broadaddr, dstaddr;
   int ret = 0;
   char *p, *q;
 
@@ -215,13 +216,14 @@ int pcap_findalldevs_interfaces(pcap_if_list_t *devlistp, char *errbuf,
      * no netmask).
      */
     if (ifa->ifa_addr != nullptr) {
-      addr = ifa->ifa_addr;
-      addr_size = SA_LEN(addr);
-      netmask = ifa->ifa_netmask;
+      addr = std::string_view(reinterpret_cast<const char *>(ifa->ifa_addr),
+                              SA_LEN(ifa->ifa_addr));
+      netmask =
+          std::string_view(reinterpret_cast<const char *>(ifa->ifa_netmask),
+                           SA_LEN(ifa->ifa_netmask));
     } else {
-      addr = nullptr;
-      addr_size = 0;
-      netmask = nullptr;
+      addr = "";
+      netmask = "";
     }
 
     /*
@@ -240,26 +242,28 @@ int pcap_findalldevs_interfaces(pcap_if_list_t *devlistp, char *errbuf,
      * platforms).
      */
     if (ifa->ifa_flags & IFF_BROADCAST && ifa->ifa_broadaddr != nullptr) {
-      broadaddr = ifa->ifa_broadaddr;
-      broadaddr_size = SA_LEN(broadaddr);
+      broadaddr =
+          std::string_view(reinterpret_cast<const char *>(ifa->ifa_broadaddr),
+                           SA_LEN(ifa->ifa_broadaddr));
     } else {
-      broadaddr = nullptr;
-      broadaddr_size = 0;
+      broadaddr = "";
     }
     if (ifa->ifa_flags & IFF_POINTOPOINT && ifa->ifa_dstaddr != nullptr) {
-      dstaddr = ifa->ifa_dstaddr;
-      dstaddr_size = SA_LEN(ifa->ifa_dstaddr);
+      dstaddr =
+          std::string_view(reinterpret_cast<const char *>(ifa->ifa_dstaddr),
+                           SA_LEN(ifa->ifa_dstaddr));
     } else {
-      dstaddr = nullptr;
-      dstaddr_size = 0;
+      dstaddr = "";
     }
 
     /*
      * Add information for this address to the list.
      */
-    if (add_addr_to_if(devlistp, ifa->ifa_name, ifa->ifa_flags, get_flags_func,
-                       addr, addr_size, netmask, addr_size, broadaddr,
-                       broadaddr_size, dstaddr, dstaddr_size, errbuf) < 0) {
+    if (auto add_ret =
+            add_addr_to_if(*devlistp, ifa->ifa_name, ifa->ifa_flags,
+                           get_flags_func, addr, netmask, broadaddr, dstaddr);
+        add_ret != std::nullopt) {
+      strncpy(errbuf, add_ret->string.c_str(), PCAP_ERRBUF_SIZE);
       ret = -1;
       break;
     }
@@ -269,3 +273,5 @@ int pcap_findalldevs_interfaces(pcap_if_list_t *devlistp, char *errbuf,
 
   return (ret);
 }
+
+} // namespace pcap

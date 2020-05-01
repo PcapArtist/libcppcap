@@ -127,7 +127,7 @@ typedef struct _TC_FUNCTIONS {
   TcFcnStatisticsQueryValue StatisticsQueryValue;
 } TC_FUNCTIONS;
 
-static pcap_if_t *TcCreatePcapIfFromPort(TC_PORT port);
+static Interface *TcCreatePcapIfFromPort(TC_PORT port);
 static int TcSetDatalink(pcap_t *p, int dlt);
 static int TcGetNonBlock(pcap_t *p);
 static int TcSetNonBlock(pcap_t *p, int nonblock);
@@ -445,13 +445,13 @@ struct pcap_tc {
   u_char *PpiPacket;
 };
 
-int TcFindAllDevs(pcap_if_list_t *devlist, char *errbuf) {
+int TcFindAllDevs(Interfaces *devlist, char *errbuf) {
   TC_API_LOAD_STATUS loadStatus;
   ULONG numPorts;
   PTC_PORT pPorts = nullptr;
   TC_STATUS status;
   int result = 0;
-  pcap_if_t *dev;
+  Interface *dev;
   ULONG i;
 
   do {
@@ -494,12 +494,12 @@ int TcFindAllDevs(pcap_if_list_t *devlist, char *errbuf) {
   return result;
 }
 
-static pcap_if_t *TcCreatePcapIfFromPort(TC_PORT port) {
+static Interface *TcCreatePcapIfFromPort(TC_PORT port) {
   CHAR *name;
   CHAR *description;
-  pcap_if_t *newIf = nullptr;
+  Interface *newIf = nullptr;
 
-  newIf = (pcap_if_t *)malloc(sizeof(*newIf));
+  newIf = (Interface *)malloc(sizeof(*newIf));
   if (newIf == nullptr) {
     return nullptr;
   }
@@ -1167,45 +1167,51 @@ static HANDLE TcGetReceiveWaitHandle(pcap_t *p) {
   return g_TcFunctions.InstanceGetReceiveWaitHandle(pt->TcInstance);
 }
 
-static int TcOidGetRequest(pcap_t *p, bpf_u_int32 oid _U_, void *data _U_,
-                           size_t *lenp _U_) {
+static int TcOidGetRequest(pcap_t *p, [[maybe_unused]] bpf_u_int32 oid,
+                           [[maybe_unused]] void *data,
+                           [[maybe_unused]] size_t *lenp) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "An OID get request cannot be performed on a TurboCap device");
   return PCAP_ERROR;
 }
 
-static int TcOidSetRequest(pcap_t *p, bpf_u_int32 oid _U_, const void *data _U_,
-                           size_t *lenp _U_) {
+static int TcOidSetRequest(pcap_t *p, [[maybe_unused]] bpf_u_int32 oid,
+                           [[maybe_unused]] const void *data,
+                           [[maybe_unused]] size_t *lenp) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "An OID set request cannot be performed on a TurboCap device");
   return PCAP_ERROR;
 }
 
-static u_int TcSendqueueTransmit(pcap_t *p, pcap_send_queue *queue _U_,
-                                 int sync _U_) {
+static u_int TcSendqueueTransmit(pcap_t *p,
+                                 [[maybe_unused]] pcap_send_queue *queue,
+                                 [[maybe_unused]] int sync) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "Packets cannot be bulk transmitted on a TurboCap device");
   return 0;
 }
 
-static int TcSetUserBuffer(pcap_t *p, int size _U_) {
+static int TcSetUserBuffer(pcap_t *p, [[maybe_unused]] int size) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "The user buffer cannot be set on a TurboCap device");
   return -1;
 }
 
-static int TcLiveDump(pcap_t *p, char *filename _U_, int maxsize _U_,
-                      int maxpacks _U_) {
+static int TcLiveDump(pcap_t *p, [[maybe_unused]] char *filename,
+                      [[maybe_unused]] int maxsize,
+                      [[maybe_unused]] int maxpacks) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "Live packet dumping cannot be performed on a TurboCap device");
   return -1;
 }
 
-static int TcLiveDumpEnded(pcap_t *p, int sync _U_) {
+static int TcLiveDumpEnded(pcap_t *p, [[maybe_unused]] int sync) {
   snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
            "Live packet dumping cannot be performed on a TurboCap device");
   return -1;
 }
 
-static PAirpcapHandle TcGetAirPcapHandle(pcap_t *p _U_) { return nullptr; }
+static PAirpcapHandle TcGetAirPcapHandle([[maybe_unused]] pcap_t *p) {
+  return nullptr;
+}
 #endif

@@ -32,18 +32,19 @@
  */
 
 #ifndef pcap_rpcap_h
-#define	pcap_rpcap_h
+#define pcap_rpcap_h
 
 /*
  * Internal interfaces for "pcap_open()".
  */
-pcap_t	*pcap_open_rpcap(const char *source, int snaplen, int flags,
-    int read_timeout, struct pcap_rmtauth *auth, char *errbuf);
+pcap_t *pcap_open_rpcap(const char *source, int snaplen, int flags,
+                        int read_timeout, struct pcap_rmtauth *auth,
+                        char *errbuf);
 
 /*
  * Internal interfaces for "pcap_findalldevs_ex()".
  */
-int	pcap_findalldevs_ex_remote(const char *source,
-    struct pcap_rmtauth *auth, pcap_if_t **alldevs, char *errbuf);
+int pcap_findalldevs_ex_remote(const char *source, struct pcap_rmtauth *auth,
+                               Interface **alldevs, char *errbuf);
 
 #endif

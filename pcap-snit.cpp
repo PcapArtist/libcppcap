@@ -437,7 +437,7 @@ bad:
   return (err);
 }
 
-pcap_t *pcap_create_interface(const char *device _U_, char *ebuf) {
+pcap_t *pcap_create_interface([[maybe_unused]] const char *device, char *ebuf) {
   pcap_t *p;
 
   p = pcap_create_common(ebuf, sizeof(struct pcap_snit));
@@ -452,10 +452,11 @@ pcap_t *pcap_create_interface(const char *device _U_, char *ebuf) {
  * XXX - there's probably a NIOCBIND error that means "that device
  * doesn't support NIT"; if so, we should try an NIOCBIND and use that.
  */
-static int can_be_bound(const char *name _U_) { return (1); }
+static int can_be_bound([[maybe_unused]] const char *name) { return (1); }
 
-static int get_if_flags(const char *name _U_, bpf_u_int32 *flags _U_,
-                        char *errbuf _U_) {
+static int get_if_flags([[maybe_unused]] const char *name,
+                        [[maybe_unused]] bpf_u_int32 *flags,
+                        [[maybe_unused]] char *errbuf) {
   /*
    * Nothing we can do.
    * XXX - is there a way to find out whether an adapter has
@@ -464,7 +465,7 @@ static int get_if_flags(const char *name _U_, bpf_u_int32 *flags _U_,
   return (0);
 }
 
-int pcap_platform_finddevs(pcap_if_list_t *devlistp, char *errbuf) {
+int pcap_platform_finddevs(Interfaces *devlistp, char *errbuf) {
   return (pcap_findalldevs_interfaces(devlistp, errbuf, can_be_bound,
                                       get_if_flags));
 }

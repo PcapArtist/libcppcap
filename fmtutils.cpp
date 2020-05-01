@@ -71,7 +71,7 @@ void pcap_fmt_set_encoding(unsigned int opts) {
     use_utf_8 = 1;
 }
 #else
-void pcap_fmt_set_encoding(unsigned int opts _U_) {
+void pcap_fmt_set_encoding([[maybe_unused]] unsigned int opts) {
   /*
    * Nothing to do here.
    */

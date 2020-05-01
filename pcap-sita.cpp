@@ -85,10 +85,10 @@ static fd_set readfds; /* a place to store the file descriptors for the
                           connections to the IOPs */
 static int max_fs;
 
-pcap_if_t *acn_if_list; /* pcap's list of available interfaces */
+Interface *acn_if_list; /* pcap's list of available interfaces */
 
 static void dump_interface_list(void) {
-  pcap_if_t *iff;
+  Interface *iff;
   pcap_addr_t *addr;
   int longest_name_len = 0;
   char *n, *d, *f;
@@ -142,7 +142,7 @@ static void dump(unsigned char *ptr, int i, int indent) {
 }
 
 static void dump_interface_list_p(void) {
-  pcap_if_t *iff;
+  Interface *iff;
   pcap_addr_t *addr;
   int if_number = 0;
 
@@ -151,7 +151,7 @@ static void dump_interface_list_p(void) {
   while (iff) {
     printf("%3d: %p %p next: %p\n", if_number++, iff->name, iff->description,
            iff->next);
-    dump((unsigned char *)iff, sizeof(pcap_if_t), 5);
+    dump((unsigned char *)iff, sizeof(Interface), 5);
     addr = iff->addresses;
     while (addr) {
       printf("          %p %p %p %p, next: %p\n", addr->addr, addr->netmask,
@@ -453,7 +453,7 @@ static void send_to_fd(int fd, int len, unsigned char *str) {
 
 static void acn_freealldevs(void) {
 
-  pcap_if_t *iff, *next_iff;
+  Interface *iff, *next_iff;
   pcap_addr_t *addr, *next_addr;
 
   for (iff = acn_if_list; iff != nullptr; iff = next_iff) {
@@ -614,7 +614,7 @@ static int if_sort(char *s1, char *s2) {
 }
 
 static void sort_if_table(void) {
-  pcap_if_t *p1, *p2, *prev, *temp;
+  Interface *p1, *p2, *prev, *temp;
   int has_swapped;
 
   if (!acn_if_list)
@@ -655,7 +655,7 @@ static void sort_if_table(void) {
 static int process_client_data(char *errbuf) { /* returns: -1 = error, 0 = OK */
   int chassis, geoslot;
   unit_t *u;
-  pcap_if_t *iff, *prev_iff;
+  Interface *iff, *prev_iff;
   pcap_addr_t *addr, *prev_addr;
   char *ptr;
   int address_count;
@@ -673,14 +673,14 @@ static int process_client_data(char *errbuf) { /* returns: -1 = error, 0 = OK */
       empty_unit_iface(u);
       ptr = u->imsg; /* point to the start of the msg for this IOP */
       while (ptr < (u->imsg + u->len)) {
-        if ((iff = malloc(sizeof(pcap_if_t))) == nullptr) {
+        if ((iff = malloc(sizeof(Interface))) == nullptr) {
           pcap_fmt_errmsg_for_errno(errbuf, PCAP_ERRBUF_SIZE, errno, "malloc");
           return -1;
         }
         memset(
             (char *)iff, 0,
             sizeof(
-                pcap_if_t)); /* bzero() is deprecated, replaced with memset() */
+                Interface)); /* bzero() is deprecated, replaced with memset() */
         if (acn_if_list == 0)
           acn_if_list = iff; /* remember the head of the list */
         if (prev_iff)
@@ -975,7 +975,7 @@ static int acn_open_live(
   int chassis, geoslot;
   unit_t *u;
   iface_t *p;
-  pcap_if_list_t devlist;
+  Interfaces devlist;
 
   pcap_platform_finddevs(&devlist, errbuf);
   for (chassis = 0; chassis <= MAX_CHASSIS; chassis++) { /* scan the table... */
@@ -1027,7 +1027,8 @@ static void acn_start_monitor(int fd, int snaplen, int timeout, int promiscuous,
   // printf("acn_start_monitor() complete\n");				// fulko
 }
 
-static int pcap_inject_acn(pcap_t *p, const void *buf _U_, int size _U_) {
+static int pcap_inject_acn(pcap_t *p, [[maybe_unused]] const void *buf,
+                           [[maybe_unused]] int size) {
   pcap_strlcpy(p->errbuf, "Sending packets isn't supported on ACN adapters",
                PCAP_ERRBUF_SIZE);
   return (-1);
@@ -1093,7 +1094,7 @@ static int acn_read_n_bytes_with_timeout(pcap_t *handle, int count) {
     } else {
       if ((len = recv(fd, (bp + offset), count, 0)) <= 0) {
         //				fprintf(stderr, "premature exit during
-        //packet data rx\n");
+        // packet data rx\n");
         return -1;
       }
       count -= len;
@@ -1196,7 +1197,7 @@ static int pcap_activate_sita(pcap_t *handle) {
   return 0;
 }
 
-pcap_t *pcap_create_interface(const char *device _U_, char *ebuf) {
+pcap_t *pcap_create_interface([[maybe_unused]] const char *device, char *ebuf) {
   pcap_t *p;
 
   p = pcap_create_common(ebuf, 0);
@@ -1207,7 +1208,7 @@ pcap_t *pcap_create_interface(const char *device _U_, char *ebuf) {
   return (p);
 }
 
-int pcap_platform_finddevs(pcap_if_list_t *devlistp, char *errbuf) {
+int pcap_platform_finddevs(Interfaces *devlistp, char *errbuf) {
 
   // printf("pcap_findalldevs()\n");				// fulko
 

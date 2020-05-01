@@ -99,14 +99,15 @@ struct pcap_win {
  * WinPcap.
  */
 #ifndef HAVE_NPCAP_PACKET_API
-static int PacketIsMonitorModeSupported(PCHAR AdapterName _U_) {
+static int PacketIsMonitorModeSupported([[maybe_unused]] PCHAR AdapterName) {
   /*
    * We don't support monitor mode.
    */
   return (0);
 }
 
-static int PacketSetMonitorMode(PCHAR AdapterName _U_, int mode _U_) {
+static int PacketSetMonitorMode([[maybe_unused]] PCHAR AdapterName,
+                                [[maybe_unused]] int mode) {
   /*
    * This should never be called, as PacketIsMonitorModeSupported()
    * will return 0, meaning "we don't support monitor mode, so
@@ -115,7 +116,7 @@ static int PacketSetMonitorMode(PCHAR AdapterName _U_, int mode _U_) {
   return (0);
 }
 
-static int PacketGetMonitorMode(PCHAR AdapterName _U_) {
+static int PacketGetMonitorMode([[maybe_unused]] PCHAR AdapterName) {
   /*
    * This should fail, so that pcap_activate_npf() returns
    * PCAP_ERROR_RFMON_NOTSUP if our caller requested monitor
@@ -445,7 +446,7 @@ static PAirpcapHandle pcap_get_airpcap_handle_npf(pcap_t *p) {
   return (PacketGetAirPcapHandle(pw->adapter));
 }
 #else  /* HAVE_AIRPCAP_API */
-static PAirpcapHandle pcap_get_airpcap_handle_npf(pcap_t *p _U_) {
+static PAirpcapHandle pcap_get_airpcap_handle_npf([[maybe_unused]] pcap_t *p) {
   return (nullptr);
 }
 #endif /* HAVE_AIRPCAP_API */
@@ -1206,7 +1207,7 @@ static int pcap_can_set_rfmon_npf(pcap_t *p) {
   return (PacketIsMonitorModeSupported(p->opt.device) == 1);
 }
 
-pcap_t *pcap_create_interface(const char *device _U_, char *ebuf) {
+pcap_t *pcap_create_interface([[maybe_unused]] const char *device, char *ebuf) {
   pcap_t *p;
 
   p = pcap_create_common(ebuf, sizeof(struct pcap_win));
@@ -1333,10 +1334,9 @@ static int pcap_setnonblock_npf(pcap_t *p, int nonblock) {
   return (0);
 }
 
-static int pcap_add_if_npf(pcap_if_list_t *devlistp, char *name,
-                           bpf_u_int32 flags, const char *description,
-                           char *errbuf) {
-  pcap_if_t *curdev;
+static int pcap_add_if_npf(Interfaces *devlistp, char *name, bpf_u_int32 flags,
+                           const char *description, char *errbuf) {
+  Interface *curdev;
   npf_if_addr if_addrs[MAX_NETWORK_ADDRESSES];
   LONG if_addr_size;
   int res = 0;
@@ -1642,7 +1642,7 @@ static int get_if_flags(const char *name, bpf_u_int32 *flags, char *errbuf) {
   return (0);
 }
 
-int pcap_platform_finddevs(pcap_if_list_t *devlistp, char *errbuf) {
+int pcap_platform_finddevs(Interfaces *devlistp, char *errbuf) {
   int ret = 0;
   const char *desc;
   char *AdaptersName;
@@ -1759,159 +1759,6 @@ int pcap_platform_finddevs(pcap_if_list_t *devlistp, char *errbuf) {
 
   free(AdaptersName);
   return (ret);
-}
-
-/*
- * Return the name of a network interface attached to the system, or nullptr
- * if none can be found.  The interface must be configured up; the
- * lowest unit number is preferred; loopback is ignored.
- *
- * In the best of all possible worlds, this would be the same as on
- * UN*X, but there may be software that expects this to return a
- * full list of devices after the first device.
- */
-#define ADAPTERSNAME_LEN 8192
-char *pcap_lookupdev(char *errbuf) {
-  DWORD dwVersion;
-  DWORD dwWindowsMajorVersion;
-
-  /*
-   * We disable this in "new API" mode, because 1) in WinPcap/Npcap,
-   * it may return UTF-16 strings, for backwards-compatibility
-   * reasons, and we're also disabling the hack to make that work,
-   * for not-going-past-the-end-of-a-string reasons, and 2) we
-   * want its behavior to be consistent.
-   *
-   * In addition, it's not thread-safe, so we've marked it as
-   * deprecated.
-   */
-  if (pcap_new_api) {
-    snprintf(errbuf, PCAP_ERRBUF_SIZE,
-             "pcap_lookupdev() is deprecated and is not supported in programs "
-             "calling pcap_init()");
-    return (nullptr);
-  }
-
-  /* disable MSVC's GetVersion() deprecated warning here */
-  DIAG_OFF_DEPRECATION
-  dwVersion = GetVersion(); /* get the OS version */
-  DIAG_ON_DEPRECATION
-  dwWindowsMajorVersion = (DWORD)(LOBYTE(LOWORD(dwVersion)));
-
-  if (dwVersion >= 0x80000000 && dwWindowsMajorVersion >= 4) {
-    /*
-     * Windows 95, 98, ME.
-     */
-    ULONG NameLength = ADAPTERSNAME_LEN;
-    static char AdaptersName[ADAPTERSNAME_LEN];
-
-    if (PacketGetAdapterNames(AdaptersName, &NameLength))
-      return (AdaptersName);
-    else
-      return nullptr;
-  } else {
-    /*
-     * Windows NT (NT 4.0 and later).
-     * Convert the names to Unicode for backward compatibility.
-     */
-    ULONG NameLength = ADAPTERSNAME_LEN;
-    static WCHAR AdaptersName[ADAPTERSNAME_LEN];
-    size_t BufferSpaceLeft;
-    char *tAstr;
-    WCHAR *Unameptr;
-    char *Adescptr;
-    size_t namelen, i;
-    WCHAR *TAdaptersName = (WCHAR *)malloc(ADAPTERSNAME_LEN * sizeof(WCHAR));
-    int NAdapts = 0;
-
-    if (TAdaptersName == nullptr) {
-      (void)snprintf(errbuf, PCAP_ERRBUF_SIZE, "memory allocation failure");
-      return nullptr;
-    }
-
-    if (!PacketGetAdapterNames((PTSTR)TAdaptersName, &NameLength)) {
-      pcap_fmt_errmsg_for_win32_err(errbuf, PCAP_ERRBUF_SIZE, GetLastError(),
-                                    "PacketGetAdapterNames");
-      free(TAdaptersName);
-      return nullptr;
-    }
-
-    BufferSpaceLeft = ADAPTERSNAME_LEN * sizeof(WCHAR);
-    tAstr = (char *)TAdaptersName;
-    Unameptr = AdaptersName;
-
-    /*
-     * Convert the device names to Unicode into AdapterName.
-     */
-    do {
-      /*
-       * Length of the name, including the terminating
-       * NUL.
-       */
-      namelen = strlen(tAstr) + 1;
-
-      /*
-       * Do we have room for the name in the Unicode
-       * buffer?
-       */
-      if (BufferSpaceLeft < namelen * sizeof(WCHAR)) {
-        /*
-         * No.
-         */
-        goto quit;
-      }
-      BufferSpaceLeft -= namelen * sizeof(WCHAR);
-
-      /*
-       * Copy the name, converting ASCII to Unicode.
-       * namelen includes the NUL, so we copy it as
-       * well.
-       */
-      for (i = 0; i < namelen; i++)
-        *Unameptr++ = *tAstr++;
-
-      /*
-       * Count this adapter.
-       */
-      NAdapts++;
-    } while (namelen != 1);
-
-    /*
-     * Copy the descriptions, but don't convert them from
-     * ASCII to Unicode.
-     */
-    Adescptr = (char *)Unameptr;
-    while (NAdapts--) {
-      size_t desclen;
-
-      desclen = strlen(tAstr) + 1;
-
-      /*
-       * Do we have room for the name in the Unicode
-       * buffer?
-       */
-      if (BufferSpaceLeft < desclen) {
-        /*
-         * No.
-         */
-        goto quit;
-      }
-
-      /*
-       * Just copy the ASCII string.
-       * namelen includes the NUL, so we copy it as
-       * well.
-       */
-      memcpy(Adescptr, tAstr, desclen);
-      Adescptr += desclen;
-      tAstr += desclen;
-      BufferSpaceLeft -= desclen;
-    }
-
-  quit:
-    free(TAdaptersName);
-    return (char *)(AdaptersName);
-  }
 }
 
 /*

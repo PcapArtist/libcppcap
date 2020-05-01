@@ -429,7 +429,8 @@ static int pcap_dpdk_dispatch(pcap_t *p, int max_cnt, pcap_handler cb,
   return pkt_cnt;
 }
 
-static int pcap_dpdk_inject(pcap_t *p, const void *buf _U_, int size _U_) {
+static int pcap_dpdk_inject(pcap_t *p, [[maybe_unused]] const void *buf,
+                            [[maybe_unused]] int size) {
   // not implemented yet
   pcap_strlcpy(p->errbuf,
                "dpdk error: Inject function has not been implemented yet",
@@ -961,7 +962,7 @@ pcap_t *pcap_dpdk_create(const char *device, char *ebuf, int *is_ours) {
   return p;
 }
 
-int pcap_dpdk_findalldevs(pcap_if_list_t *devlistp, char *ebuf) {
+int pcap_dpdk_findalldevs(Interfaces *devlistp, char *ebuf) {
   int ret = 0;
   unsigned int nb_ports = 0;
   char dpdk_name[DPDK_DEV_NAME_MAX];
@@ -1018,7 +1019,8 @@ int pcap_dpdk_findalldevs(pcap_if_list_t *devlistp, char *ebuf) {
 /*
  * There are no regular interfaces, just DPDK interfaces.
  */
-int pcap_platform_finddevs(pcap_if_list_t *devlistp _U_, char *errbuf) {
+int pcap_platform_finddevs([[maybe_unused]] Interfaces *devlistp,
+                           char *errbuf) {
   return (0);
 }
 

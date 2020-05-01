@@ -131,7 +131,7 @@ struct rtentry; /* declarations in <net/if.h> */
  * way on Linux, for example, but if that better way is "getifaddrs()",
  * we already have that.
  */
-int pcap_findalldevs_interfaces(pcap_if_list_t *devlistp, char *errbuf,
+int pcap_findalldevs_interfaces(Interfaces *devlistp, char *errbuf,
                                 int (*check_usable)(const char *),
                                 get_if_flags_func get_flags_func) {
   int fd;
@@ -394,7 +394,7 @@ int pcap_findalldevs_interfaces(pcap_if_list_t *devlistp, char *errbuf,
     if (add_addr_to_if(devlistp, ifrp->ifr_name, ifrflags.ifr_flags,
                        get_flags_func, &ifrp->ifr_addr, SA_LEN(&ifrp->ifr_addr),
                        netmask, netmask_size, broadaddr, broadaddr_size,
-                       dstaddr, dstaddr_size, errbuf) < 0) {
+                       dstaddr, dstaddr_size, errbuf) != std::nullopt) {
       ret = -1;
       break;
     }

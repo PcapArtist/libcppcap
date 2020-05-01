@@ -46,6 +46,8 @@
 
 #include "conversion_utils.h"
 
+namespace pcap {
+
 /*
  * Block types.
  */
@@ -1509,3 +1511,4 @@ found:
 
   return (0);
 }
+} // namespace pcap

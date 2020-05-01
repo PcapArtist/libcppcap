@@ -69,7 +69,7 @@ struct pcap_bt {
   int dev_id; /* device ID of device we're bound to */
 };
 
-int bt_findalldevs(pcap_if_list_t *devlistp, char *err_str) {
+int bt_findalldevs(Interfaces *devlistp, char *err_str) {
   struct hci_dev_list_req *dev_list;
   struct hci_dev_req *dev_req;
   int sock;
@@ -296,7 +296,7 @@ close_fail:
   return err;
 }
 
-static int bt_read_linux(pcap_t *handle, int max_packets _U_,
+static int bt_read_linux(pcap_t *handle, [[maybe_unused]] int max_packets,
                          pcap_handler callback, u_char *user) {
   struct cmsghdr *cmsg;
   struct msghdr msg;
@@ -375,7 +375,8 @@ static int bt_read_linux(pcap_t *handle, int max_packets _U_,
   return 0; /* didn't pass filter */
 }
 
-static int bt_inject_linux(pcap_t *handle, const void *buf _U_, int size _U_) {
+static int bt_inject_linux(pcap_t *handle, [[maybe_unused]] const void *buf,
+                           [[maybe_unused]] int size) {
   snprintf(handle->errbuf, PCAP_ERRBUF_SIZE,
            "Packet injection is not supported on Bluetooth devices");
   return (-1);

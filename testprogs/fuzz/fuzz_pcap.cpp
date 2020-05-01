@@ -36,11 +36,11 @@ void fuzz_openFile(const char *name) {
 }
 
 int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
-  pcap_t *pkts;
-  char errbuf[PCAP_ERRBUF_SIZE];
+  pcap::pcap_t *pkts;
+  char errbuf[pcap::PCAP_ERRBUF_SIZE];
   const u_char *pkt;
-  struct pcap_pkthdr *header;
-  struct pcap_stat stats;
+  pcap::pcap_pkthdr *header;
+  pcap::pcap_stat stats;
   int r;
 
   // initialize output file
@@ -57,7 +57,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   }
 
   // initialize structure
-  pkts = pcap_open_offline("/tmp/fuzz.pcap", errbuf);
+  pkts = pcap::pcap_open_offline("/tmp/fuzz.pcap", errbuf);
   if (pkts == nullptr) {
     fprintf(outfile, "Couldn't open pcap file %s\n", errbuf);
     return 0;

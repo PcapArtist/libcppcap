@@ -46,7 +46,7 @@
  * port, for similar reasons.
  */
 #ifndef lint
-static const char copyright[] _U_ =
+[[maybe_unused]] static const char copyright[] =
     "@(#) Copyright (c) 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 2000\n\
 The Regents of the University of California.  All rights reserved.\n";
 #endif
@@ -253,7 +253,7 @@ int main(int argc, char **argv) {
   char ebuf[PCAP_ERRBUF_SIZE];
   char *infile;
   const char *cmdbuf;
-  pcap_if_t *devlist;
+  Interface *devlist;
   pcap_t *pd;
   int status = 0;
   int pcap_fd;

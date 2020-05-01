@@ -34,9 +34,9 @@
 #define __SSLUTILS_H__
 
 #ifdef HAVE_OPENSSL
-#include "pcap/socket.h"  // for SOCKET
-#include <openssl/ssl.h>
+#include "pcap/socket.h" // for SOCKET
 #include <openssl/err.h>
+#include <openssl/ssl.h>
 
 /*
  * Utility functions
@@ -44,23 +44,19 @@
 
 void ssl_set_certfile(const char *certfile);
 void ssl_set_keyfile(const char *keyfile);
-int ssl_init_once(int is_server, int enable_compression, char *errbuf, size_t errbuflen);
+int ssl_init_once(int is_server, int enable_compression, char *errbuf,
+                  size_t errbuflen);
 SSL *ssl_promotion(int is_server, SOCKET s, char *errbuf, size_t errbuflen);
 void ssl_finish(SSL *ssl);
-int ssl_send(SSL *, char const *buffer, int size, char *errbuf, size_t errbuflen);
+int ssl_send(SSL *, char const *buffer, int size, char *errbuf,
+             size_t errbuflen);
 int ssl_recv(SSL *, char *buffer, int size, char *errbuf, size_t errbuflen);
 
-// The SSL parameters are used
-#define _U_NOSSL_
-
-#else   // HAVE_OPENSSL
+#else // HAVE_OPENSSL
 
 // This saves us from a lot of ifdefs:
 #define SSL void const
 
-// The SSL parameters are unused
-#define _U_NOSSL_	_U_
+#endif // HAVE_OPENSSL
 
-#endif  // HAVE_OPENSSL
-
-#endif  // __SSLUTILS_H__
+#endif // __SSLUTILS_H__

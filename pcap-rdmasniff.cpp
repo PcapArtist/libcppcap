@@ -400,7 +400,7 @@ pcap_t *rdmasniff_create(const char *device, char *ebuf, int *is_ours) {
   return p;
 }
 
-int rdmasniff_findalldevs(pcap_if_list_t *devlistp, char *err_str) {
+int rdmasniff_findalldevs(Interfaces *devlistp, char *err_str) {
   struct ibv_device **dev_list;
   int numdev;
   int i;

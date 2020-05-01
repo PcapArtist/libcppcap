@@ -22,7 +22,7 @@
 #include "varattrs.h"
 
 #ifndef lint
-static const char copyright[] _U_ =
+[[maybe_unused]] static const char copyright[] =
     "@(#) Copyright (c) 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 2000\n\
 The Regents of the University of California.  All rights reserved.\n";
 #endif
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
   const char *mechanism;
   struct bpf_program fcode;
   char ebuf[PCAP_ERRBUF_SIZE];
-  pcap_if_t *devlist;
+  Interface *devlist;
   int selectable_fd;
   const struct timeval *required_timeout;
   int status;
@@ -347,8 +347,8 @@ int main(int argc, char **argv) {
   exit(status == -1 ? 1 : 0);
 }
 
-static void countme(u_char *user, const struct pcap_pkthdr *h _U_,
-                    const u_char *sp _U_) {
+static void countme(u_char *user, [[maybe_unused]] const struct pcap_pkthdr *h,
+                    [[maybe_unused]] const u_char *sp) {
   int *counterp = (int *)user;
 
   (*counterp)++;

@@ -45,10 +45,8 @@
  * functions used effectively by the pcap library
  */
 
-pcap_t *
-TcCreate(const char *device, char *ebuf, int *is_ours);
+pcap_t *TcCreate(const char *device, char *ebuf, int *is_ours);
 
-int
-TcFindAllDevs(pcap_if_list_t *devlistp, char *errbuf);
+int TcFindAllDevs(Interfaces *devlistp, char *errbuf);
 
 #endif

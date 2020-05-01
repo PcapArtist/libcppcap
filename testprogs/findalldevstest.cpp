@@ -22,7 +22,7 @@
 #include "pcap/funcattrs.h"
 #include "varattrs.h"
 
-static int ifprint(pcap_if_t *d);
+static int ifprint(Interface *d);
 static char *iptos(bpf_u_int32 in);
 
 #ifdef _WIN32
@@ -94,11 +94,11 @@ static char *getpass(const char *prompt) {
 #ifdef ENABLE_REMOTE
 int main(int argc, char **argv)
 #else
-int main(int argc _U_, char **argv _U_)
+int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
 #endif
 {
-  pcap_if_t *alldevs;
-  pcap_if_t *d;
+  Interface *alldevs;
+  Interface *d;
   bpf_u_int32 net, mask;
   int exit_status = 0;
   char errbuf[PCAP_ERRBUF_SIZE + 1];
@@ -173,7 +173,7 @@ int main(int argc _U_, char **argv _U_)
   exit(exit_status);
 }
 
-static int ifprint(pcap_if_t *d) {
+static int ifprint(Interface *d) {
   pcap_addr_t *a;
   char ipv4_buf[INET_ADDRSTRLEN];
   char ipv6_buf[INET6_ADDRSTRLEN];

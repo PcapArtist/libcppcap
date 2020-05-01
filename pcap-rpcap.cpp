@@ -126,7 +126,7 @@ struct pcap_rpcap {
   SOCKET rmt_sockctrl; /* socket ID of the socket used for the control
                           connection */
   SOCKET
-      rmt_sockdata; /* socket ID of the socket used for the data connection */
+  rmt_sockdata; /* socket ID of the socket used for the data connection */
   SSL *ctrl_ssl, *data_ssl; /* optional transport of rmt_sockctrl and
                                rmt_sockdata via TLS */
   int rmt_flags;       /* we have to save flags, since they are passed by the
@@ -2117,7 +2117,7 @@ static int pcap_getnonblock_rpcap(pcap_t *p) {
   return (-1);
 }
 
-static int pcap_setnonblock_rpcap(pcap_t *p, int nonblock _U_) {
+static int pcap_setnonblock_rpcap(pcap_t *p, [[maybe_unused]] int nonblock) {
   snprintf(
       p->errbuf, PCAP_ERRBUF_SIZE,
       "Non-blocking mode isn't supported for capturing remotely with rpcap");
@@ -2458,7 +2458,7 @@ static void freeaddr(struct pcap_addr *addr) {
 }
 
 int pcap_findalldevs_ex_remote(const char *source, struct pcap_rmtauth *auth,
-                               pcap_if_t **alldevs, char *errbuf) {
+                               Interface **alldevs, char *errbuf) {
   uint8 protocol_version; /* protocol version */
   SOCKET sockctrl;        /* socket descriptor of the control connection */
   SSL *ssl = nullptr;     /* optional SSL handler for sockctrl */
@@ -2472,8 +2472,8 @@ int pcap_findalldevs_ex_remote(const char *source, struct pcap_rmtauth *auth,
   char host[PCAP_BUF_SIZE], port[PCAP_BUF_SIZE];
   char tmpstring[PCAP_BUF_SIZE + 1]; /* Needed to convert names and descriptions
                                         from 'old' syntax to the 'new' one */
-  pcap_if_t *lastdev;                /* Last device in the pcap_if_t list */
-  pcap_if_t *dev; /* Device we're adding to the pcap_if_t list */
+  Interface *lastdev;                /* Last device in the Interface list */
+  Interface *dev; /* Device we're adding to the Interface list */
 
   /* List starts out empty. */
   (*alldevs) = nullptr;
@@ -2526,7 +2526,7 @@ int pcap_findalldevs_ex_remote(const char *source, struct pcap_rmtauth *auth,
     findalldevs_if.naddr = ntohs(findalldevs_if.naddr);
 
     /* allocate the main structure */
-    dev = (pcap_if_t *)malloc(sizeof(pcap_if_t));
+    dev = (Interface *)malloc(sizeof(Interface));
     if (dev == nullptr) {
       pcap_fmt_errmsg_for_errno(errbuf, PCAP_ERRBUF_SIZE, errno,
                                 "malloc() failed");
@@ -2534,7 +2534,7 @@ int pcap_findalldevs_ex_remote(const char *source, struct pcap_rmtauth *auth,
     }
 
     /* Initialize the structure to 'zero' */
-    memset(dev, 0, sizeof(pcap_if_t));
+    memset(dev, 0, sizeof(Interface));
 
     /* Append it to the list. */
     if (lastdev == nullptr) {

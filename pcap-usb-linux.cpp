@@ -220,7 +220,7 @@ static int have_binary_usbmon(void) {
 }
 
 /* facility to add an USB device to the device list*/
-static int usb_dev_add(pcap_if_list_t *devlistp, int n, char *err_str) {
+static int usb_dev_add(Interfaces *devlistp, int n, char *err_str) {
   char dev_name[10];
   char dev_descr[30];
   snprintf(dev_name, 10, USB_IFACE "%d", n);
@@ -251,7 +251,7 @@ static int usb_dev_add(pcap_if_list_t *devlistp, int n, char *err_str) {
   return 0;
 }
 
-int usb_findalldevs(pcap_if_list_t *devlistp, char *err_str) {
+int usb_findalldevs(Interfaces *devlistp, char *err_str) {
   char usb_mon_dir[PATH_MAX];
   char *usb_mon_prefix;
   size_t usb_mon_prefix_len;
@@ -818,7 +818,7 @@ static inline int ascii_to_int(char c) {
  * <linux-kernel-source>/drivers/usb/mon/mon_text.cpp for urb string
  * format description
  */
-static int usb_read_linux(pcap_t *handle, int max_packets _U_,
+static int usb_read_linux(pcap_t *handle, [[maybe_unused]] int max_packets,
                           pcap_handler callback, u_char *user) {
   /* see:
    * /usr/src/linux/Documentation/usb/usbmon.txt
@@ -1004,7 +1004,8 @@ got:
   return 0; /* didn't pass filter */
 }
 
-static int usb_inject_linux(pcap_t *handle, const void *buf _U_, int size _U_) {
+static int usb_inject_linux(pcap_t *handle, [[maybe_unused]] const void *buf,
+                            [[maybe_unused]] int size) {
   snprintf(handle->errbuf, PCAP_ERRBUF_SIZE,
            "Packet injection is not supported on USB devices");
   return (-1);
@@ -1114,7 +1115,7 @@ static int usb_stats_linux_bin(pcap_t *handle, struct pcap_stat *stats) {
  * see <linux-kernel-source>/Documentation/usb/usbmon.txt and
  * <linux-kernel-source>/drivers/usb/mon/mon_bin.cpp binary ABI
  */
-static int usb_read_linux_bin(pcap_t *handle, int max_packets _U_,
+static int usb_read_linux_bin(pcap_t *handle, [[maybe_unused]] int max_packets,
                               pcap_handler callback, u_char *user) {
   struct pcap_usb_linux *handlep = handle->priv;
   struct mon_bin_get info;
