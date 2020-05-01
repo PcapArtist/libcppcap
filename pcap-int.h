@@ -517,7 +517,7 @@ find_or_add_if(Interfaces &devlistp, std::string_view name,
 std::optional<std::string>
 add_addr_to_if(Interfaces &devlistp, std::string_view name,
                bpf_u_int32 if_flags, get_if_flags_func get_flags_func,
-               std::optional<std::string_view> addr, std::string_view netmask,
+               std::string_view addr, std::string_view netmask,
                std::string_view broadaddr, std::string_view dstaddr);
 #endif
 
