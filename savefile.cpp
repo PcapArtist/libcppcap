@@ -56,6 +56,8 @@
 #include "sf-pcap.h"
 #include "sf-pcapng.h"
 
+namespace pcap {
+
 #ifdef _WIN32
 /*
  * This isn't exported on Windows, because it would only work if both
@@ -609,3 +611,4 @@ int pcap_offline_read(pcap_t *p, int cnt, pcap_handler callback, u_char *user) {
   /*XXX this breaks semantics tcpslice expects */
   return (n);
 }
+} // namespace pcap

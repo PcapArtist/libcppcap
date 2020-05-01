@@ -133,6 +133,8 @@ static int bpf_load(char *errbuf);
 #include "os-proto.h"
 #endif
 
+namespace pcap {
+
 /*
  * Later versions of NetBSD stick padding in front of FDDI frames
  * to align the IP header on a 4-byte boundary.
@@ -2463,7 +2465,7 @@ static int pcap_activate_bpf(pcap_t *p) {
 bad:
   pcap_cleanup_bpf(p);
   return (status);
-}
+} // namespace pcap
 
 /*
  * Not all interfaces can be bound to by BPF, so try to bind to
@@ -3331,3 +3333,5 @@ const char *pcap_lib_version(void) {
   return (PCAP_VERSION_STRING);
 #endif
 }
+
+} // namespace pcap

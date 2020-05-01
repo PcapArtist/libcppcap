@@ -55,6 +55,8 @@
 
 #include "sf-pcap.h"
 
+namespace pcap {
+
 /*
  * Setting O_BINARY on DOS/Windows is a bit tricky
  */
@@ -1111,3 +1113,5 @@ void pcap_dump_close(pcap_dumper_t *p) {
 #endif
   (void)fclose((FILE *)p);
 }
+
+} // namespace pcap

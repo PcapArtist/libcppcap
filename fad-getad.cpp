@@ -77,6 +77,8 @@
 #endif /* HAVE_NETPACKET_PACKET_H */
 #endif /* (defined(linux) || defined(__Lynx__)) && defined(AF_PACKET) */
 
+namespace pcap {
+
 /*
  * This is fun.
  *
@@ -270,3 +272,5 @@ int pcap_findalldevs_interfaces(Interfaces *devlistp, char *errbuf,
 
   return (ret);
 }
+
+} // namespace pcap
