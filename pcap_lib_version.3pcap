@@ -27,7 +27,7 @@ pcap_lib_version \- get the version information for libpcap
 .ft
 .LP
 .ft B
-const char *pcap_lib_version(void);
+constexpr std::string_view pcap_lib_version(void);
 .ft
 .fi
 .SH DESCRIPTION

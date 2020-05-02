@@ -3326,7 +3326,7 @@ static int pcap_set_datalink_bpf([[maybe_unused]] pcap_t *p,
 /*
  * Platform-specific information.
  */
-const char *pcap_lib_version(void) {
+constexpr std::string_view pcap_lib_version(void) {
 #ifdef HAVE_ZEROCOPY_BPF
   return (PCAP_VERSION_STRING " (with zerocopy support)");
 #else

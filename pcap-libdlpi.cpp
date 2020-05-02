@@ -461,4 +461,6 @@ pcap_t *pcap_create_interface([[maybe_unused]] const char *device, char *ebuf) {
 /*
  * Libpcap version string.
  */
-const char *pcap_lib_version(void) { return (PCAP_VERSION_STRING); }
+constexpr std::string_view pcap_lib_version(void) {
+  return (PCAP_VERSION_STRING);
+}

@@ -1340,4 +1340,6 @@ static void pktq_clear(struct rx_ringbuf *q) { q->in_index = q->out_index; }
 /*
  * Libpcap version string.
  */
-const char *pcap_lib_version(void) { return ("DOS-" PCAP_VERSION_STRING); }
+constexpr std::string_view pcap_lib_version(void) {
+  return ("DOS-" PCAP_VERSION_STRING);
+}

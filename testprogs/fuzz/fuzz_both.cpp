@@ -80,7 +80,9 @@ int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   // nullptr terminate string
   filter[filterSize - 1] = 0;
 
-  if (pcap_compile(pkts, &bpf, filter, 1, PCAP_NETMASK_UNKNOWN) == 0) {
+  if (pcap_compile(pkts, &bpf, filter, 1, pcap::PCAP_NETMASK_UNKNOWN) != 0) {
+    pcap_close(pkts);
+  } else {
     // loop over packets
     r = pcap_next_ex(pkts, &header, &pkt);
     while (r > 0) {
@@ -92,8 +94,6 @@ int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     // close structure
     pcap_close(pkts);
     pcap::pcap_freecode(&bpf);
-  } else {
-    pcap_close(pkts);
   }
   free(filter);
 

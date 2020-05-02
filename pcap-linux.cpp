@@ -5936,7 +5936,7 @@ int pcap_set_protocol_linux(pcap_t *p, int protocol) {
 /*
  * Libpcap version string.
  */
-const char *pcap_lib_version(void) {
+constexpr std::string_view pcap_lib_version(void) {
 #if defined(HAVE_TPACKET3)
   return (PCAP_VERSION_STRING " (with TPACKET_V3)");
 #else

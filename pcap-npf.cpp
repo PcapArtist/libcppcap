@@ -1818,7 +1818,7 @@ static const char *pcap_lib_version_string;
 static const char pcap_version_string[] = WINPCAP_PRODUCT_NAME
     " version " WINPCAP_VER_STRING ", based on " PCAP_VERSION_STRING;
 
-const char *pcap_lib_version(void) {
+constexpr std::string_view pcap_lib_version(void) {
   if (pcap_lib_version_string == nullptr) {
     /*
      * Generate the version string.
@@ -1862,7 +1862,7 @@ const char *pcap_lib_version(void) {
  * libpcap being built for Windows, not as part of a WinPcap/Npcap source
  * tree.
  */
-const char *pcap_lib_version(void) {
+constexpr std::string_view pcap_lib_version(void) {
   if (pcap_lib_version_string == nullptr) {
     /*
      * Generate the version string.  Report the packet.dll

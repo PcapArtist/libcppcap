@@ -310,7 +310,7 @@ pcap_t *pcap_create_interface(const char *device, char *errbuf) {
 /*
  * Libpcap version string.
  */
-const char *pcap_lib_version(void) {
+constexpr std::string_view pcap_lib_version(void) {
   return (PCAP_VERSION_STRING " (Septel-only)");
 }
 #endif

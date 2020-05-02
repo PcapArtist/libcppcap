@@ -7785,11 +7785,11 @@ block *gen_broadcast(compiler_state_t *cstate, int proto) {
 
   case Q_IP:
     /*
-     * We treat a netmask of PCAP_NETMASK_UNKNOWN (0xffffffff)
+     * We treat a netmask of pcap::PCAP_NETMASK_UNKNOWN (0xffffffff)
      * as an indication that we don't know the netmask, and fail
      * in that case.
      */
-    if (cstate->netmask == PCAP_NETMASK_UNKNOWN)
+    if (cstate->netmask == pcap::PCAP_NETMASK_UNKNOWN)
       bpf_error(cstate, "netmask not known, so 'ip broadcast' not supported");
     b0 = gen_linktype(cstate, ETHERTYPE_IP);
     hostmask = ~cstate->netmask;
